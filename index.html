@@ -1,0 +1,1472 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>瑞興國小校本課程介紹</title>
+<meta name="description" content="瑞興國小校本課程互動網站：雲海上的天空之城「濱海綠寶石群島」，六座浮空島帶你走過一到六年級的校訂課程。">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cpath d='M20 6h24l14 18-26 34L6 24z' fill='%232fa36b'/%3E%3Cpath d='M20 6l12 18 12-18M6 24h52M32 24v34' stroke='%23d8f7e4' stroke-width='3' fill='none'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&family=Noto+Serif+TC:wght@600;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#fffaf0; --cream:#fbf3e3; --ink:#3f3a2a; --muted:#857a5f; --line:#e6dcc0;
+  --gem:#2f9a62; --gem-soft:#dff3e6; --sea:#2f7fb0; --gold:#c8902e; --gold-soft:#fbefd6;
+  --accent:var(--gem); --accent-soft:var(--gem-soft);
+  --shadow:0 10px 28px rgba(50,60,30,.18); --r:18px;
+}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;overflow:hidden;background:#cfe6f5;color:var(--ink);
+  font-family:"Noto Sans TC",system-ui,-apple-system,"Microsoft JhengHei",sans-serif;-webkit-font-smoothing:antialiased}
+button{font:inherit;color:inherit;cursor:pointer}
+a{color:inherit}
+#stage{position:fixed;inset:0}
+#stage canvas{display:block;touch-action:none}
+.card{background:rgba(255,250,240,.93);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
+  border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow)}
+
+/* ---------- top bar ---------- */
+.brand{position:fixed;top:14px;left:14px;display:flex;align-items:center;gap:12px;padding:8px 18px 8px 10px;z-index:20;max-width:calc(100vw - 28px)}
+.brand .logo{width:52px;height:52px;flex:none;border-radius:14px;background:linear-gradient(145deg,#4cc28a,#1f7a4c);display:grid;place-items:center;box-shadow:inset 0 -4px 0 rgba(0,0,0,.15)}
+.brand .logo svg{width:34px;height:34px}
+.brand h1{margin:0;font:900 20px/1.2 "Noto Serif TC",serif;letter-spacing:.04em;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.brand h1 em{font:700 11px/1 "Noto Sans TC";font-style:normal;background:var(--gem);color:#fff;padding:4px 8px;border-radius:999px;letter-spacing:.05em}
+.brand p{margin:3px 0 0;font-size:12px;color:var(--muted)}
+.quote{position:fixed;top:14px;left:50%;transform:translateX(-50%);display:flex;align-items:center;gap:10px;padding:10px 12px 10px 14px;z-index:19;max-width:430px}
+.quote .tag{flex:none;background:var(--gem);color:#fff;font-size:12px;font-weight:700;padding:4px 9px;border-radius:999px}
+.quote p{margin:0;font:600 15px/1.45 "Noto Serif TC",serif;min-width:210px}
+.iconbtn{flex:none;width:30px;height:30px;border-radius:50%;border:1px solid var(--line);background:#fff;display:grid;place-items:center;font-size:14px}
+.iconbtn:hover{background:var(--cream)}
+.music-pill{position:fixed;top:14px;right:232px;display:flex;align-items:center;gap:8px;padding:9px 16px;z-index:20;font-weight:700;font-size:14px;transition:transform .2s,background .2s;border-radius:999px}
+.music-pill:hover{transform:scale(1.05);background:#fff}
+.music-pill.playing{background:var(--gem-soft);border-color:var(--gem);color:#1f6b45}
+.music-pill.playing .m-icon{animation:spin 3s linear infinite;display:inline-block}
+@keyframes spin{to{transform:rotate(360deg)}}
+#confettiCanvas{position:fixed;inset:0;pointer-events:none;z-index:99;display:none}
+.clock{position:fixed;top:14px;right:14px;display:flex;align-items:center;gap:14px;padding:10px 16px;z-index:20}
+.clock b{display:block;font:900 20px/1.1 "Noto Serif TC",serif}
+.clock small{font-size:12px;color:var(--muted)}
+.clock .sky{display:flex;align-items:center;gap:8px;padding-left:14px;border-left:1px solid var(--line)}
+.clock .sky span{font-size:24px}
+
+/* ---------- labels ---------- */
+#labels{position:fixed;inset:0;pointer-events:none;z-index:5;overflow:hidden}
+body.nolabels #labels{display:none}
+.lbl{position:absolute;left:0;top:0;pointer-events:auto;border:0;background:none;padding:0;will-change:transform}
+.lbl>span{display:flex;align-items:center;gap:6px;padding:5px 12px 5px 8px;background:var(--paper);border:2px solid var(--c);border-radius:999px;
+  font-weight:700;font-size:14px;white-space:nowrap;box-shadow:0 4px 10px rgba(40,50,20,.22);transition:transform .2s,background .2s,color .2s}
+.lbl i{width:22px;height:22px;border-radius:50%;background:var(--c);flex:none;color:#fff;font-style:normal;font-size:12px;display:grid;place-items:center;font-weight:900}
+.lbl small{font-weight:500;color:var(--muted);font-size:11px}
+.lbl.hub>span{font:900 17px/1.2 "Noto Serif TC",serif;background:var(--c);color:#fff;padding:7px 16px 7px 10px}
+.lbl.hub i{background:#fff;color:var(--c)}
+.lbl.hub small{color:rgba(255,255,255,.85);font-family:"Noto Sans TC"}
+.lbl:hover>span,.lbl.on>span{transform:scale(1.08)}
+.lbl.on:not(.hub)>span{background:var(--c);color:#fff}
+.lbl.on:not(.hub) small{color:rgba(255,255,255,.85)}
+.lbl.on:not(.hub) i{background:#fff;color:var(--c)}
+.lbl .stamp{font-size:11px;margin-left:2px;font-style:normal}
+
+/* ---------- bottom-left ---------- */
+.passport{position:fixed;left:14px;bottom:78px;padding:12px 14px;z-index:20;width:300px}
+.passport header{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.passport header b{font:900 15px "Noto Serif TC",serif}
+.passport header span{font-size:12px;color:var(--muted)}
+.stamps{display:grid;grid-template-columns:repeat(6,1fr);gap:6px}
+.stamp-dot{aspect-ratio:1;border-radius:50%;border:1.5px dashed #c9bb94;background:transparent;font-size:12px;font-weight:700;color:#b3a37c;display:grid;place-items:center;padding:0}
+.stamp-dot.got{border:2px solid var(--c);background:var(--c);color:#fff;transform:rotate(-8deg)}
+.gems{display:flex;align-items:center;gap:8px;margin-top:10px;padding-top:9px;border-top:1px dashed var(--line);font-size:12.5px}
+.gems b{color:var(--gem);font-size:15px}
+.gems .bar{flex:1;height:6px;border-radius:3px;background:var(--line);overflow:hidden}
+.gems .bar i{display:block;height:100%;background:linear-gradient(90deg,#57c98d,#1f8a55);width:0;transition:width .4s}
+.hint{margin:8px 0 0;font-size:12px;color:var(--muted);line-height:1.5}
+.actions{position:fixed;left:14px;bottom:18px;display:flex;gap:8px;z-index:20}
+.pill{border:0;border-radius:999px;padding:10px 18px;font-weight:700;font-size:14px;box-shadow:var(--shadow);display:flex;align-items:center;gap:6px;text-decoration:none}
+.pill.gem{background:var(--gem);color:#fff}
+.pill.sea{background:var(--sea);color:#fff}
+.pill:hover{filter:brightness(1.07)}
+
+/* ---------- dock ---------- */
+.dock{position:fixed;left:50%;bottom:18px;transform:translateX(-50%);display:flex;gap:8px;z-index:20}
+.seg{display:flex;gap:2px;padding:4px}
+.seg button{border:0;background:none;padding:7px 13px;border-radius:999px;font-size:14px;font-weight:500;white-space:nowrap}
+.seg button:hover{background:var(--cream)}
+.seg button.on{background:var(--ink);color:#fff}
+.seg button.tog.on{background:var(--gem);color:#fff}
+
+/* ---------- panel ---------- */
+.panel{position:fixed;top:92px;right:14px;bottom:78px;width:440px;z-index:30;display:flex;flex-direction:column;overflow:hidden;
+  transform:translateX(calc(100% + 30px));transition:transform .45s cubic-bezier(.2,.8,.2,1)}
+.panel.open{transform:none}
+.p-head{padding:14px 18px 0;background:linear-gradient(180deg,var(--accent-soft),rgba(255,250,240,0))}
+.p-nav{display:flex;align-items:center;gap:6px}
+.p-nav .crumb{font-size:12px;font-weight:700;color:var(--accent);background:#fff;border:1px solid var(--line);padding:4px 10px;border-radius:999px}
+.p-nav .sp{flex:1}
+.p-head h2{margin:10px 0 2px;font:900 26px/1.25 "Noto Serif TC",serif;letter-spacing:.03em}
+.p-head .sub{margin:0;font-size:15px;font-weight:700}
+.p-head .meta{margin:4px 0 0;font-size:12px;color:var(--muted)}
+.tabs{display:flex;gap:2px;padding:12px 14px 0;border-bottom:1px solid var(--line);overflow-x:auto;scrollbar-width:none}
+.tabs button{border:0;background:none;padding:8px 11px 10px;font-size:14px;font-weight:500;color:var(--muted);border-bottom:3px solid transparent;margin-bottom:-1px;white-space:nowrap}
+.tabs button.on{color:var(--ink);font-weight:700;border-color:var(--accent)}
+.p-body{flex:1;overflow:auto;padding:16px 18px;font-size:14.5px;line-height:1.75}
+.p-body h4{margin:16px 0 6px;font:900 15px "Noto Serif TC",serif;display:flex;align-items:center;gap:6px}
+.p-body h4::before{content:"";width:6px;height:16px;border-radius:3px;background:var(--accent)}
+.p-body p{margin:0 0 8px}
+.hero{margin:0 0 12px;border-radius:14px;overflow:hidden;border:1px solid var(--line);background:var(--cream);position:relative}
+.hero img{display:block;width:100%;height:220px;object-fit:cover}
+.hero figcaption{position:absolute;left:10px;bottom:10px;background:rgba(40,50,30,.72);color:#fff;font-size:12px;padding:3px 10px;border-radius:999px}
+.lead{font-size:15px}
+.facts{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:10px 0 4px}
+.facts div{background:var(--accent-soft);border-radius:12px;padding:8px 6px;text-align:center}
+.facts b{display:block;font:900 16px/1.3 "Noto Serif TC",serif;color:var(--accent)}
+.facts span{font-size:11px;color:var(--muted)}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chips span{font-size:13px;padding:3px 10px;border-radius:999px;background:#fff;border:1px solid var(--line)}
+.chips span.k{background:var(--accent-soft);border-color:transparent;color:var(--accent);font-weight:700}
+.units{list-style:none;margin:0;padding:0;position:relative}
+.units::before{content:"";position:absolute;left:15px;top:14px;bottom:14px;width:2px;background:var(--line)}
+.units li{position:relative;display:flex;gap:12px;padding:8px 0}
+.units li>span{flex:none;width:32px;height:32px;border-radius:50%;background:var(--accent);color:#fff;display:grid;place-items:center;font-weight:900;font-size:13px;position:relative}
+.units li b{display:block;font-size:14.5px}
+.units li small{display:block;color:var(--muted);font-size:13px;line-height:1.6}
+.units li em{display:inline-block;font-style:normal;font-size:11.5px;font-weight:700;color:var(--accent);background:var(--accent-soft);padding:1px 8px;border-radius:999px;margin-top:3px}
+.gallery{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.gallery.portrait{grid-template-columns:repeat(3,1fr)}
+.shot{border:1px solid var(--line);border-radius:12px;overflow:hidden;padding:0;background:#fff;text-align:left;position:relative;transition:transform .2s}
+.shot:hover{transform:translateY(-2px);box-shadow:var(--shadow)}
+.shot img{display:block;width:100%;aspect-ratio:4/3;object-fit:cover;background:var(--cream)}
+.gallery.portrait .shot img{aspect-ratio:3/4}
+.shot span{position:absolute;left:6px;top:6px;background:rgba(40,50,30,.72);color:#fff;font-size:11px;padding:1px 8px;border-radius:999px}
+.linkrow{display:flex;align-items:center;gap:12px;width:100%;text-align:left;border:1px dashed var(--line);background:#fff;border-radius:12px;padding:10px 12px;margin-top:10px;font-size:13.5px;text-decoration:none}
+.linkrow:hover{border-style:solid;border-color:var(--accent)}
+.linkrow img{width:52px;height:52px;border-radius:8px;object-fit:cover;flex:none}
+.linkrow .ic{width:52px;height:52px;border-radius:10px;flex:none;background:var(--accent-soft);display:grid;place-items:center;font-size:24px}
+.linkrow b{display:block;font-size:14.5px}
+.linkrow small{display:block;color:var(--muted);font-size:12px}
+.linkrow .go{margin-left:auto;color:var(--accent);font-weight:900}
+.point{display:flex;gap:10px;padding:8px 0;border-bottom:1px dashed var(--line)}
+.point>b{flex:none;width:30px;height:30px;border-radius:8px;background:var(--accent-soft);color:var(--accent);display:grid;place-items:center;font-size:13px}
+.matrix{width:100%;border-collapse:separate;border-spacing:0;font-size:12.5px;line-height:1.5}
+.matrix th,.matrix td{padding:7px 6px;border-bottom:1px solid var(--line);vertical-align:top;text-align:left}
+.matrix th{font-size:11.5px;color:var(--muted);font-weight:700}
+.matrix td:first-child{font-weight:900;white-space:nowrap}
+.matrix tr[data-go]{cursor:pointer}
+.matrix tr[data-go]:hover td{background:var(--accent-soft)}
+.dotc{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:4px;vertical-align:1px}
+.p-foot{padding:12px 18px 16px;border-top:1px solid var(--line);display:flex;gap:8px;flex-wrap:wrap}
+.btn{flex:1;min-width:150px;display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:11px 14px;border-radius:12px;font-weight:700;text-decoration:none;border:1px solid var(--line);background:#fff;font-size:14px}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+.btn:hover{filter:brightness(1.05)}
+
+/* ---------- overlays ---------- */
+.overlay{position:fixed;inset:0;z-index:40;background:rgba(30,40,25,.4);display:none;align-items:center;justify-content:center;padding:20px}
+.overlay.open{display:flex}
+.listbox{width:min(1080px,100%);max-height:100%;overflow:auto;padding:20px 22px 24px}
+.listbox header{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px}
+.listbox h3{margin:0;font:900 22px "Noto Serif TC",serif}
+.tiles{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:12px}
+.tile{border:1px solid var(--line);background:#fff;border-radius:14px;overflow:hidden;padding:0;text-align:left;transition:transform .2s,box-shadow .2s;border-top:5px solid var(--c)}
+.tile:hover{transform:translateY(-3px);box-shadow:var(--shadow)}
+.tile img{display:block;width:100%;aspect-ratio:16/10;object-fit:cover;background:var(--cream)}
+.tile div{padding:8px 12px 12px}
+.tile small{font-size:11.5px;color:var(--muted)}
+.tile b{display:block;font:900 16px/1.35 "Noto Serif TC",serif}
+.tile p{margin:3px 0 0;font-size:12.5px;color:var(--muted);line-height:1.55}
+.lightbox .lb-wrap{display:flex;flex-direction:column;align-items:center;gap:10px;max-width:min(1200px,100%)}
+.lightbox img{max-width:100%;max-height:calc(100vh - 190px);border-radius:12px;box-shadow:0 20px 50px rgba(0,0,0,.4);background:#fff}
+.lb-text{max-width:760px;color:#fff;font-size:15px;line-height:1.7;text-align:center;text-shadow:0 1px 3px rgba(0,0,0,.6);margin:0}
+.lb-bar{display:flex;gap:8px;align-items:center;color:#fff;font-size:14px;flex-wrap:wrap;justify-content:center}
+.lb-bar button{border:0;background:rgba(255,250,240,.95);border-radius:999px;padding:7px 14px;font-weight:700}
+
+/* ---------- tour & toast ---------- */
+.tourbar{position:fixed;top:92px;left:50%;transform:translateX(-50%);display:none;align-items:center;gap:10px;padding:8px 10px 8px 16px;z-index:25;font-size:14px}
+.tourbar.on{display:flex}
+.tourbar .prog{width:120px;height:6px;border-radius:3px;background:var(--line);overflow:hidden}
+.tourbar .prog i{display:block;height:100%;background:var(--gem);width:0}
+.tourbar button{border:0;border-radius:999px;padding:5px 12px;background:var(--cream);font-weight:700;font-size:13px}
+.toast{position:fixed;left:50%;top:84px;transform:translate(-50%,-20px);opacity:0;z-index:60;padding:10px 18px;font-weight:700;pointer-events:none;transition:all .35s;max-width:calc(100vw - 32px);text-align:center}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+
+/* ---------- loader ---------- */
+.loader{position:fixed;inset:0;z-index:80;display:grid;place-items:center;background:radial-gradient(ellipse at 50% 30%,#fbf6e4 0%,#cfe8f3 55%,#93c6e6 100%);transition:opacity .8s}
+.loader.hide{opacity:0;pointer-events:none}
+.loader .box{width:min(420px,calc(100vw - 40px));text-align:center;padding:28px 26px 22px}
+.loader small{letter-spacing:.3em;color:var(--muted);font-size:12px}
+.loader .gemicon{width:96px;height:96px;margin:14px auto 4px;display:block}
+.loader h2{margin:6px 0 4px;font:900 28px "Noto Serif TC",serif;letter-spacing:.06em}
+.loader p{margin:0;color:var(--muted)}
+.loader .bar{height:8px;border-radius:4px;background:var(--line);margin:18px 0 8px;overflow:hidden}
+.loader .bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,#57c98d,#2f9a62,#2f7fb0);transition:width .3s}
+.loader .step{font-size:13px;color:var(--muted)}
+.loader .skip{margin-top:10px;border:0;background:none;color:var(--muted);font-size:13px;text-decoration:underline}
+.float{animation:bob 3s ease-in-out infinite}
+@keyframes bob{50%{transform:translateY(-8px)}}
+
+/* ---------- responsive ---------- */
+@media (max-width:1180px){ .quote{display:none} }
+@media (max-width:760px){
+  .music-pill{top:auto;bottom:70px;right:96px;padding:6px 12px;font-size:12px;gap:4px}
+  .music-pill .m-txt{display:none}
+  .brand{top:8px;left:8px;padding:6px 12px 6px 8px;gap:8px}
+  .brand .logo{width:38px;height:38px;border-radius:10px} .brand .logo svg{width:24px;height:24px}
+  .brand h1{font-size:16px} .brand p{display:none}
+  .clock{top:auto;bottom:70px;right:8px;padding:6px 10px;gap:8px}
+  .clock>div:first-child{display:none} .clock .sky{border:0;padding:0}
+  .passport{display:none}
+  .actions{left:8px;bottom:70px}
+  .pill{padding:8px 12px;font-size:13px}
+  .dock{left:8px;right:8px;bottom:10px;transform:none;overflow-x:auto;scrollbar-width:none}
+  .dock::-webkit-scrollbar{display:none}
+  .seg button{padding:7px 10px;font-size:13px}
+  .panel{top:auto;left:8px;right:8px;bottom:8px;width:auto;height:64vh;transform:translateY(calc(100% + 20px))}
+  .panel .p-head h2{font-size:21px}
+  .lbl>span{font-size:12px;padding:3px 9px 3px 4px} .lbl small{display:none}
+  .lbl.hub>span{font-size:14px}
+  .tiles{grid-template-columns:1fr 1fr}
+  .gallery.portrait{grid-template-columns:1fr 1fr}
+  .tourbar{top:62px}
+}
+@media (prefers-reduced-motion:reduce){ .float{animation:none} }
+</style>
+<script type="importmap">
+{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"}}
+</script>
+<script src="island/stories.js"></script>
+</head>
+<body>
+<div id="stage"></div>
+<div id="labels"></div>
+
+<header class="brand card">
+  <div class="logo"><svg viewBox="0 0 64 64"><path d="M20 6h24l14 18-26 34L6 24z" fill="#bff0d4"/><path d="M20 6l12 18 12-18M6 24h52M32 24v34" stroke="#2f9a62" stroke-width="3" fill="none"/></svg></div>
+  <div>
+    <h1>瑞興國小校本課程介紹 <em>天空之城</em></h1>
+    <p>濱海綠寶石｜一至六年級・六座浮空島</p>
+  </div>
+</header>
+
+<div class="quote card" aria-live="polite">
+  <span class="tag">島嶼小語</span>
+  <p id="quoteText">大樹守護我們，黑豆滋養我們。</p>
+  <button class="iconbtn" id="quoteBtn" aria-label="換一句">↻</button>
+</div>
+
+<button class="music-pill card" id="bgmBtn" aria-label="播放背景音樂" title="點擊開啟/暫停背景音樂">
+  <span class="m-icon">🔇</span><span class="m-txt">背景音樂</span>
+</button>
+<canvas id="confettiCanvas"></canvas>
+
+<div class="clock card">
+  <div><b id="clkDate">—</b><small id="clkTime">—</small></div>
+  <div class="sky"><span id="skyIcon">☀️</span><div><b id="skyName" style="font-size:16px">白晝</b><small id="skyMode">即時天色</small></div></div>
+</div>
+
+<section class="passport card" aria-label="島嶼護照">
+  <header><b>🎒 綠寶石護照</b><span id="stampCount">已登島 0 / 6</span></header>
+  <div class="stamps" id="stamps"></div>
+  <div class="gems">💎 小綠寶石 <b id="gemCount">0</b>/<span id="gemTotal">12</span><div class="bar"><i id="gemBar"></i></div></div>
+  <p class="hint">點一座島開始探索！島上還藏著會發光的小綠寶石，找找看。拖曳旋轉、滾輪或雙指縮放。</p>
+</section>
+
+<div class="actions">
+  <button class="pill gem" id="tourBtn">▶ 島嶼導覽</button>
+  <button class="pill sea" id="frameBtn">🗺️ 課程架構</button>
+</div>
+
+<nav class="dock">
+  <div class="seg card" id="views">
+    <button data-view="overview" class="on">全景</button>
+    <button data-view="low">低年級</button>
+    <button data-view="mid">中年級</button>
+    <button data-view="high">高年級</button>
+    <button data-view="bird">鳥瞰</button>
+    <button data-view="list">清單</button>
+  </div>
+  <div class="seg card">
+    <button class="tog on" id="tLabels">島名</button>
+    <button class="tog" id="tTime">🕒 即時</button>
+    <button class="tog on" id="tFx">特效</button>
+    <button class="tog" id="tRotate">旋轉</button>
+  </div>
+</nav>
+
+<div class="tourbar card" id="tourbar">
+  <span id="tourText">導覽中</span>
+  <div class="prog"><i id="tourProg"></i></div>
+  <button id="tourPause">暫停</button>
+  <button id="tourStop">結束</button>
+</div>
+
+<aside class="panel card" id="panel" aria-hidden="true">
+  <div class="p-head">
+    <div class="p-nav">
+      <button class="iconbtn" id="pPrev" aria-label="上一座島">‹</button>
+      <span class="crumb" id="pCrumb"></span>
+      <button class="iconbtn" id="pNext" aria-label="下一座島">›</button>
+      <span class="sp"></span>
+      <button class="iconbtn" id="pClose" aria-label="關閉">✕</button>
+    </div>
+    <h2 id="pTitle"></h2>
+    <p class="sub" id="pSub"></p>
+    <p class="meta" id="pMeta"></p>
+  </div>
+  <div class="tabs" id="pTabs"></div>
+  <div class="p-body" id="pBody"></div>
+  <div class="p-foot" id="pFoot"></div>
+</aside>
+
+<div class="overlay" id="listOv">
+  <div class="listbox card">
+    <header><h3 id="listTitle">六座浮空島一覽</h3><button class="iconbtn" data-close aria-label="關閉">✕</button></header>
+    <div id="listBody"></div>
+  </div>
+</div>
+
+<div class="overlay lightbox" id="lbOv">
+  <div class="lb-wrap">
+    <img id="lbImg" alt="">
+    <p class="lb-text" id="lbText"></p>
+    <div class="lb-bar"><button id="lbPrev">← 上一張</button><span id="lbCap"></span><button id="lbNext">下一張 →</button><button data-close>關閉 ✕</button></div>
+  </div>
+</div>
+
+<div class="toast card" id="toast"></div>
+
+<div class="loader" id="loader">
+  <div class="box card">
+    <small>HELLO, RUIXING</small>
+    <svg class="gemicon float" viewBox="0 0 64 64"><path d="M20 6h24l14 18-26 34L6 24z" fill="#3fb57a"/><path d="M20 6l12 18 12-18M6 24h52M32 24v34M6 24l26 34 26-34" stroke="#d8f7e4" stroke-width="2" fill="none"/><path d="M20 6l-14 18h14z" fill="#7bd9a6"/></svg>
+    <h2>瑞興國小校本課程</h2>
+    <p>雲海之上，六座濱海綠寶石浮空島等你登島。</p>
+    <div class="bar"><i id="loadBar"></i></div>
+    <div class="step" id="loadStep">正在喚醒天空之城…</div>
+    <button class="skip" id="skipBtn">略過 ›</button>
+  </div>
+</div>
+
+<script type="module">
+import * as THREE from 'three';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+
+/* =========================================================
+   課程資料
+   ========================================================= */
+const GRADE = ['', '一', '二', '三', '四', '五', '六'];
+const F1 = '一年級校本課程/', F2 = '二年級校本課程/', F3 = '三年級校本課程/', F4 = '四年級校本課程/', F5 = '五年級校本課程/', F6 = '六年級濱海校本課程/';
+const COURSES = [
+  { id:'g1', grade:1, name:'傑克的大樹與黑豆冒險', short:'大樹黑豆島', accent:'#4e9a3a', top:'#9fcf6a',
+    sub:'樹木夥伴與黑豆家族', lessons:'2 節', mode:'綜藝劇場・辦桌小師傅', axis:'環境倫理・飲食生活',
+    heroes:'傑克、小松鼠栗栗、大樹巨人、黑豆精靈',
+    summary:'傑克在「濱海綠寶石」公園遇上大風雨，是大樹巨人張開綠色手臂替他擋住風雨；接著黑豆大家族辦起派對，傑克化身辦桌小師傅，喝下香濃的黑豆漿，學會感恩每一粒食物、不再挑食。',
+    goal:'認識大樹遮風擋雨、淨化空氣、提供木材的「棟樑」角色；認識黑豆從種子、發芽到結莢的成長，以及黑豆漿、醬油、黑豆茶等天然食物，養成不挑食、感恩食物的好習慣。',
+    units:[
+      ['尋找兩個神秘寶物', '跟著森林動物出任務：大自然藏著兩個寶物，第一個是保護我們的「綠色大巨人」。', '引起動機'],
+      ['大樹棟樑的禮物', '大樹遮風擋雨、淨化空氣、提供木材蓋房子——謝謝大樹給我們的禮物。', '環境倫理'],
+      ['換我們來當大樹！', '兩人一組，一人扮演張開手臂的大樹，一人扮演躲雨的小動物；再上台對大樹說一句感謝的話。', '綜藝劇場'],
+      ['猜猜神秘寶物：黑豆精靈', '黑黑圓圓的是什麼？原來是健康的天然食物——黑豆！認識黑豆從種子、發芽到結莢。', '飲食生活'],
+      ['黑豆精靈的變身魔法', '黑豆可以變成黑豆漿、醬油、黑豆茶；比一比：哪一個才是大自然給我們的禮物？', '天然 vs 加工'],
+      ['換你當主廚！', '化身辦桌小師傅，在盤子上畫出自己的健康小菜單，承諾「謝謝大樹、謝謝食物，我們不挑食！」', '辦桌小師傅'],
+    ],
+    tags:['大樹棟樑','黑豆成長','天然食物','不挑食','感恩惜福'],
+    hero:'island/img/g1/01.webp', imgs:'g1', portrait:true, slides:'g1',
+    links:[
+      { url:F1 + '1class.html', icon:'📖', t:'電子繪本：傑克的大樹與黑豆冒險', s:'翻頁有聲繪本・十頁故事' },
+      { url:'濱海綠寶石一年級課程.html', icon:'🌱', t:'一年級跨領域主題教學網', s:'故事館・黑豆小博士・隨堂測驗・畫畫挑戰・學習徽章' },
+      { url:'一年級簡報.pptx', icon:'📊', t:'下載課堂簡報（PowerPoint）', s:'綠寶石小探索家：樹木夥伴與黑豆家族・13 張', dl:true },
+    ] },
+  { id:'g2', grade:2, name:'雞油樹下的百歲宴', short:'百歲宴島', accent:'#d65a36', top:'#a8d070',
+    sub:'辦桌小師傅的五彩冒險', lessons:'2 節', mode:'綜藝劇場・辦桌小師傅', axis:'環境倫理・飲食均衡',
+    heroes:'老櫸爺爺、小松鼠巧巧、小鳥飛飛',
+    summary:'濱海森林裡的雞油樹家族「手牽手、根連根」一起抵抗海風；小松鼠巧巧為了感謝老櫸爺爺，當起辦桌小師傅，找齊紅、綠、黃、白、紫五色「長命百歲菜」，辦一場熱鬧的百歲宴，也讓挑食的小鳥飛飛愛上蔬菜。',
+    goal:'認識臺灣原生樹種「雞油樹（臺灣櫸）」與樹木家族互相扶持、抓緊土壤的功能；理解五色蔬菜的營養與均衡飲食，設計自己的長命百歲養生餐盤。',
+    units:[
+      ['尋找傳說中的「雞油樹」', '用放大鏡觀察臺灣櫸：為什麼叫它「雞油」？樹幹會流出香噴噴的油嗎？', '樹與樹'],
+      ['雞油樹大公寓', '大樹撐起傘、保護小動物、抓住泥土地——樹木家族是一家人。', '環境倫理'],
+      ['雞油家族樹之舞', '分組上台演出：強壯的雞油樹、乘涼的小樹苗、築巢的小鳥、互相支持保護彼此。', '綜藝劇場'],
+      ['尋找「長命百歲菜」', '五彩蔬菜大集合：紅色護心、綠色活力、黃色護眼、白色護呼吸道、紫色抗氧化。', '飲食均衡'],
+      ['為什麼我們不能挑食？', '彩色＝健康！每一種顏色都需要，天平兩端比一比。', '健康生活'],
+      ['辦桌小師傅：百歲宴分享會', '選出最棒的長命百歲菜，在盤子上畫滿五種顏色，發表「長命百歲養生餐盤」。', '辦桌小師傅'],
+    ],
+    tags:['雞油樹（臺灣櫸）','五色蔬菜','均衡飲食','百歲宴','互相扶持'],
+    hero:'island/img/g2/01.webp', imgs:'g2', slides:'g2',
+    links:[
+      { url:F2 + '2class.html', icon:'📖', t:'電子繪本與互動教學網', s:'繪本閱讀・五彩百歲餐盤挑戰・雞油樹生態小大師考驗' },
+      { url:'綠寶石小探索家二年級簡報.pptx', icon:'📊', t:'下載課堂簡報（PowerPoint）', s:'綠寶石小探索家出發囉！・13 張', dl:true },
+    ] },
+  { id:'g3', grade:3, name:'小綠寶石的固碳魔法', short:'固碳魔法島', accent:'#22968a', top:'#e8d79a',
+    sub:'木麻黃木木與藍碳的秘密', lessons:'多節', mode:'知識測驗・小遊戲・榮譽卡', axis:'能資源永續・氣候變遷',
+    heroes:'小木麻黃「木木」、小女孩晴晴',
+    summary:'海岸邊的小木麻黃「木木」不怕鹹鹹的海風，和夥伴們排成綠色長城擋風固沙。地球發燒了怎麼辦？木木用「光合作用」把二氧化碳吸進身體鎖起來——這就是固碳；海邊植物和泥土儲存的碳，叫做「藍碳」。',
+    goal:'理解溫室效應讓地球「發燒」的原因；認識光合作用與固碳、藍碳的概念；認識木麻黃防風林擋風固沙、保護家園，並在生活中實踐減碳行動。',
+    units:[
+      ['我是濱海小綠寶石', '認識生長在海邊、不怕鹽風的濱海植物與木麻黃防風林。', '繪本導讀'],
+      ['發燒的地球', '工廠和汽車排出太多二氧化碳，像厚棉被把熱包住——這就是溫室效應。', '教學活動 1'],
+      ['植物的冷氣魔法', '光合作用：吸進二氧化碳、吐出氧氣，像天然冷氣機幫地球降溫。', '教學活動 2'],
+      ['海岸的隱藏寶庫：藍碳', '木麻黃、紅樹林和底下泥土儲存的碳，靠近藍色大海，稱為「藍碳」。', '教學活動 3'],
+      ['知識小測驗・抓 CO₂', '三關知識測驗，再點擊飄浮的二氧化碳幫小綠寶石吸收它們。', '評量挑戰'],
+      ['固碳魔法小尖兵', '寫下名字領取榮譽卡，承諾成為減碳的國際小公民。', '國際小公民'],
+    ],
+    tags:['溫室效應','光合作用','固碳','藍碳','木麻黃防風林'],
+    hero:'island/img/g3/01.webp', imgs:'g3',
+    links:[
+      { url:F3 + '3class.html', icon:'🌿', t:'固碳魔法學習網', s:'聽故事・教學活動・知識小測驗・抓 CO₂ 小遊戲與證書' },
+      { url:'mumu-carbon-magic/index.html', icon:'🎧', t:'有聲繪本：木木的固碳魔法', s:'十頁翻頁繪本・語音旁白・自動翻頁' },
+    ] },
+  { id:'g4', grade:4, name:'尋找濱海綠寶石', short:'環保皂島', accent:'#c48a1e', top:'#9fcf75',
+    sub:'天然植物皂・綠生活・碳權價值', lessons:'2 節（80 分鐘）', mode:'綜藝劇場・國際小公民', axis:'環境倫理・能資源永續',
+    heroes:'沐晴、秉勳',
+    summary:'四年級的沐晴與秉勳在校園撿到一張泛黃的探索地圖，沿著海岸發現會起泡的無患子、動手做天然環保皂，再認識大樹是地球的「碳吸塵器」。原來「濱海綠寶石」不是地底的珍寶，而是被好好愛護的綠色大地與海洋。',
+    goal:'認識無患子等植物中的天然清潔成分與皂化原理，體驗手作環保皂、守護水資源；理解碳足跡、固碳與碳權價值，簽署綠生活承諾書，成為國際小公民。',
+    units:[
+      ['繪本導讀：尋找濱海綠寶石', '十頁繪本：古老的地圖、遇見無患子、不生病的河流……跟著沐晴與秉勳出發。', '繪本'],
+      ['樹與生活應用：清潔一把皂', '天然 vs. 化學清潔劑大比拚；認識皂素（Saponin）與油脂皂化。', '第 1 節'],
+      ['綠寶石環保皂工坊', '選基底（無患子／苦茶粉）、油脂、香氛與模具，調配專屬植物皂；分組展演「環保清潔小達人」。', '綜藝劇場'],
+      ['綠生活：碳權價值高', '大樹是「碳吸塵器」：用減碳小算盤換算自己的低碳行動等於幾棵大樹。', '第 2 節'],
+      ['國際小公民承諾', '簽署綠生活承諾書：自備餐具、選用天然皂、在地低碳飲食，獲得數位徽章。', '國際小公民'],
+    ],
+    tags:['無患子','手作環保皂','碳足跡','固碳與碳權','國際小公民'],
+    hero:'island/img/g4/01.webp', imgs:'g4',
+    links:[
+      { url:F4 + '4class.html', icon:'🧼', t:'四年級永續綠生活互動教學網', s:'繪本導讀・環保皂工坊・碳足跡換算機・小公民承諾・教案備課' },
+    ] },
+  { id:'g5', grade:5, name:'濱海綠寶石大冒險', short:'濕地綠能島', accent:'#c9577c', top:'#a6d07a',
+    sub:'水生植物・食用玫瑰・綠能源', lessons:'3 節（120 分鐘）', mode:'綜藝劇場・辦桌小師傅・小魯班', axis:'環境倫理・永續發展・能資源永續',
+    heroes:'小綠、小白鷺阿綠',
+    summary:'小綠和小白鷺阿綠走進濕地公園，聽見水生植物的「濕地交響曲」；再到玫瑰花園舉辦花香盛宴，最後登上風車山丘，畫下綠能未來的藍圖，一起守護這顆濱海綠寶石。',
+    goal:'認識挺水、浮葉、漂浮、沉水四類水生植物與濕地生物多樣性；探索無毒栽培的食用玫瑰與天然食材之美；了解太陽能、風力等再生能源，構思校園綠能裝置。',
+    units:[
+      ['樹與生物多樣性：水生植物', '水生植物吸收水中過多養分、提供棲地；演出「濕地交響曲」短劇。', '綜藝劇場'],
+      ['永續發展：玫瑰與天然食材', '探索食用玫瑰的生長環境與無毒栽培，設計「綠寶石創意花卉輕食菜單」。', '辦桌小師傅'],
+      ['能資源永續：綠能源', '太陽能與風力發電的減碳價值，繪製校園綠能節能裝置藍圖並簽署永續承諾。', '國際小公民・小魯班'],
+      ['學習單與評量矩陣', '三項任務學習單，依優異、良好、基礎三級評量。', '多元評量'],
+    ],
+    tags:['水生植物','濕地生態','食用玫瑰','太陽能','風力發電'],
+    hero:'island/img/g5/01.webp', imgs:'g5',
+    links:[
+      { url:F5 + '5class.html', icon:'🌹', t:'五年級校訂課程互動教學網', s:'課程大綱・四章互動繪本・隨堂測驗・學習單與評量' },
+    ] },
+  { id:'g6', grade:6, name:'藍碳小守護者', short:'紅樹林島', accent:'#2f6fae', top:'#9cc77a',
+    sub:'紅樹林濕地與藍碳保育', lessons:'3 節（120 分鐘）', mode:'綜藝劇場・國際小公民', axis:'環境倫理・氣候行動（SDG 13、14）',
+    heroes:'宥安、芷蔚',
+    summary:'宥安與芷蔚踏上紅樹林木棧道，發現像綠筆一樣的水筆仔胎生苗、抓緊泥沙的支柱根與伸出泥潭的呼吸根。紅樹林是「藍碳巨星」，卻被垃圾威脅——他們撿拾垃圾、籌備綜藝劇場，帶領全校發表「綠寶石永續宣言」。',
+    goal:'認識紅樹林胎生苗、支柱根、呼吸根等適應構造；理解潮間帶碎屑食物網與藍碳的減碳價值；以綜藝劇場倡議海岸保育，展現國際小公民行動力。',
+    units:[
+      ['水陸交界處的奇蹟：紅樹林生存術', '胎生苗、支柱根、呼吸根，以及防風定砂與護岸功能；繪製紅樹林特徵解剖圖。', '第 1 節'],
+      ['生態寶庫與藍碳巨星', '招潮蟹、彈塗魚、大白鷺的濕地食物網；用藍碳試算器體驗保育的減碳貢獻。', '第 2 節'],
+      ['綠寶石倡議行動', '選擇主題、組合 2 分鐘環境保育快閃劇本，發表「綜藝劇場」與永續宣言。', '綜藝劇場'],
+      ['生態守護大使認證', '完成極速挑戰題，獲得「綠寶石生態守護大使」榮譽電子證書。', '國際小公民'],
+    ],
+    tags:['水筆仔胎生苗','支柱根・呼吸根','藍碳','濕地食物網','淨灘行動'],
+    hero:'island/img/g6/01.webp', imgs:'g6', portrait:true,
+    links:[
+      { url:F6 + '6class.html', icon:'🌊', t:'紅樹林濕地與藍碳保育互動教學網', s:'故事繪本・生存特異功能・藍碳試算器・劇本生成器・守護大使測驗' },
+    ] },
+];
+const SLIDE_CAP = {
+  g1:['綠寶石小探索家：樹木夥伴與黑豆家族','今天的任務：尋找大自然的兩個神秘寶物','誰是保護我們的綠色大巨人？','謝謝大樹給我們的禮物','換我們來當大樹！（兩人一組大挑戰）','舞台時間！請對大樹說一句感謝的話','猜猜看，這是什麼神秘寶物？','原來是健康的天然食物：黑豆精靈！','黑豆精靈的變身魔法','哪一個才是大自然給我們的禮物？','換你當主廚！畫出你的健康小菜單','謝謝大樹，謝謝食物，我們不挑食！','恭喜完成探險！回家記得跟家人分享'],
+  g2:['綠寶石小探索家出發囉！','今天的兩項神秘任務','尋找傳說中的「雞油樹」','歡迎光臨！雞油樹大公寓','任務指令：雞油家族樹之舞','任務完成：CLEAR！','尋找傳說中的「長命百歲菜」','五彩蔬菜大集合','為什麼我們不能挑食呢？','任務指令：辦桌小師傅出動！','辦桌小師傅：百歲宴分享會','大自然的禮物，我們的心意','恭喜解鎖！你是一名合格的探索家了'],
+};
+const QUOTES = [
+  '大樹守護我們，黑豆滋養我們。', '手牽手、根連根，一起抵抗風浪。', '每一種顏色的蔬菜，都有不同的魔法。',
+  '樹木是地球的碳吸塵器。', '濱海綠寶石，是被好好愛護的綠色大地與海洋。', '保護紅樹林，就是守護我們的地球。',
+  '樂在學習・溫馨關懷・感恩惜福・健康成長', '把碳鎖進樹裡，讓地球退燒。', '每一個小小的綠色選擇，都在幫地球降溫。',
+];
+
+/* =========================================================
+   音效與背景音樂
+   ========================================================= */
+let audioCtx = null;
+function getAudioCtx() {
+  if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  if (audioCtx.state === 'suspended') audioCtx.resume();
+  return audioCtx;
+}
+function playTone(freq = 523.25, type = 'sine', duration = .4, gain = .1, delay = 0) {
+  try {
+    const ctx = getAudioCtx(), t0 = ctx.currentTime + delay;
+    const osc = ctx.createOscillator(), g = ctx.createGain();
+    osc.type = type; osc.frequency.setValueAtTime(freq, t0);
+    g.gain.setValueAtTime(gain, t0); g.gain.exponentialRampToValueAtTime(.0001, t0 + duration);
+    osc.connect(g); g.connect(ctx.destination); osc.start(t0); osc.stop(t0 + duration);
+  } catch (e) {}
+}
+const PENTA = [261.63, 293.66, 329.63, 392.00, 440.00, 523.25, 587.33];
+const playIslandChime = (g = 1) => { const f = PENTA[(g - 1) % PENTA.length]; playTone(f, 'sine', .55, .14); playTone(f * 1.5, 'triangle', .65, .08, .09); };
+const playStamp = () => { playTone(340, 'sine', .18, .2); playTone(659.25, 'sine', .35, .12, .11); };
+const playGem = () => [1046.5, 1318.5, 1568].forEach((f, i) => playTone(f, 'triangle', .4, .09, i * .07));
+const playFanfare = () => [523.25, 659.25, 783.99, 1046.5].forEach((f, i) => playTone(f, 'triangle', .85, .18, i * .14));
+
+const bgm = new Audio('island/intro-bgm.mp3'); bgm.loop = true; bgm.volume = .35;
+let bgmPlaying = false;
+const bgmBtn = document.getElementById('bgmBtn');
+bgmBtn.onclick = () => {
+  getAudioCtx();
+  if (bgmPlaying) { bgm.pause(); bgmPlaying = false; bgmBtn.classList.remove('playing'); bgmBtn.querySelector('.m-icon').textContent = '🔇'; }
+  else bgm.play().then(() => { bgmPlaying = true; bgmBtn.classList.add('playing'); bgmBtn.querySelector('.m-icon').textContent = '🎵'; }).catch(() => {});
+};
+
+function fireConfetti() {
+  const cvs = document.getElementById('confettiCanvas'); cvs.style.display = 'block';
+  cvs.width = innerWidth; cvs.height = innerHeight;
+  const ctx = cvs.getContext('2d'), colors = ['#2f9a62', '#57c98d', '#2f7fb0', '#c8902e', '#d65a36', '#c9577c'];
+  const ps = Array.from({ length:100 }, () => ({ x:innerWidth * Math.random(), y:-20 - Math.random() * 200, w:8 + Math.random() * 8, h:5 + Math.random() * 6, c:colors[(Math.random() * colors.length) | 0], vx:(Math.random() - .5) * 3, vy:2 + Math.random() * 4, r:Math.random() * 360, vr:(Math.random() - .5) * 10 }));
+  let f = 0;
+  (function anim() {
+    ctx.clearRect(0, 0, cvs.width, cvs.height);
+    for (const p of ps) { p.x += p.vx; p.y += p.vy; p.r += p.vr; ctx.save(); ctx.translate(p.x, p.y); ctx.rotate(p.r * Math.PI / 180); ctx.fillStyle = p.c; ctx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h); ctx.restore(); }
+    if (++f < 260) requestAnimationFrame(anim); else cvs.style.display = 'none';
+  })();
+}
+
+/* =========================================================
+   基本場景
+   ========================================================= */
+const $ = s => document.querySelector(s);
+const renderer = new THREE.WebGLRenderer({ antialias:true, powerPreference:'high-performance' });
+renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+renderer.setSize(innerWidth, innerHeight);
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure = 1.05;
+renderer.outputColorSpace = THREE.SRGBColorSpace;
+$('#stage').appendChild(renderer.domElement);
+
+const scene = new THREE.Scene();
+scene.fog = new THREE.Fog('#d6eaf6', 130, 380);
+const camera = new THREE.PerspectiveCamera(40, innerWidth / innerHeight, .5, 1200);
+camera.position.set(0, 130, 220);
+const controls = new OrbitControls(camera, renderer.domElement);
+controls.enableDamping = true; controls.dampingFactor = .08;
+controls.maxPolarAngle = 1.36; controls.minDistance = 7; controls.maxDistance = 260; controls.autoRotateSpeed = .5;
+
+const hemi = new THREE.HemisphereLight('#dff0ff', '#8d7a5e', 1.0); scene.add(hemi);
+const sun = new THREE.DirectionalLight('#fff4df', 2.6);
+sun.castShadow = true; sun.shadow.mapSize.set(2048, 2048);
+Object.assign(sun.shadow.camera, { left:-55, right:55, top:50, bottom:-50, near:10, far:300 });
+sun.shadow.bias = -.0004; sun.shadow.normalBias = .03;
+scene.add(sun, sun.target);
+
+const rand = (s => () => { s |= 0; s = s + 0x6D2B79F5 | 0; let t = Math.imul(s ^ s >>> 15, 1 | s); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; })(20261118);
+const R = (a, b) => a + rand() * (b - a);
+const PI = Math.PI;
+const updaters = [], fxObjects = [], glowList = [];
+
+/* ---------- 材質與幾何小工具 ---------- */
+const matCache = new Map();
+function mat(color, o = {}) {
+  const key = color + JSON.stringify(o);
+  if (!matCache.has(key)) matCache.set(key, new THREE.MeshStandardMaterial({ color, roughness:o.r ?? .85, metalness:o.m ?? 0, flatShading:o.flat ?? true, transparent:!!o.op, opacity:o.op ?? 1 }));
+  return matCache.get(key);
+}
+const M = c => (c && c.isMaterial) ? c : mat(c);
+const winMat = new THREE.MeshStandardMaterial({ color:'#6d8299', emissive:'#ffc766', emissiveIntensity:0, roughness:.4, flatShading:true });
+const lanternMat = new THREE.MeshStandardMaterial({ color:'#d8402e', emissive:'#ff5a2a', emissiveIntensity:.3, flatShading:true });
+const lampMat = new THREE.MeshStandardMaterial({ color:'#fff3cf', emissive:'#ffd27a', emissiveIntensity:.2, flatShading:true });
+function glowMat(color, emissive, day = .25, night = 1.6, o = {}) {
+  const m = new THREE.MeshStandardMaterial({ color, emissive, emissiveIntensity:day, roughness:o.r ?? .3, metalness:o.m ?? .1, flatShading:true, transparent:!!o.op, opacity:o.op ?? 1 });
+  glowList.push([m, day, night]); return m;
+}
+
+function add(p, geo, material, x = 0, y = 0, z = 0, ry = 0) {
+  const m = new THREE.Mesh(geo, material);
+  m.position.set(x, y, z); m.rotation.y = ry; m.castShadow = true; m.receiveShadow = true;
+  p.add(m); return m;
+}
+const B = (p, w, h, d, c, x = 0, y = 0, z = 0, ry = 0) => add(p, new THREE.BoxGeometry(w, h, d), M(c), x, y + h / 2, z, ry);
+const C = (p, rt, rb, h, c, x = 0, y = 0, z = 0, seg = 8) => add(p, new THREE.CylinderGeometry(rt, rb, h, seg), M(c), x, y + h / 2, z);
+const K = (p, r, h, c, x = 0, y = 0, z = 0, seg = 6) => add(p, new THREE.ConeGeometry(r, h, seg), M(c), x, y + h / 2, z);
+const S = (p, r, c, x = 0, y = 0, z = 0, d = 1) => add(p, new THREE.IcosahedronGeometry(r, d), M(c), x, y, z);
+const G = (p, x = 0, y = 0, z = 0, ry = 0, s = 1) => { const g = new THREE.Group(); g.position.set(x, y, z); g.rotation.y = ry; g.scale.setScalar(s); p.add(g); return g; };
+
+function roofGeo(w, d, h, over = .15) {
+  const a = d / 2 + over, L = w + over * 2;
+  const s = new THREE.Shape(); s.moveTo(-a, 0); s.lineTo(a, 0); s.lineTo(0, h); s.closePath();
+  const g = new THREE.ExtrudeGeometry(s, { depth:L, bevelEnabled:false });
+  g.translate(0, 0, -L / 2); g.rotateY(PI / 2); return g;
+}
+const roof = (p, w, d, h, c, x = 0, y = 0, z = 0, over = .15) => add(p, roofGeo(w, d, h, over), M(c), x, y, z);
+
+function tree(p, x, z, s = 1, type = 'round', y = 0) {
+  const g = G(p, x, y, z, R(0, 6), s);
+  const greens = ['#4f9a4f', '#5aa456', '#3f8a49', '#6bb05a'];
+  const gc = () => greens[(rand() * greens.length) | 0];
+  if (type === 'pine') { // 木麻黃
+    C(g, .08, .12, .7, '#7a5a3a');
+    K(g, .6, 1.5, '#4f7f4a', 0, .5, 0, 7); K(g, .45, 1.2, '#5b8d52', 0, 1.2, 0, 7); K(g, .28, .8, '#689a5c', 0, 1.9, 0, 7);
+  } else if (type === 'bush') {
+    S(g, .45, gc(), 0, .3, 0); S(g, .32, gc(), .35, .22, .1);
+  } else {
+    C(g, .1, .16, .9, '#7a5232');
+    S(g, .7, gc(), 0, 1.35, 0); S(g, .48, gc(), .38, 1.05, .15); S(g, .42, gc(), -.3, 1.15, -.2);
+  }
+  return g;
+}
+function scatterTrees(p, r, n, avoid = () => false, types = ['round', 'round', 'pine']) {
+  let placed = 0, tries = 0;
+  while (placed < n && tries++ < 300) {
+    const a = R(0, PI * 2), d = R(r * .7, r * .88), x = Math.cos(a) * d, z = Math.sin(a) * d;
+    if (avoid(x, z)) continue;
+    tree(p, x, z, R(.65, 1), types[(rand() * types.length) | 0]); placed++;
+  }
+}
+function textTex(lines, { w = 512, h = 256, bg = '#fff6e2', fg = '#4a3a20', size = 110, border = '#c98a4b', font = '"Noto Serif TC", serif', weight = 900 } = {}) {
+  const cv = document.createElement('canvas'); cv.width = w; cv.height = h;
+  const x = cv.getContext('2d');
+  x.fillStyle = bg; x.beginPath(); x.roundRect(6, 6, w - 12, h - 12, 26); x.fill();
+  if (border) { x.lineWidth = 10; x.strokeStyle = border; x.stroke(); }
+  x.fillStyle = fg; x.font = `${weight} ${size}px ${font}`; x.textAlign = 'center'; x.textBaseline = 'middle';
+  lines.forEach((l, i) => x.fillText(l, w / 2, h / 2 + (i - (lines.length - 1) / 2) * size * 1.12 + size * .04));
+  const t = new THREE.CanvasTexture(cv); t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 4; return t;
+}
+function signBoard(p, text, w, h, x, z, { y = 1.1, ry = 0, bg, fg, border, size } = {}) {
+  const g = G(p, x, 0, z, ry);
+  const tm = new THREE.MeshStandardMaterial({ map:textTex([text], { w:512 * (w / h > 2.5 ? 2 : 1), h:256, bg, fg, border, size }), roughness:.8 });
+  const wood = mat('#8a5a34');
+  const board = new THREE.Mesh(new THREE.BoxGeometry(w, h, .12), [wood, wood, wood, wood, tm, tm]);
+  board.position.y = y + h / 2; board.castShadow = true; g.add(board);
+  for (const s of [-1, 1]) C(g, .06, .07, y + h * .6, '#7a4f2e', s * w * .38, 0, -.02, 6);
+  return g;
+}
+function waterTexture(c1 = '#4fa3c7', c2 = '#6cbad6') {
+  const cv = document.createElement('canvas'); cv.width = cv.height = 128;
+  const x = cv.getContext('2d');
+  const gr = x.createLinearGradient(0, 0, 0, 128); gr.addColorStop(0, c1); gr.addColorStop(.5, c2); gr.addColorStop(1, c1);
+  x.fillStyle = gr; x.fillRect(0, 0, 128, 128);
+  x.strokeStyle = 'rgba(255,255,255,.55)'; x.lineWidth = 3;
+  for (let i = 0; i < 7; i++) { const yy = 10 + i * 17; x.beginPath(); x.moveTo(R(0, 40), yy); x.lineTo(R(60, 120), yy + R(-2, 2)); x.stroke(); }
+  const t = new THREE.CanvasTexture(cv); t.wrapS = t.wrapT = THREE.RepeatWrapping; t.colorSpace = THREE.SRGBColorSpace; return t;
+}
+const waterTex = waterTexture(); waterTex.repeat.set(2, 2);
+const waterMat = new THREE.MeshStandardMaterial({ map:waterTex, roughness:.2, metalness:.1 });
+const pondTex = waterTexture('#5aa5a0', '#7cc2b8'); pondTex.repeat.set(2, 2);
+const pondMat = new THREE.MeshStandardMaterial({ map:pondTex, roughness:.2, metalness:.1 });
+updaters.push((t, dt) => { waterTex.offset.x -= dt * .08; waterTex.offset.y -= dt * .03; pondTex.offset.x -= dt * .04; });
+
+function house(p, x, z, { w = 1.6, d = 1.1, h = .9, wall = '#f1e7d3', roof:rc = '#c0603a', ry = 0, rh = .55 } = {}) {
+  const g = G(p, x, 0, z, ry);
+  B(g, w, h, d, wall); roof(g, w, d, rh, rc, 0, h, 0);
+  B(g, .3, .5, .04, '#6b4a2f', 0, 0, d / 2 + .01);
+  B(g, .26, .22, .04, winMat, -w * .3, h * .42, d / 2 + .01); B(g, .26, .22, .04, winMat, w * .3, h * .42, d / 2 + .01);
+  return g;
+}
+function lantern(p, x, y, z, s = .13) { const m = S(p, s, lanternMat, x, y, z, 1); m.scale.y = 1.25; m.castShadow = false; return m; }
+function lamp(p, x, z) { C(p, .045, .06, 1.5, '#3c3a38', x, 0, z, 6); S(p, .14, lampMat, x, 1.6, z, 0).castShadow = false; }
+function egret(p, x, z, ry = 0, s = 1) {
+  const g = G(p, x, 0, z, ry, s), w = mat('#fbfaf4'), y = mat('#e3b23c');
+  for (const sx of [-.07, .07]) C(g, .018, .018, .55, '#2f2f2f', sx, 0, 0, 4);
+  const body = S(g, .26, w, 0, .7, 0, 1); body.scale.set(.8, .75, 1.35);
+  const neck = C(g, .05, .07, .5, w, 0, .75, .25, 6); neck.rotation.x = -.35;
+  S(g, .1, w, 0, 1.25, .38, 1);
+  const beak = K(g, .035, .3, y, 0, 1.17, .58, 5); beak.rotation.x = PI / 2;
+  return g;
+}
+function bubbles(p, x, z, { n = 8, col = '#e9fbff', h = 3.5, spread = .8, size = .14 } = {}) {
+  const g = G(p, x, 0, z); fxObjects.push(g);
+  const m = new THREE.MeshStandardMaterial({ color:col, transparent:true, opacity:.7, roughness:.1, metalness:.2, emissive:col, emissiveIntensity:.15 });
+  const bs = Array.from({ length:n }, (_, i) => ({ m:add(g, new THREE.IcosahedronGeometry(size * R(.7, 1.3), 1), m), o:i / n, a:R(0, 6) }));
+  bs.forEach(b => b.m.castShadow = false);
+  updaters.push(t => {
+    if (!g.visible) return;
+    for (const b of bs) { const k = (t * .18 + b.o) % 1; b.m.position.set(Math.sin(t * .8 + b.a) * spread * k, k * h, Math.cos(t * .7 + b.a) * spread * k); b.m.scale.setScalar(Math.sin(k * PI) * 1.2 + .1); }
+  });
+  return g;
+}
+
+/* =========================================================
+   浮空島底座
+   ========================================================= */
+function islandBase(r, top, seg = 8) {
+  const g = new THREE.Group();
+  const cap = add(g, new THREE.CylinderGeometry(r, r * 1.01, .5, seg), mat(top), 0, -.25, 0); cap.rotation.y = PI / seg;
+  const soil = add(g, new THREE.CylinderGeometry(r * .995, r * .93, 1.4, seg), mat('#b98a5a'), 0, -1.2, 0); soil.rotation.y = PI / seg;
+  const stripe = add(g, new THREE.CylinderGeometry(r * .94, r * .9, .35, seg), mat('#9c7048'), 0, -1.95, 0); stripe.rotation.y = PI / seg;
+  const h = r * 1.4;
+  const cg = new THREE.ConeGeometry(r * .9, h, seg, 4);
+  const pa = cg.attributes.position, seen = new Map();
+  for (let i = 0; i < pa.count; i++) {
+    const vx = pa.getX(i), vy = pa.getY(i), vz = pa.getZ(i);
+    if (vy < -h / 2 + .01) continue;
+    const key = `${vx.toFixed(2)},${vy.toFixed(2)},${vz.toFixed(2)}`;
+    if (!seen.has(key)) seen.set(key, [R(.78, 1.12), R(-.35, .35)]);
+    const [s, dy] = seen.get(key);
+    pa.setXYZ(i, vx * s, vy + (vy < h / 2 - .01 ? dy : 0), vz * s);
+  }
+  cg.rotateX(PI); cg.rotateY(PI / seg); cg.computeVertexNormals();
+  add(g, cg, mat('#8d735c'), 0, -2.12 - h / 2, 0);
+  for (let i = 0; i < 3; i++) { const a = R(0, PI * 2), rr = R(r * .5, r * 1.05); S(g, R(.25, .6), '#8d735c', Math.cos(a) * rr, R(-h * .9, -h * .4), Math.sin(a) * rr, 0); }
+  for (let i = 0; i < seg; i++) {
+    const a = (i + .5) / seg * PI * 2 + PI / seg;
+    if (rand() < .4) continue;
+    const moss = K(g, R(.18, .3), R(.5, 1.1), '#6f9a4a', Math.cos(a) * r * .96, -1.1, Math.sin(a) * r * .96, 5);
+    moss.rotation.x = PI; moss.position.y = -.6 - moss.geometry.parameters.height / 2;
+  }
+  return g;
+}
+// 島面局部地貌（沙灘／泥灘／水面），貼在島面上方
+function patch(p, r, color, x, z, { seg = 20, start = 0, len = PI * 2, y = .02, m } = {}) {
+  const mesh = add(p, new THREE.CylinderGeometry(r, r, .05, seg, 1, false, start, len), m || mat(color), x, y, z);
+  mesh.castShadow = false; return mesh;
+}
+
+/* =========================================================
+   各島造景
+   ========================================================= */
+const BUILD = {
+  hub(g) { // 中央島：濱海綠寶石・瑞興國小
+    patch(g, 8.1, '#ead9a6', 0, 0, { seg:8, start:PI * .62, len:PI * .76, y:.01 });
+    patch(g, 7.4, null, 0, 0, { seg:8, start:PI * .7, len:PI * .6, y:.04, m:waterMat });
+    // 校舍
+    const sch = G(g, -.6, 0, -3.6);
+    B(sch, 6.4, 1.5, 1.7, '#f3ead6'); B(sch, 6.6, .14, 1.9, '#c75b3a', 0, 1.5, 0);
+    B(sch, 6.4, 1.3, 1.6, '#f6eedc', 0, 1.64, 0); B(sch, 6.7, .16, 1.9, '#c75b3a', 0, 2.94, 0);
+    for (let i = 0; i < 7; i++) for (const yy of [.6, 2.2]) B(sch, .52, .5, .04, winMat, -2.7 + i * .9, yy, .86);
+    B(sch, 1.5, 3.9, 1.8, '#e7dcc4', 0, 0, .1); roof(sch, 1.6, 1.9, .7, '#c75b3a', 0, 3.9, .1);
+    const plaque = new THREE.Mesh(new THREE.PlaneGeometry(1.3, .42), new THREE.MeshStandardMaterial({ map:textTex(['瑞興國小'], { w:512, h:168, bg:'#2f6a4a', fg:'#f5e6b8', size:96, border:'#d9b56a' }) }));
+    plaque.position.set(0, 3.25, 1.02); sch.add(plaque);
+    const clock = new THREE.Mesh(new THREE.CircleGeometry(.24, 20), mat('#fffaf0')); clock.position.set(0, 2.5, 1.02); sch.add(clock);
+    // 操場
+    const track = add(g, new THREE.RingGeometry(1.4, 1.9, 40), mat('#c8573f'), -1.3, .03, .4); track.rotation.x = -PI / 2; track.castShadow = false; track.scale.set(1.5, 1, 1);
+    // 旗桿
+    C(g, .05, .06, 3.8, '#d9d6cc', 2.8, 0, -1.3, 6);
+    const flag = new THREE.Mesh(new THREE.PlaneGeometry(1.0, .64, 10, 3), new THREE.MeshStandardMaterial({ color:'#2f9a62', side:THREE.DoubleSide }));
+    flag.position.set(3.32, 3.4, -1.3); g.add(flag); waveFlag(flag);
+    // 巨大的綠寶石
+    const gemG = G(g, 2.2, 0, 2.2);
+    C(gemG, 1.0, 1.25, .5, '#cfc3a6', 0, 0, 0, 8); C(gemG, .8, .95, .3, '#e2d8bd', 0, .5, 0, 8);
+    const gm = glowMat('#3fcf86', '#20b56b', .45, 1.8, { r:.15, m:.25 });
+    const gem = add(gemG, new THREE.OctahedronGeometry(1.1, 0), gm, 0, 2.6, 0); gem.scale.set(.9, 1.35, .9);
+    const halo = add(gemG, new THREE.TorusGeometry(1.5, .04, 6, 48), glowMat('#c7ffe0', '#9bffd0', .6, 2), 0, 2.6, 0); halo.rotation.x = PI / 2; halo.castShadow = false;
+    updaters.push(t => { gem.rotation.y = t * .6; gem.position.y = 2.6 + Math.sin(t * 1.4) * .18; halo.rotation.z = t * .3; halo.position.y = gem.position.y; halo.scale.setScalar(1 + Math.sin(t * 2) * .06); });
+    signBoard(g, '濱海綠寶石', 2.4, .6, -.6, 3.1, { ry:.15, bg:'#f3fbf4', fg:'#1f6b45', border:'#2f9a62', size:96 });
+    for (const [x, z] of [[-4.5, 1.6], [-5.6, -.4], [5.2, -2.6], [-3.6, 3.2]]) tree(g, x, z, R(.85, 1.1), 'round');
+    for (let i = 0; i < 6; i++) { const a = PI * .72 + i * .12; tree(g, Math.cos(a) * 6.6, Math.sin(a) * 6.6, .8, 'pine'); }
+    lamp(g, 1.2, -1.4); lamp(g, -3, -1.4);
+  },
+
+  g1(g) { // 大樹黑豆島
+    const tg = G(g, -1.2, 0, -.8);
+    C(tg, .55, .9, 2.6, '#7a5232', 0, 0, 0, 9);
+    for (let i = 0; i < 5; i++) { const a = i / 5 * PI * 2, r = C(tg, .12, .25, 1.2, '#6e4a2e', Math.cos(a) * .7, -.1, Math.sin(a) * .7, 6); r.rotation.set(Math.sin(a) * .9, 0, -Math.cos(a) * .9); }
+    for (const [x, y, z, r] of [[0, 3.6, 0, 1.8], [1.2, 3.1, .4, 1.25], [-1.2, 3.2, -.3, 1.3], [.3, 3.3, -1.1, 1.2], [-.3, 4.4, .3, 1.15], [.2, 3.0, 1.2, 1.1]]) S(tg, r, ['#4f9a4f', '#5aa456', '#3f8a49'][(rand() * 3) | 0], x, y, z);
+    // 大樹的笑臉
+    for (const s of [-1, 1]) S(tg, .1, '#2b1d12', s * .22, 1.95, .78, 0);
+    const smile = add(tg, new THREE.TorusGeometry(.2, .04, 6, 12, PI), mat('#2b1d12'), 0, 1.68, .8); smile.rotation.z = PI;
+    // 黑豆田
+    B(g, 2.6, .1, 2.2, '#8b5a3c', 1.6, 0, 1.4);
+    for (let i = 0; i < 3; i++) for (let j = 0; j < 4; j++) {
+      const x = .65 + j * .62, z = .65 + i * .72;
+      C(g, .025, .03, .5, '#5c8a3a', x, .1, z, 4); S(g, .2, '#6aa847', x, .55, z, 0);
+      for (let k = 0; k < 2; k++) S(g, .07, '#1f1d22', x + R(-.12, .12), R(.35, .55), z + .16, 0);
+    }
+    // 黑豆精靈（會跳）
+    const jumpers = [];
+    for (const [x, z] of [[2.6, -1.2], [3.2, -.5], [2.0, -.4]]) { const b = S(g, .22, '#232027', x, .3, z, 1); b.scale.set(1, 1.15, 1); jumpers.push([b, R(0, 6)]); for (const s of [-1, 1]) S(b, .045, '#ffffff', s * .08, .06, .19, 0); }
+    updaters.push(t => jumpers.forEach(([b, ph]) => { b.position.y = .25 + Math.abs(Math.sin(t * 3 + ph)) * .45; }));
+    // 黑豆漿小攤
+    const st = G(g, -2.4, 0, 2.2, .5);
+    B(st, 1.6, .7, .7, '#a06a3e'); for (const s of [-1, 1]) C(st, .04, .04, 1.4, '#7a4f2e', s * .7, .7, -.25, 5);
+    const aw = B(st, 1.8, .08, 1.0, '#e7d7b0', 0, 2.05, 0); aw.rotation.x = .2;
+    for (let i = 0; i < 3; i++) C(st, .1, .08, .2, '#f4ead6', -.4 + i * .4, .7, .15, 8);
+    S(st, .17, '#2a2025', .4, .9, -.1, 1);
+    // 小松鼠栗栗
+    const sq = G(g, .4, 0, 2.8, -.4);
+    S(sq, .2, '#c8743a', 0, .25, 0); S(sq, .14, '#c8743a', 0, .5, .1); const tail = S(sq, .2, '#d98a4a', 0, .45, -.25); tail.scale.set(.7, 1.4, .8);
+    signBoard(g, '大樹棟樑', 1.6, .5, -3.0, -1.6, { ry:.6, size:92 });
+    scatterTrees(g, 5, 4, (x, z) => (x > 0 && z > 0) || Math.hypot(x + 1.2, z + .8) < 2.4 || (x < -1 && z > 1.2), ['bush', 'round']);
+  },
+
+  g2(g) { // 百歲宴島
+    const tg = G(g, -1.4, 0, -1.4);
+    C(tg, .45, .7, 2.4, '#8a6a4a', 0, 0, 0, 9);
+    for (const a of [.3, 2.3, 4.2]) { const br = C(tg, .12, .2, 1.4, '#8a6a4a', Math.cos(a) * .3, 2.0, Math.sin(a) * .3, 6); br.rotation.set(Math.sin(a) * .6, 0, -Math.cos(a) * .6); }
+    for (const [x, y, z, r] of [[0, 3.4, 0, 1.6], [1.4, 3.0, .3, 1.15], [-1.3, 3.1, .2, 1.2], [0, 3.1, -1.3, 1.1], [.2, 4.2, .2, 1.1], [.4, 2.9, 1.3, 1.0]]) S(tg, r, ['#6aa64a', '#7bb455', '#5d9a44'][(rand() * 3) | 0], x, y, z);
+    // 樹根相連的小樹苗
+    for (const [x, z] of [[1.0, -2.6], [-2.9, -.2], [-3.1, -2.4]]) tree(g, x, z, .55, 'round');
+    // 辦桌棚
+    const tent = G(g, 1.5, 0, 1.2);
+    for (const [x, z] of [[-1.5, -1.2], [1.5, -1.2], [-1.5, 1.2], [1.5, 1.2]]) C(tent, .05, .05, 2, '#d9d0bf', x, 0, z, 5);
+    const top = add(tent, new THREE.ConeGeometry(2.4, .8, 4), mat('#d6402e'), 0, 2.4, 0, PI / 4); top.scale.set(1.25, 1, 1);
+    B(tent, 3.1, .12, .04, '#f2e7cf', 0, 1.92, 1.25); B(tent, 3.1, .12, .04, '#f2e7cf', 0, 1.92, -1.25);
+    for (const x of [-1.5, -.5, .5, 1.5]) lantern(tent, x, 1.75, 1.3, .12);
+    // 圓桌與五色菜
+    const veg = ['#e2412c', '#3f9a3a', '#e8b828', '#f4f1e6', '#7a3f9a'];
+    for (const [x, z] of [[-.7, -.3], [.8, .5]]) {
+      C(tent, .75, .75, .08, '#d6402e', x, .62, z, 18); C(tent, .08, .12, .62, '#7a5232', x, 0, z, 6);
+      for (let k = 0; k < 5; k++) { const a = k / 5 * PI * 2; C(tent, .17, .13, .05, '#ffffff', x + Math.cos(a) * .45, .7, z + Math.sin(a) * .45, 10); S(tent, .1, veg[k], x + Math.cos(a) * .45, .8, z + Math.sin(a) * .45, 0); }
+      for (let k = 0; k < 6; k++) { const a = k / 6 * PI * 2 + .3; C(tent, .12, .12, .4, '#c9a06a', x + Math.cos(a) * 1.0, 0, z + Math.sin(a) * 1.0, 6); }
+    }
+    // 菜園：五色作物
+    for (let i = 0; i < 5; i++) { B(g, .55, .1, 1.4, '#8b5a3c', -2.8 + i * .62, 0, 2.6); for (let k = 0; k < 3; k++) S(g, .14, veg[i], -2.8 + i * .62, .22, 2.1 + k * .45, 0); }
+    const pot = G(g, 3.4, 0, -1.6); C(pot, .4, .32, .5, '#3a3a3a', 0, .3, 0, 10); B(pot, .9, .3, .9, '#a87a4a');
+    signBoard(g, '百歲宴', 1.3, .5, 3.6, -.2, { ry:-1.2, bg:'#fff1e6', fg:'#b3361f', border:'#d6402e' });
+    scatterTrees(g, 5, 3, (x, z) => (x > -1 && z > -1) || z > 1.6 || Math.hypot(x + 1.4, z + 1.4) < 2.4, ['bush', 'round']);
+    const smk = G(g, 3.4, .8, -1.6); fxObjects.push(smk);
+    const puffs = Array.from({ length:5 }, (_, i) => ({ m:add(smk, new THREE.IcosahedronGeometry(.16, 0), new THREE.MeshStandardMaterial({ color:'#f3efe7', transparent:true, opacity:.8, depthWrite:false })), o:i / 5 }));
+    updaters.push(t => puffs.forEach(f => { const k = (t * .25 + f.o) % 1; f.m.position.set(Math.sin(k * 6) * .2 * k, k * 2, 0); f.m.scale.setScalar(.6 + k * 1.6); f.m.material.opacity = .7 * (1 - k); }));
+  },
+
+  g3(g) { // 固碳魔法島：海岸沙灘＋木麻黃防風林
+    patch(g, 5.05, null, 0, 0, { seg:8, start:PI * .2, len:PI * .75, y:.03, m:waterMat });
+    patch(g, 5.0, '#ead9a6', 0, 0, { seg:8, start:PI * .95, len:PI * .4, y:.02 });
+    // 木麻黃防風林
+    for (let i = 0; i < 9; i++) { const a = PI * 1.1 + i * .16; tree(g, Math.cos(a) * 3.4, Math.sin(a) * 3.4, R(1, 1.25), 'pine'); }
+    // 木木（主角）
+    const mm = G(g, -.6, 0, .2);
+    C(mm, .22, .32, 1.4, '#b88a5a', 0, 0, 0, 8);
+    for (const [y, r] of [[1.6, .9], [2.4, .7], [3.0, .45]]) K(mm, r, 1.2, '#4f8f4a', 0, y, 0, 9);
+    for (const s of [-1, 1]) { S(mm, .07, '#2b1d12', s * .1, 1.0, .27, 0); S(mm, .07, '#f2a3a3', s * .17, .88, .25, 0); const arm = C(mm, .05, .07, .6, '#a87a4a', s * .3, .8, 0, 5); arm.rotation.z = -s * 1.0; }
+    // 晴晴
+    const kid = G(g, .7, 0, .9, -.6);
+    C(kid, .08, .08, .35, '#2f5fae', 0, 0, 0, 6); C(kid, .14, .17, .42, '#f08a2a', 0, .35, 0, 8); S(kid, .15, '#f2d2b0', 0, .92, 0, 1); S(kid, .16, '#2a2020', 0, 1.0, -.03, 1).scale.set(1, .7, 1);
+    // CO₂ 雲朵被吸進樹裡，O₂ 泡泡往上飄
+    const co2 = G(g, -.6, 0, .2); fxObjects.push(co2);
+    const cm = new THREE.MeshStandardMaterial({ color:'#8a8f98', transparent:true, opacity:.85, flatShading:true });
+    const cs = Array.from({ length:6 }, (_, i) => ({ m:add(co2, new THREE.IcosahedronGeometry(.28, 0), cm), a:i / 6 * PI * 2, o:i / 6 }));
+    updaters.push(t => { if (!co2.visible) return; cs.forEach(c => { const k = (t * .15 + c.o) % 1, r = 3.2 * (1 - k); c.m.position.set(Math.cos(c.a + t * .3) * r, 3.4 - k * 1.6, Math.sin(c.a + t * .3) * r); c.m.scale.setScalar(1 - k * .8); }); });
+    bubbles(g, -.6, .2, { n:7, col:'#c8f1ff', h:4.5, spread:1.4, size:.13 });
+    signBoard(g, '固碳魔法', 1.6, .5, 1.9, -1.4, { ry:-.5, bg:'#effaf7', fg:'#16716a', border:'#22968a', size:92 });
+    // 海浪拍岸的小螃蟹
+    const crab = G(g, 2.6, 0, 1.4); B(crab, .3, .12, .22, '#d8552e'); for (const s of [-1, 1]) S(crab, .07, '#e2653a', s * .22, .1, .12, 0);
+    updaters.push(t => { crab.position.x = 2.6 + Math.sin(t * .8) * .5; });
+  },
+
+  g4(g) { // 環保皂島：無患子樹、小溪、手作工坊
+    const river = add(g, new THREE.BoxGeometry(9.2, .06, 1.3), waterMat, 0, .02, 1.6); river.castShadow = false; river.rotation.y = .18;
+    // 小木橋
+    const br = G(g, -.6, 0, 1.75, .18); B(br, .9, .1, 1.8, '#a77a4b', 0, .15, 0); for (const s of [-1, 1]) B(br, .05, .35, 1.8, '#7a5232', s * .45, .2, 0);
+    // 無患子樹（金黃果實）
+    const sb = G(g, -2.2, 0, -1.4);
+    C(sb, .25, .38, 1.6, '#7a5a3a', 0, 0, 0, 8);
+    for (const [x, y, z, r] of [[0, 2.3, 0, 1.25], [.9, 2.0, .3, .85], [-.9, 2.1, -.2, .9], [.1, 2.9, .2, .85]]) S(sb, r, '#5fa04a', x, y, z);
+    for (let i = 0; i < 14; i++) { const a = R(0, PI * 2), y = R(1.6, 3.0); S(sb, .09, '#d9a33a', Math.cos(a) * 1.2, y, Math.sin(a) * 1.2, 0); }
+    // 手作環保皂工坊
+    const ws = house(g, 1.8, -1.6, { w:2.4, d:1.5, h:1.1, wall:'#f4efe2', roof:'#5f9a5a', ry:-.3 });
+    signBoard(ws, '環保皂工坊', 1.6, .42, 0, .95, { y:1.25, bg:'#f3fbf0', fg:'#2f6a3a', border:'#5f9a5a', size:84 });
+    const tbl = G(g, 2.2, 0, .1, -.3); B(tbl, 1.6, .5, .8, '#a87a4a');
+    const soapCols = ['#7ccf8a', '#b9e3a0', '#e8f2c8', '#9fd6c0'];
+    for (let i = 0; i < 6; i++) { const s = B(tbl, .26, .14, .18, soapCols[i % 4], -.6 + (i % 3) * .5, .5, i < 3 ? -.18 : .18); s.rotation.y = R(-.3, .3); }
+    bubbles(g, 2.2, .1, { n:9, col:'#ffffff', h:3.2, spread:1, size:.12 });
+    // 溪中小魚
+    const fish = [0, 1, 2].map(i => { const f = S(g, .12, '#f0a33a', 0, .1, 1.6, 0); f.scale.set(1.6, .7, .7); return [f, i * 2.1]; });
+    updaters.push(t => fish.forEach(([f, o]) => { const k = ((t * .12 + o / 6) % 1) * 8 - 4; f.position.set(k, .08, 1.6 - k * .18 + Math.sin(t * 2 + o) * .2); }));
+    // 低碳承諾告示
+    signBoard(g, '低碳綠生活', 1.6, .48, -3.3, .4, { ry:1.2, size:84 });
+    scatterTrees(g, 5, 5, (x, z) => (z > .6 && z < 2.8) || Math.hypot(x - 1.8, z + 1.2) < 2 || Math.hypot(x + 2.2, z + 1.4) < 1.8, ['round', 'bush']);
+  },
+
+  g5(g) { // 濕地綠能島：濕地、玫瑰花園、風車、太陽能板
+    patch(g, 2.4, null, -1.6, 1.2, { seg:16, y:.03, m:pondMat });
+    for (let i = 0; i < 6; i++) { const a = R(0, PI * 2), r = R(.4, 1.9); const pad = add(g, new THREE.CylinderGeometry(.25, .25, .03, 10), mat('#5aa84a'), -1.6 + Math.cos(a) * r, .07, 1.2 + Math.sin(a) * r); pad.castShadow = false; if (i % 2) S(g, .09, '#f6a6c8', pad.position.x, .14, pad.position.z, 0); }
+    for (let i = 0; i < 14; i++) { const a = R(0, PI * 2), r = R(2.3, 2.7), x = -1.6 + Math.cos(a) * r, z = 1.2 + Math.sin(a) * r; if (Math.hypot(x, z) > 4.4) continue; C(g, .025, .03, R(.8, 1.3), '#6e9a3a', x, 0, z, 4); C(g, .05, .05, .22, '#7a4a2a', x, R(.8, 1.1), z, 6); }
+    egret(g, -.4, 2.6, -1.0, .9);
+    // 木棧道
+    for (let i = 0; i < 6; i++) B(g, .9, .08, .32, '#b08458', .3 + i * .05, .12, 2.8 - i * .45, .3);
+    // 玫瑰花園
+    for (let i = 0; i < 3; i++) for (let j = 0; j < 3; j++) { const x = 1.4 + j * .7, z = .6 + i * .65; S(g, .28, '#4f8a3f', x, .25, z, 1); for (let k = 0; k < 3; k++) S(g, .09, ['#e0507a', '#f08aa8', '#c9305a'][k], x + R(-.2, .2), R(.4, .55), z + R(-.2, .2), 0); }
+    const arch = add(g, new THREE.TorusGeometry(.7, .06, 6, 16, PI), mat('#7a5232'), 2.1, 0, 2.5);
+    for (let k = 0; k < 6; k++) S(g, .1, '#e0507a', 2.1 + Math.cos(k / 5 * PI) * .7, Math.sin(k / 5 * PI) * .7, 2.5, 0);
+    // 太陽能板
+    for (let i = 0; i < 3; i++) { const sp = G(g, -2.6 + i * 1.1, 0, -2.0, .2); C(sp, .04, .04, .5, '#777', 0, 0, 0, 5); const pnl = B(sp, .9, .05, .6, glowMat('#2a4c8a', '#3a6ad0', .05, .3, { r:.25, m:.4 }), 0, .5, 0); pnl.rotation.x = -.5; }
+    // 風車
+    const fans = [];
+    for (const [x, z, s] of [[1.6, -2.4, 1], [3.1, -1.0, .8]]) {
+      const wt = G(g, x, 0, z, -.6, s); C(wt, .08, .14, 4.2, '#f2f2ee', 0, 0, 0, 8); B(wt, .25, .25, .4, '#f2f2ee', 0, 4.1, 0);
+      const rot = G(wt, 0, 4.22, .24);
+      for (let k = 0; k < 3; k++) { const bl = B(rot, .14, 1.6, .04, '#ffffff', 0, 0, 0); bl.geometry.translate(0, 0, 0); bl.rotation.z = k / 3 * PI * 2; bl.position.set(Math.sin(-k / 3 * PI * 2) * .8, Math.cos(k / 3 * PI * 2) * .8, 0); }
+      fans.push(rot);
+    }
+    updaters.push((t, dt) => fans.forEach((f, i) => f.rotation.z -= dt * (1.4 + i * .3)));
+    signBoard(g, '綠能未來', 1.4, .48, -3.4, -.4, { ry:1.0, bg:'#fff3f6', fg:'#a3355a', border:'#c9577c', size:90 });
+  },
+
+  g6(g) { // 紅樹林島
+    patch(g, 5.0, '#8a6a4a', 0, 0, { seg:8, start:0, len:PI * 2, y:.01 });
+    patch(g, 4.6, null, .5, .6, { seg:16, start:PI * .1, len:PI * 1.1, y:.04, m:waterMat });
+    // 紅樹林（支柱根＋呼吸根）
+    function mangrove(x, z, s = 1) {
+      const m = G(g, x, 0, z, R(0, 6), s);
+      C(m, .1, .14, 1.4, '#6e5038', 0, .5, 0, 6);
+      for (let k = 0; k < 6; k++) { const a = k / 6 * PI * 2, r = C(m, .035, .05, .9, '#6e5038', Math.cos(a) * .32, 0, Math.sin(a) * .32, 4); r.rotation.set(-Math.sin(a) * .5, 0, Math.cos(a) * .5); }
+      for (const [xx, y, zz, r] of [[0, 2.1, 0, .75], [.45, 1.8, .2, .55], [-.4, 1.85, -.2, .55]]) S(m, r, '#3f7a42', xx, y, zz);
+      for (let k = 0; k < 4; k++) { const pod = C(m, .025, .02, .45, '#5e8a3a', R(-.5, .5), 1.05, R(-.5, .5), 4); }
+      return m;
+    }
+    for (const [x, z, s] of [[-2.4, -1.2, 1.15], [-1.0, -2.6, 1], [.8, -1.4, 1.1], [2.4, -2.4, .95], [-3.2, .8, .9], [1.8, .2, .85], [-.6, .4, .9]]) mangrove(x, z, s);
+    for (let i = 0; i < 26; i++) C(g, .02, .03, .25, '#6e5038', R(-3.5, 3.5), 0, R(-3, 2.5), 4);
+    // 木棧道
+    const bw = G(g, 0, 0, 2.2, -.2);
+    for (let i = 0; i < 24; i++) { B(bw, .26, .08, 1.0, i % 2 ? '#b48a5a' : '#a77d50', -3.4 + i * .29, .45, 0); }
+    for (let i = 0; i < 7; i++) for (const s of [-1, 1]) C(bw, .05, .05, .9, '#7a5232', -3.3 + i * 1.1, 0, s * .48, 5);
+    // 招潮蟹
+    const crabs = [[-1.8, 1.2], [.6, 1.1], [2.8, -.4], [-3.0, -.3]].map(([x, z], i) => {
+      const c = G(g, x, .05, z, R(0, 6)); B(c, .22, .1, .16, '#d8552e'); const claw = S(c, .09, '#f2c24a', .16, .1, .06, 0); claw.scale.set(1.3, .8, .8); return [c, i];
+    });
+    updaters.push(t => crabs.forEach(([c, i]) => { c.position.y = .05 + Math.max(0, Math.sin(t * 3 + i * 2)) * .08; c.rotation.y += Math.sin(t + i) * .005; }));
+    egret(g, 3.0, 1.0, -2.2, 1);
+    signBoard(g, '藍碳', 1.0, .5, -3.4, 2.0, { ry:.9, bg:'#eef5fc', fg:'#1f5a90', border:'#2f6fae', size:110 });
+    // 藍碳光點：從泥灘往下沉
+    const bc = G(g, 0, 0, 0); fxObjects.push(bc);
+    const bm = glowMat('#7fc4ff', '#4aa3ff', .6, 1.8, { op:.85 });
+    const dots = Array.from({ length:10 }, (_, i) => ({ m:add(bc, new THREE.IcosahedronGeometry(.08, 0), bm), x:R(-3, 3), z:R(-2.5, 1.5), o:i / 10 }));
+    dots.forEach(d => d.m.castShadow = false);
+    updaters.push(t => { if (!bc.visible) return; dots.forEach(d => { const k = (t * .2 + d.o) % 1; d.m.position.set(d.x, 2.6 - k * 2.6, d.z); d.m.scale.setScalar(1 - k * .6); }); });
+  },
+};
+function waveFlag(mesh) {
+  const pa = mesh.geometry.attributes.position, base = Float32Array.from(pa.array);
+  updaters.push(t => { for (let i = 0; i < pa.count; i++) { const x = base[i * 3] + .5; pa.setZ(i, Math.sin(t * 4 + x * 5) * .08 * x); } pa.needsUpdate = true; });
+}
+
+/* =========================================================
+   群島佈局：中央「濱海綠寶石」＋六座年級島環繞
+   ========================================================= */
+const islands = [], byId = {};
+const RING = 23;
+const gradePos = i => { const a = (-90 - 150 + i * 60) * PI / 180; return [Math.cos(a) * RING, [1.2, -.6, .8, -1.0, 1.0, -.3][i], Math.sin(a) * RING * .82]; };
+const DEFS = [
+  { id:'hub', kind:'hub', name:'濱海綠寶石', tag:'中央島・瑞興國小', accent:'#2f9a62', r:8.2, pos:[0, 1.6, 0], top:'#a9d47a', build:'hub' },
+  ...COURSES.map((d, i) => ({ ...d, kind:'grade', tag:GRADE[d.grade] + '年級', r:5.2, pos:gradePos(i), build:d.id, data:d })),
+];
+const ORDER = DEFS.map(d => d.id);
+const labelsEl = $('#labels');
+
+function buildIslands() {
+  for (const def of DEFS) {
+    const g = new THREE.Group(); g.position.set(...def.pos); scene.add(g);
+    g.add(islandBase(def.r, def.top));
+    const deco = new THREE.Group(); g.add(deco);
+    BUILD[def.build](deco, def);
+    const ring = new THREE.Mesh(new THREE.TorusGeometry(def.r + .3, .09, 6, 64), new THREE.MeshBasicMaterial({ color:def.accent, transparent:true, opacity:0 }));
+    ring.rotation.x = PI / 2; ring.position.y = .05; g.add(ring);
+    const proxy = new THREE.Mesh(new THREE.CylinderGeometry(def.r, def.r * .5, def.r * 1.5 + 5.5, 10), new THREE.MeshBasicMaterial({ visible:false }));
+    proxy.position.y = (5.5 - def.r * 1.5) / 2; g.add(proxy);
+    const el = document.createElement('button');
+    el.className = 'lbl ' + (def.kind === 'grade' ? '' : 'hub');
+    el.style.setProperty('--c', def.accent);
+    el.innerHTML = def.kind === 'grade'
+      ? `<span><i>${def.grade}</i><b>${def.name}</b><small>${def.tag}</small><em class="stamp"></em></span>`
+      : `<span><i>💎</i><b>${def.name}</b><small>${def.tag}</small></span>`;
+    el.setAttribute('aria-label', `${def.name}（${def.tag}）`);
+    labelsEl.appendChild(el);
+    const isl = { ...def, group:g, base:new THREE.Vector3(...def.pos), phase:R(0, 6), lift:0, hover:false, ring, proxy, el, labelY:def.kind === 'grade' ? 5.8 : 6.8 };
+    proxy.userData.isl = isl;
+    el.addEventListener('click', e => { e.stopPropagation(); stopTour(); select(isl); });
+    el.addEventListener('pointerenter', () => setHover(isl));
+    el.addEventListener('pointerleave', () => setHover(null));
+    islands.push(isl); byId[def.id] = isl;
+  }
+}
+
+/* ---------- 隱藏的小綠寶石 ---------- */
+const hiddenGems = [];
+const gemFound = new Set();
+try { JSON.parse(localStorage.getItem('ruixing-sky-gems') || '[]').forEach(i => gemFound.add(i)); } catch (e) {}
+const GEM_SPOTS = [['hub', -5.2, 3.0], ['hub', 5.0, .6], ['g1', 3.4, 2.2], ['g1', -3.6, .6], ['g2', -3.3, 1.2], ['g2', 3.6, 2.0], ['g3', 3.2, -2.4], ['g3', -2.6, 3.0], ['g4', -3.6, -2.0], ['g4', 3.8, 1.9], ['g5', 3.8, .6], ['g6', 3.5, -1.0]];
+function buildGems() {
+  const geo = new THREE.OctahedronGeometry(.32, 0);
+  GEM_SPOTS.forEach(([id, x, z], i) => {
+    const isl = byId[id], m = new THREE.Mesh(geo, glowMat('#47e08f', '#22c26e', .7, 2.2, { r:.1, m:.3 }));
+    m.position.set(x, .9, z); m.scale.set(1, 1.4, 1); m.userData.gem = i; isl.group.add(m);
+    m.visible = !gemFound.has(i); hiddenGems.push(m);
+  });
+  updaters.push(t => hiddenGems.forEach((m, i) => { if (!m.visible) return; m.rotation.y = t * 1.5 + i; m.position.y = .9 + Math.sin(t * 2 + i) * .15; if (m.userData.pop) { m.userData.pop += .05; m.scale.setScalar(1 + m.userData.pop * 2); if (m.userData.pop > .5) m.visible = false; } }));
+}
+function collectGem(m) {
+  const i = m.userData.gem; if (gemFound.has(i)) return;
+  gemFound.add(i); m.userData.pop = .01;
+  try { localStorage.setItem('ruixing-sky-gems', JSON.stringify([...gemFound])); } catch (e) {}
+  playGem(); renderGems();
+  if (gemFound.size === GEM_SPOTS.length) { setTimeout(() => { playFanfare(); fireConfetti(); }, 300); toast('🎉 十二顆小綠寶石全部找到！你是濱海綠寶石守護者！'); }
+  else toast(`💎 找到一顆小綠寶石！（${gemFound.size}/${GEM_SPOTS.length}）`);
+}
+function renderGems() { $('#gemCount').textContent = gemFound.size; $('#gemTotal').textContent = GEM_SPOTS.length; $('#gemBar').style.width = gemFound.size / GEM_SPOTS.length * 100 + '%'; }
+
+/* ---------- 吊橋 ---------- */
+const bridges = [];
+function buildBridges() {
+  const link = (a, b, w) => bridges.push({ a:byId[a], b:byId[b], w });
+  COURSES.forEach((d, i) => { link('hub', d.id, 1.2); link(d.id, COURSES[(i + 1) % 6].id, .85); });
+  let total = 0;
+  for (const br of bridges) { const len = br.a.base.distanceTo(br.b.base) - br.a.r - br.b.r; br.n = Math.max(6, Math.ceil(len / .42)); br.start = total; total += br.n; }
+  const planks = new THREE.InstancedMesh(new THREE.BoxGeometry(1, .09, .3), mat('#a77a4b'), total);
+  planks.castShadow = true; planks.receiveShadow = true; planks.frustumCulled = false; scene.add(planks);
+  const posts = new THREE.InstancedMesh(new THREE.CylinderGeometry(.06, .07, .8, 6), mat('#7a5232'), bridges.length * 4);
+  posts.castShadow = true; posts.frustumCulled = false; scene.add(posts);
+  let segs = 0; bridges.forEach(b => segs += b.n * 2);
+  const ropePos = new Float32Array(segs * 2 * 3);
+  const ropeGeo = new THREE.BufferGeometry(); ropeGeo.setAttribute('position', new THREE.BufferAttribute(ropePos, 3));
+  const ropes = new THREE.LineSegments(ropeGeo, new THREE.LineBasicMaterial({ color:'#6b4a2f' }));
+  ropes.frustumCulled = false; scene.add(ropes);
+  const dummy = new THREE.Object3D(), A = new THREE.Vector3(), Bv = new THREE.Vector3(), P = new THREE.Vector3(), T = new THREE.Vector3(), side = new THREE.Vector3(), up = new THREE.Vector3(0, 1, 0);
+  const edge = (isl, other, out) => { out.copy(other.group.position).sub(isl.group.position); out.y = 0; out.normalize(); return out.multiplyScalar(isl.r * .9).add(isl.group.position).setY(isl.group.position.y + .05); };
+  updaters.push(() => {
+    let ri = 0;
+    bridges.forEach((br, bi) => {
+      edge(br.a, br.b, A); edge(br.b, br.a, Bv);
+      T.copy(Bv).sub(A); const len = T.length(); T.normalize(); side.crossVectors(T, up).normalize();
+      const sag = Math.min(1.2, len * .06);
+      const pt = (t, out) => out.lerpVectors(A, Bv, t).setY(A.y + (Bv.y - A.y) * t - sag * 4 * t * (1 - t));
+      for (let i = 0; i < br.n; i++) { const t = (i + .5) / br.n; pt(t, P); dummy.position.copy(P); pt(t + .01, T); dummy.lookAt(T); dummy.scale.set(br.w, 1, 1); dummy.updateMatrix(); planks.setMatrixAt(br.start + i, dummy.matrix); }
+      [[A, 1], [A, -1], [Bv, 1], [Bv, -1]].forEach(([p, s], k) => { dummy.position.copy(p).addScaledVector(side, s * br.w * .48); dummy.position.y += .4; dummy.rotation.set(0, 0, 0); dummy.scale.set(1, 1, 1); dummy.updateMatrix(); posts.setMatrixAt(bi * 4 + k, dummy.matrix); });
+      for (const s of [1, -1]) for (let i = 0; i < br.n; i++) for (const tt of [i / br.n, (i + 1) / br.n]) { pt(tt, P); P.addScaledVector(side, s * br.w * .48); P.y += .62; ropePos[ri++] = P.x; ropePos[ri++] = P.y; ropePos[ri++] = P.z; }
+    });
+    planks.instanceMatrix.needsUpdate = true; posts.instanceMatrix.needsUpdate = true; ropeGeo.attributes.position.needsUpdate = true;
+  });
+}
+
+/* =========================================================
+   雲海、天空、飛鳥
+   ========================================================= */
+const skyUni = { top:{ value:new THREE.Color() }, hor:{ value:new THREE.Color() }, bot:{ value:new THREE.Color() } };
+const sky = new THREE.Mesh(new THREE.SphereGeometry(600, 32, 16), new THREE.ShaderMaterial({
+  side:THREE.BackSide, depthWrite:false, uniforms:skyUni,
+  vertexShader:'varying vec3 vP; void main(){ vP = normalize(position); gl_Position = projectionMatrix * modelViewMatrix * vec4(position,1.0); }',
+  fragmentShader:'uniform vec3 top; uniform vec3 hor; uniform vec3 bot; varying vec3 vP; void main(){ float h = vP.y; vec3 c = h > 0.0 ? mix(hor, top, pow(min(h*1.6,1.0), 0.7)) : mix(hor, bot, pow(min(-h*3.0,1.0), 0.6)); gl_FragColor = vec4(c,1.0);\n#include <colorspace_fragment>\n}',
+}));
+sky.frustumCulled = false; scene.add(sky);
+const starGeo = new THREE.BufferGeometry(); { const n = 700, p = new Float32Array(n * 3); for (let i = 0; i < n; i++) { const th = R(0, PI * 2), ph = R(.05, 1.4), r = 500; p[i * 3] = Math.cos(th) * Math.cos(ph) * r; p[i * 3 + 1] = Math.sin(ph) * r; p[i * 3 + 2] = Math.sin(th) * Math.cos(ph) * r; } starGeo.setAttribute('position', new THREE.BufferAttribute(p, 3)); }
+const stars = new THREE.Points(starGeo, new THREE.PointsMaterial({ color:'#fff8e0', size:2.2, sizeAttenuation:false, transparent:true, opacity:0, depthWrite:false, fog:false }));
+scene.add(stars);
+
+const cloudMat = new THREE.MeshStandardMaterial({ color:'#ffffff', roughness:1, emissive:'#ffffff', emissiveIntensity:.22 });
+function cloudLayer(clusters, puffs, area, yRange, scale, speed, avoid) {
+  const n = clusters * puffs, im = new THREE.InstancedMesh(new THREE.IcosahedronGeometry(1, 2), cloudMat, n);
+  const data = [], d = new THREE.Object3D();
+  for (let c = 0; c < clusters; c++) {
+    let cx, cz; do { cx = R(-area[0], area[0]); cz = R(area[1], area[2]); } while (avoid && Math.hypot(cx, cz) < 42);
+    const cy = R(...yRange);
+    for (let p = 0; p < puffs; p++) data.push([cx + R(-1, 1) * scale * 1.4, cy + R(0, .8) * scale * .5, cz + R(-1, 1) * scale, R(.55, 1) * scale]);
+  }
+  im.frustumCulled = false; scene.add(im);
+  const upd = dt => { data.forEach((p, i) => { p[0] += dt * speed; if (p[0] > area[0] + 20) p[0] -= area[0] * 2 + 40; d.position.set(p[0], p[1], p[2]); d.scale.set(p[3], p[3] * .62, p[3]); d.updateMatrix(); im.setMatrixAt(i, d.matrix); }); im.instanceMatrix.needsUpdate = true; };
+  upd(0); updaters.push((t, dt) => upd(dt));
+}
+cloudLayer(110, 5, [240, -240, 160], [-28, -21], 6.5, 1.1);
+cloudLayer(20, 6, [150, -130, 90], [-6, 9], 3.2, .8, true);
+
+const birds = [];
+function buildBirds() {
+  const bm = mat('#fbfaf6');
+  for (let i = 0; i < 9; i++) {
+    const g = new THREE.Group(); scene.add(g); fxObjects.push(g);
+    add(g, new THREE.BoxGeometry(.16, .14, .6), bm);
+    const wl = new THREE.Group(), wr = new THREE.Group(); g.add(wl, wr);
+    add(wl, new THREE.BoxGeometry(.8, .03, .3), bm, .4, 0, 0); add(wr, new THREE.BoxGeometry(.8, .03, .3), bm, -.4, 0, 0);
+    g.scale.setScalar(R(.9, 1.4));
+    birds.push({ g, wl, wr, r:R(30, 60), h:R(10, 20), sp:R(.08, .16) * (rand() < .5 ? 1 : -1), ph:R(0, 6) });
+  }
+  updaters.push(t => { for (const b of birds) { if (!b.g.visible) continue; const a = b.ph + t * b.sp; b.g.position.set(Math.cos(a) * b.r, b.h + Math.sin(t * .7 + b.ph) * 1.5, Math.sin(a) * b.r * .8); b.g.rotation.y = Math.atan2(-Math.sin(a) * b.sp, Math.cos(a) * .8 * b.sp); const f = Math.sin(t * 9 + b.ph) * .7; b.wl.rotation.z = f; b.wr.rotation.z = -f; } });
+}
+const motesGeo = new THREE.BufferGeometry(); const motesN = 220; const motesSeed = [];
+{ const p = new Float32Array(motesN * 3); for (let i = 0; i < motesN; i++) motesSeed.push([R(-45, 45), R(-6, 18), R(-35, 35), R(0, 6)]); motesGeo.setAttribute('position', new THREE.BufferAttribute(p, 3)); }
+const motesMat = new THREE.PointsMaterial({ color:'#fff1c9', size:.32, transparent:true, opacity:.7, depthWrite:false });
+const motes = new THREE.Points(motesGeo, motesMat); motes.frustumCulled = false; scene.add(motes); fxObjects.push(motes);
+updaters.push(t => { if (!motes.visible) return; const p = motesGeo.attributes.position.array; motesSeed.forEach((s, i) => { p[i * 3] = s[0] + Math.sin(t * .3 + s[3]) * 2; p[i * 3 + 1] = s[1] + Math.sin(t * .5 + s[3] * 2) * 1.2; p[i * 3 + 2] = s[2] + Math.cos(t * .25 + s[3]) * 2; }); motesGeo.attributes.position.needsUpdate = true; });
+
+/* ---------- 即時天色 ---------- */
+const PAL = {
+  N:{ top:'#0d1a3f', hor:'#2f4277', bot:'#22305f', fog:'#2a3a6a', sun:'#9db4ff', sunI:.5, hs:'#6f86c9', hg:'#2b2f4a', hI:.6, night:1, cloud:'#aab6d8' },
+  D0:{ top:'#7d9ad4', hor:'#ffd2ad', bot:'#d9a9a8', fog:'#f0cdb8', sun:'#ffc08f', sunI:1.7, hs:'#ffe0c8', hg:'#7a6a5a', hI:.85, night:.2, cloud:'#fff0e6' },
+  DAY:{ top:'#3f8fdc', hor:'#cfe6f7', bot:'#8fc3ea', fog:'#c9e2f5', sun:'#fff4df', sunI:2.6, hs:'#dff0ff', hg:'#8d7a5e', hI:1.05, night:0, cloud:'#ffffff' },
+  DK:{ top:'#4d5fa3', hor:'#ffae73', bot:'#c98f8c', fog:'#e8b59a', sun:'#ff9b5c', sunI:1.7, hs:'#ffcfae', hg:'#6b5148', hI:.8, night:.35, cloud:'#ffe2cf' },
+};
+const KEYS = [[0, 'N'], [4.6, 'N'], [6.2, 'D0'], [8.2, 'DAY'], [16, 'DAY'], [17.6, 'DK'], [19, 'N'], [24, 'N']];
+const tmpA = new THREE.Color(), tmpB = new THREE.Color();
+let lastNight = -1;
+function applySky(h) {
+  let i = 0; while (i < KEYS.length - 2 && h >= KEYS[i + 1][0]) i++;
+  const [h0, k0] = KEYS[i], [h1, k1] = KEYS[i + 1], f = h1 > h0 ? (h - h0) / (h1 - h0) : 0;
+  const a = PAL[k0], b = PAL[k1];
+  const col = key => tmpA.set(a[key]).lerp(tmpB.set(b[key]), f);
+  const num = key => a[key] + (b[key] - a[key]) * f;
+  skyUni.top.value.copy(col('top')); skyUni.hor.value.copy(col('hor')); skyUni.bot.value.copy(col('bot'));
+  scene.fog.color.copy(col('fog'));
+  sun.color.copy(col('sun')); sun.intensity = num('sunI');
+  hemi.color.copy(col('hs')); hemi.groundColor.copy(col('hg')); hemi.intensity = num('hI');
+  cloudMat.color.copy(col('cloud'));
+  const night = num('night');
+  const e = Math.sin(PI * (h - 6) / 12), az = PI * (h - 6) / 12;
+  sun.position.set(e > 0 ? Math.cos(az) * 90 : -40, e > 0 ? 35 + e * 75 : 90, 60); sun.target.position.set(0, 0, 0);
+  if (Math.abs(night - lastNight) > .002) {
+    lastNight = night;
+    winMat.emissiveIntensity = night * 1.6; winMat.color.set(night > .5 ? '#3d4a5c' : '#6d8299');
+    lanternMat.emissiveIntensity = .3 + night * 1.6; lampMat.emissiveIntensity = .2 + night * 2.2;
+    for (const [m, d, n] of glowList) m.emissiveIntensity = d + (n - d) * night;
+    stars.material.opacity = Math.max(0, night - .2) * 1.2;
+    cloudMat.emissiveIntensity = .12 * (1 - night) + .04;
+    motesMat.color.set(night > .5 ? '#c8ffb0' : '#fff1c9'); motesMat.size = night > .5 ? .45 : .32; motesMat.opacity = night > .5 ? .95 : .6;
+    renderer.toneMappingExposure = 1.05 + night * .15;
+  }
+}
+const TIME_MODES = [{ k:'live', label:'🕒 即時' }, { k:7, label:'🌅 清晨' }, { k:12.5, label:'☀️ 正午' }, { k:17.6, label:'🌇 黃昏' }, { k:21, label:'🌙 夜晚' }];
+const nowHour = () => { const d = new Date(); return d.getHours() + d.getMinutes() / 60; };
+let curHour = nowHour();
+const skyNameOf = h => h >= 5 && h < 7.5 ? ['🌅', '清晨'] : h >= 7.5 && h < 16.3 ? ['☀️', '白晝'] : h >= 16.3 && h < 18.8 ? ['🌇', '黃昏'] : ['🌙', '夜晚'];
+
+/* =========================================================
+   鏡頭
+   ========================================================= */
+const V = (x, y, z) => new THREE.Vector3(x, y, z);
+const isMobile = () => innerWidth <= 760;
+function fit(center, spanW, spanH, dir) {
+  const vf = THREE.MathUtils.degToRad(camera.fov / 2), hf = Math.atan(Math.tan(vf) * camera.aspect);
+  const d = Math.max(spanW / 2 / Math.tan(hf), spanH / 2 / Math.tan(vf)) * 1.05;
+  return { pos:center.clone().add(dir.clone().normalize().multiplyScalar(d)), target:center.clone() };
+}
+function groupPose(ids) {
+  if (!ids.every(id => byId[id])) return fit(V(0, -1, 0), 76, 40, V(0, .5, .87));
+  const c = V(0, 0, 0); ids.forEach(id => c.add(byId[id].base)); c.divideScalar(ids.length);
+  const out = V(c.x, 0, c.z).normalize();
+  return fit(c, 36, 22, V(out.x * .7, .75, out.z * .7 + .25));
+}
+function viewPose(name) {
+  const portrait = camera.aspect < .9;
+  if (name === 'low') return groupPose(['g1', 'g2']);
+  if (name === 'mid') return groupPose(['g3', 'g4']);
+  if (name === 'high') return groupPose(['g5', 'g6']);
+  if (name === 'bird') return portrait ? fit(V(0, 0, 0), 56, 62, V(0, 1, .001)) : fit(V(0, 0, 0), 70, 56, V(0, 1, .1));
+  return portrait ? fit(V(0, 0, 0), 58, 80, V(0, .75, .66)) : fit(V(0, -1, 0), 76, 40, V(0, .5, .87));
+}
+function focusPose(isl) {
+  const dist = (isl.kind === 'grade' ? 20 : 27) * (camera.aspect < 1 ? 3.3 : 1);
+  const target = isl.base.clone().add(V(0, 1, 0));
+  const out = V(isl.base.x, 0, isl.base.z); const dir = (out.length() > 1 ? out.normalize().multiplyScalar(.45).add(V(0, .56, .7)) : V(0, .56, .83)).normalize();
+  if (isMobile()) target.y -= dist * .3;
+  else { const right = V(dir.z, 0, -dir.x).normalize(); target.addScaledVector(right, dist * .2); }
+  return { pos:target.clone().addScaledVector(dir, dist), target };
+}
+let tween = null;
+function flyTo({ pos, target }, dur = 1.4) { tween = { p0:camera.position.clone(), t0:controls.target.clone(), p1:pos, t1:target, s:performance.now(), dur:dur * 1000 }; controls.enabled = false; }
+const ease = t => t < .5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+
+/* =========================================================
+   互動
+   ========================================================= */
+const raycaster = new THREE.Raycaster(), mouse = new THREE.Vector2();
+let hovered = null, pointerDirty = false, downAt = null;
+function setHover(isl) {
+  if (hovered === isl) return;
+  if (hovered) { hovered.hover = false; hovered.el.classList.toggle('on', hovered === selected); }
+  hovered = isl;
+  if (isl) { isl.hover = true; isl.el.classList.add('on'); playTone(880, 'sine', .08, .02); }
+  renderer.domElement.style.cursor = isl ? 'pointer' : '';
+}
+function pickGem() { raycaster.setFromCamera(mouse, camera); const hit = raycaster.intersectObjects(hiddenGems.filter(m => m.visible && !m.userData.pop), false)[0]; return hit ? hit.object : null; }
+function pick() { raycaster.setFromCamera(mouse, camera); const hit = raycaster.intersectObjects(islands.map(i => i.proxy), false)[0]; return hit ? hit.object.userData.isl : null; }
+const cv = renderer.domElement;
+cv.addEventListener('pointermove', e => { mouse.set(e.clientX / innerWidth * 2 - 1, -e.clientY / innerHeight * 2 + 1); pointerDirty = e.pointerType === 'mouse'; });
+cv.addEventListener('pointerleave', () => setHover(null));
+cv.addEventListener('pointerdown', e => { downAt = [e.clientX, e.clientY, performance.now()]; if (tween) { tween = null; controls.enabled = true; } stopAutoTourOnUser(); });
+cv.addEventListener('pointerup', e => {
+  if (!downAt) return;
+  const moved = Math.hypot(e.clientX - downAt[0], e.clientY - downAt[1]), dt = performance.now() - downAt[2];
+  downAt = null;
+  if (moved > 6 || dt > 600) return;
+  mouse.set(e.clientX / innerWidth * 2 - 1, -e.clientY / innerHeight * 2 + 1);
+  const gm = pickGem(); if (gm) { collectGem(gm); return; }
+  const isl = pick(); if (isl) select(isl);
+});
+cv.addEventListener('wheel', stopAutoTourOnUser, { passive:true });
+
+/* =========================================================
+   資訊面板
+   ========================================================= */
+const panelEl = $('#panel');
+let selected = null, curTab = 0;
+const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;' }[c]));
+const soft = hex => { const c = new THREE.Color(hex).lerp(new THREE.Color('#ffffff'), .84); return '#' + c.getHexString(); };
+const storyOf = d => { const list = (window.STORIES || {})[d.grade] || []; const out = list.map(([n, t]) => [`island/img/${d.imgs}/${String(n).padStart(2, '0')}.webp`, `island/img/${d.imgs}/t${String(n).padStart(2, '0')}.webp`, t]); if (d.grade === 6) out.push(['island/img/g6/11.webp', 'island/img/g6/t11.webp', '藍碳小守護者：攜手守護濱海綠寶石。']); return out; };
+const slidesOf = d => d.slides ? SLIDE_CAP[d.slides].map((cap, i) => [`island/slides/${d.slides}-${String(i + 1).padStart(2, '0')}.webp`, `island/slides/${d.slides}-t${String(i + 1).padStart(2, '0')}.webp`, cap]) : [];
+const shots = (list, set, portrait) => `<div class="gallery ${portrait ? 'portrait' : ''}">${list.map(([src, th, cap], i) => `<button class="shot" data-set="${set}" data-i="${i}"><img src="${th}" alt="${esc(cap)}" loading="lazy"><span>${i + 1}</span></button>`).join('')}</div>`;
+let galleries = {};
+
+function gradeTabs(d) {
+  const story = storyOf(d), slides = slidesOf(d);
+  galleries = { story:story.map(([s, , c]) => [s, c]), slides:slides.map(([s, , c]) => [s, c]) };
+  const tabs = [
+    ['介紹', `
+      <figure class="hero"><img src="${d.hero}" alt="${esc(d.name)}繪本封面" style="${d.portrait ? 'object-position:50% 30%' : ''}"><figcaption>📖 ${esc(d.name)}</figcaption></figure>
+      <p class="lead">${esc(d.summary)}</p>
+      <div class="facts">
+        <div><b>${GRADE[d.grade]}年級</b><span>適用年級</span></div>
+        <div><b>${esc(d.lessons)}</b><span>課程節數</span></div>
+        <div><b>${d.units.length}</b><span>學習段落</span></div>
+      </div>
+      <h4>學習目標</h4><p>${esc(d.goal)}</p>
+      <h4>故事主角</h4><p>${esc(d.heroes)}</p>
+      <h4>課程亮點</h4><div class="chips">${d.tags.map(t => `<span>${esc(t)}</span>`).join('')}</div>
+      <h4>評量產出</h4><div class="chips">${d.mode.split('・').map(t => `<span class="k">${esc(t)}</span>`).join('')}</div>`],
+    ['課程單元', `
+      <p style="color:var(--muted);font-size:13px">課程主軸：${esc(d.axis)}・${esc(d.lessons)}</p>
+      <ol class="units">${d.units.map(([t, s, k], i) => `<li><span>${i + 1}</span><div><b>${esc(t)}</b><small>${esc(s)}</small><em>${esc(k)}</em></div></li>`).join('')}</ol>`],
+    ['故事繪本', `<p style="color:var(--muted);font-size:13px;margin-bottom:10px">《${esc(d.name)}》共 ${story.length} 幅插畫，點圖可放大並閱讀故事文字。</p>${shots(story, 'story', d.portrait)}`],
+  ];
+  if (slides.length) tabs.push(['課堂簡報', `<p style="color:var(--muted);font-size:13px;margin-bottom:10px">課堂上使用的 ${slides.length} 張簡報，點圖放大逐張瀏覽。</p>${shots(slides, 'slides')}`]);
+  tabs.push(['學習資源', d.links.map(l => `<a class="linkrow" href="${encodeURI(l.url)}" ${l.dl ? 'download' : 'target="_blank" rel="noopener"'}><span class="ic">${l.icon}</span><div><b>${esc(l.t)}</b><small>${esc(l.s)}</small></div><span class="go">${l.dl ? '⤓' : '↗'}</span></a>`).join('')
+    + `<p style="margin-top:14px;color:var(--muted);font-size:13px">課程網頁會在新分頁開啟，看完可以回到天空之城繼續探索其他島嶼。</p>`]);
+  return tabs;
+}
+function hubTabs() {
+  galleries = {};
+  return [
+    ['序篇', `
+      <figure class="hero"><img src="island/img/g4/08.webp" alt="濱海綠寶石"><figcaption>💎 濱海綠寶石</figcaption></figure>
+      <p class="lead">瑞興國小依山傍海，校訂課程以<b>「濱海綠寶石」</b>為總主題：守護海岸的大樹與防風林、濕地裡的水生植物與紅樹林，還有餐桌上的天然好食物，都是孩子身邊閃閃發亮的綠寶石。</p>
+      <p>一到六年級各有一本專屬繪本與互動教學網，從「大樹與黑豆」走到「紅樹林與藍碳」，學習的半徑一年比一年大：先愛上身邊的一棵樹，最後為整片海岸發聲。</p>
+      <div class="facts"><div><b>6</b><span>座年級浮空島</span></div><div><b>6</b><span>本主題繪本</span></div><div><b>4</b><span>種評量產出</span></div></div>
+      <h4>學校願景</h4><div class="chips"><span class="k">樂在學習</span><span class="k">溫馨關懷</span><span class="k">感恩惜福</span><span class="k">健康成長</span></div>`],
+    ['六座島', `<div class="gallery">${COURSES.map(d => `<button class="shot" data-go="${d.id}"><img src="island/img/${d.imgs}/t01.webp" alt="" loading="lazy" style="aspect-ratio:4/3"><span>${GRADE[d.grade]}年級</span><div style="padding:7px 9px 9px"><b style="display:block;font:900 14px/1.35 'Noto Serif TC',serif">${esc(d.name)}</b><small style="color:var(--muted);font-size:11.5px">${esc(d.sub)}</small></div></button>`).join('')}</div>`],
+    ['課程架構', frameworkHtml()],
+    ['素養與評量', `
+      <h4>四大核心素養</h4>
+      ${[['學', '學習力', '系統思考：從觀察到探究，理解樹木、濕地與碳循環的運作。'], ['合', '合作力', '團隊合作：分組演出、共同設計菜單與倡議行動。'], ['包', '包容力', '國際理解：關心氣候變遷與全球永續目標（SDGs）。'], ['品', '品賞力', '生活美學：欣賞大自然之美，把美感帶進飲食與生活。']].map(([i, t, s]) => `<div class="point"><b>${i}</b><div><strong>${t}</strong><br><span style="color:var(--muted);font-size:13.5px">${s}</span></div></div>`).join('')}
+      <h4>四種評量產出</h4>
+      ${[['🎭', '綜藝劇場', '把知識演出來：當一棵大樹、跳樹之舞、演濕地交響曲與紅樹林倡議短劇。'], ['🍳', '辦桌小師傅', '黑豆料理、五色百歲宴、花卉輕食菜單——用飲食實踐健康與惜福。'], ['🌏', '國際小公民', '簽署低碳綠生活承諾、成為生態守護大使，把行動帶回家。'], ['🔧', '小魯班', '動手設計與製作：環保皂、校園綠能裝置藍圖。']].map(([i, t, s]) => `<div class="point"><b>${i}</b><div><strong>${t}</strong><br><span style="color:var(--muted);font-size:13.5px">${s}</span></div></div>`).join('')}`],
+  ];
+}
+function frameworkHtml() {
+  return `<p style="color:var(--muted);font-size:13px">點任一列即可飛往該年級的浮空島。</p>
+    <table class="matrix"><thead><tr><th>年級</th><th>主題繪本</th><th>學習重點</th><th>評量產出</th></tr></thead><tbody>
+    ${COURSES.map(d => `<tr data-go="${d.id}"><td><span class="dotc" style="background:${d.accent}"></span>${GRADE[d.grade]}</td><td><b>${esc(d.name)}</b><br><small style="color:var(--muted)">${esc(d.lessons)}</small></td><td>${esc(d.tags.slice(0, 3).join('、'))}</td><td>${esc(d.mode.replace(/・/g, '、'))}</td></tr>`).join('')}
+    </tbody></table>
+    <h4>三大課程主軸</h4>
+    <div class="point"><b>🌳</b><div><strong>環境倫理</strong><br><span style="color:var(--muted);font-size:13.5px">樹與樹、樹與生物多樣性：大樹棟樑、雞油樹家族、水生植物、紅樹林。</span></div></div>
+    <div class="point"><b>🥗</b><div><strong>永續發展・飲食生活</strong><br><span style="color:var(--muted);font-size:13.5px">黑豆家族、長命百歲菜、食用玫瑰與在地天然食材。</span></div></div>
+    <div class="point"><b>⚡</b><div><strong>能資源永續</strong><br><span style="color:var(--muted);font-size:13.5px">固碳與藍碳、天然環保皂、碳足跡、太陽能與風力綠能。</span></div></div>`;
+}
+function renderPanel(isl) {
+  const d = isl.data;
+  panelEl.style.setProperty('--accent', isl.accent); panelEl.style.setProperty('--accent-soft', soft(isl.accent));
+  $('#pCrumb').textContent = d ? `${GRADE[d.grade]}年級・${d.short}` : '天空之城・中央島';
+  $('#pTitle').textContent = isl.name;
+  $('#pSub').textContent = d ? d.sub : '瑞興國小校訂課程總主題';
+  $('#pMeta').textContent = d ? `評量產出：${d.mode}` : '一至六年級・六本繪本・六座浮空島';
+  const tabs = d ? gradeTabs(d) : hubTabs();
+  curTab = Math.min(curTab, tabs.length - 1);
+  const tabsEl = $('#pTabs');
+  tabsEl.innerHTML = tabs.map((t, i) => `<button class="${i === curTab ? 'on' : ''}" data-i="${i}">${t[0]}</button>`).join('');
+  $('#pBody').innerHTML = tabs[curTab][1]; $('#pBody').scrollTop = 0;
+  tabsEl.onclick = e => { const b = e.target.closest('button'); if (!b) return; curTab = +b.dataset.i; renderPanel(isl); };
+  $('#pFoot').innerHTML = d
+    ? `<a class="btn primary" href="${encodeURI(d.links[0].url)}" target="_blank" rel="noopener">進入${GRADE[d.grade]}年級課程網 ↗</a>`
+    : `<button class="btn primary" data-go="g1">從一年級開始登島 →</button><button class="btn" id="hubTour">▶ 島嶼導覽</button>`;
+}
+$('#pBody').addEventListener('click', e => {
+  const go = e.target.closest('[data-go]'); if (go) { curTab = 0; stopTour(); select(byId[go.dataset.go]); return; }
+  const sh = e.target.closest('[data-set]'); if (sh) openLightbox(galleries[sh.dataset.set], +sh.dataset.i);
+});
+$('#pFoot').addEventListener('click', e => {
+  const go = e.target.closest('[data-go]'); if (go) { curTab = 0; select(byId[go.dataset.go]); }
+  if (e.target.closest('#hubTour')) startTour();
+});
+
+function select(isl, opts = {}) {
+  if (!isl) return;
+  if (selected && selected !== isl) { selected.el.classList.remove('on'); if (!opts.keepTab) curTab = 0; }
+  selected = isl; isl.el.classList.add('on');
+  if (isl.kind === 'grade') playIslandChime(isl.grade); else playTone(440, 'sine', .4, .1);
+  renderPanel(isl);
+  panelEl.classList.add('open'); panelEl.setAttribute('aria-hidden', 'false');
+  flyTo(focusPose(isl), opts.dur || 1.4);
+  if (isl.kind === 'grade') stamp(isl);
+  try { history.replaceState(null, '', '#' + isl.id); } catch (e) {}
+  setActiveView(null);
+}
+function closePanel(goBack = true) {
+  panelEl.classList.remove('open'); panelEl.setAttribute('aria-hidden', 'true');
+  if (selected) { selected.el.classList.remove('on'); selected = null; if (goBack) setView('overview'); }
+  try { history.replaceState(null, '', location.pathname + location.search); } catch (e) {}
+}
+const step = dir => { const i = ORDER.indexOf(selected ? selected.id : 'hub'); select(byId[ORDER[(i + dir + ORDER.length) % ORDER.length]], { keepTab:true }); };
+$('#pPrev').onclick = () => { stopTour(); step(-1); };
+$('#pNext').onclick = () => { stopTour(); step(1); };
+$('#pClose').onclick = () => { stopTour(); closePanel(); };
+
+/* ---------- 視角切換 ---------- */
+function setActiveView(v) { document.querySelectorAll('#views button').forEach(b => b.classList.toggle('on', b.dataset.view === v)); }
+function setView(v) {
+  if (v === 'list') { openList(); return; }
+  if (selected) { selected.el.classList.remove('on'); selected = null; panelEl.classList.remove('open'); }
+  setActiveView(v); flyTo(viewPose(v), 1.6);
+}
+$('#views').onclick = e => { const b = e.target.closest('button'); if (!b) return; stopTour(); setView(b.dataset.view); };
+
+/* ---------- 清單 ---------- */
+const listOv = $('#listOv');
+function openList(mode = 'list') {
+  if (mode === 'frame') { $('#listTitle').textContent = '瑞興國小校訂課程架構'; $('#listBody').innerHTML = `<div style="max-width:860px">${frameworkHtml()}</div>`; }
+  else {
+    $('#listTitle').textContent = '六座浮空島一覽';
+    $('#listBody').innerHTML = `<p style="margin:0;color:var(--muted)">點任一張卡片，就會飛到那座島。</p>
+      <div class="tiles">${COURSES.map(d => `<button class="tile" style="--c:${d.accent}" data-go="${d.id}"><img src="island/img/${d.imgs}/t01.webp" alt="" loading="lazy"><div><small>${GRADE[d.grade]}年級・${esc(d.short)}${stamps.has(d.id) ? '・✅ 已登島' : ''}</small><b>${esc(d.name)}</b><p>${esc(d.sub)}</p></div></button>`).join('')}</div>
+      <button class="linkrow" data-go="hub" style="margin-top:16px"><span class="ic">💎</span><div><small>中央島</small><b>濱海綠寶石・瑞興國小課程序篇</b></div><span class="go">→</span></button>`;
+  }
+  listOv.classList.add('open');
+}
+listOv.addEventListener('click', e => {
+  const go = e.target.closest('[data-go]');
+  if (go) { listOv.classList.remove('open'); curTab = 0; stopTour(); select(byId[go.dataset.go]); return; }
+  if (e.target === listOv || e.target.closest('[data-close]')) listOv.classList.remove('open');
+});
+$('#frameBtn').onclick = () => openList('frame');
+
+/* ---------- 燈箱 ---------- */
+const lbOv = $('#lbOv'); let gallery = [], gi = 0;
+function openLightbox(items, i = 0) { if (!items || !items.length) return; gallery = items; gi = i; showLb(); lbOv.classList.add('open'); }
+function showLb() { const [src, cap] = gallery[gi]; $('#lbImg').src = src; $('#lbImg').alt = cap || ''; $('#lbText').textContent = cap || ''; $('#lbCap').textContent = `${gi + 1} / ${gallery.length}`; $('#lbPrev').style.visibility = $('#lbNext').style.visibility = gallery.length > 1 ? '' : 'hidden'; }
+$('#lbPrev').onclick = e => { e.stopPropagation(); gi = (gi - 1 + gallery.length) % gallery.length; showLb(); };
+$('#lbNext').onclick = e => { e.stopPropagation(); gi = (gi + 1) % gallery.length; showLb(); };
+lbOv.addEventListener('click', e => { if (e.target === lbOv || e.target.closest('[data-close]')) lbOv.classList.remove('open'); });
+
+document.addEventListener('keydown', e => {
+  if (lbOv.classList.contains('open')) {
+    if (e.key === 'Escape') lbOv.classList.remove('open');
+    if (e.key === 'ArrowLeft') $('#lbPrev').click();
+    if (e.key === 'ArrowRight') $('#lbNext').click();
+    return;
+  }
+  if (listOv.classList.contains('open')) { if (e.key === 'Escape') listOv.classList.remove('open'); return; }
+  if (e.key === 'Escape' && selected) { stopTour(); closePanel(); }
+  if (selected && e.key === 'ArrowLeft') { stopTour(); step(-1); }
+  if (selected && e.key === 'ArrowRight') { stopTour(); step(1); }
+});
+
+/* ---------- 綠寶石護照 ---------- */
+const stamps = new Set();
+try { JSON.parse(localStorage.getItem('ruixing-sky-stamps') || '[]').forEach(id => stamps.add(id)); } catch (e) {}
+function renderStamps() {
+  $('#stamps').innerHTML = COURSES.map(d => `<button class="stamp-dot ${stamps.has(d.id) ? 'got' : ''}" style="--c:${d.accent}" data-go="${d.id}" title="${GRADE[d.grade]}年級・${d.name}">${d.grade}</button>`).join('');
+  $('#stampCount').textContent = `已登島 ${stamps.size} / 6`;
+  islands.forEach(i => { const s = i.el.querySelector('.stamp'); if (s) s.textContent = stamps.has(i.id) ? '✅' : ''; });
+}
+$('#stamps').onclick = e => { const b = e.target.closest('[data-go]'); if (b) { stopTour(); select(byId[b.dataset.go]); } };
+function stamp(isl) {
+  if (stamps.has(isl.id)) return;
+  stamps.add(isl.id);
+  try { localStorage.setItem('ruixing-sky-stamps', JSON.stringify([...stamps])); } catch (e) {}
+  renderStamps(); playStamp();
+  if (stamps.size === 6) { setTimeout(() => { playFanfare(); fireConfetti(); }, 350); toast('🎉 六座島全部登島！恭喜成為綠寶石小探索家！'); }
+  else toast(`🎒 蓋章！${isl.short}收進護照（${stamps.size}/6）`);
+}
+let toastT;
+function toast(msg) { const t = $('#toast'); t.textContent = msg; t.classList.add('show'); clearTimeout(toastT); toastT = setTimeout(() => t.classList.remove('show'), 2600); }
+
+/* ---------- 島嶼導覽 ---------- */
+const TOUR_MS = 7500;
+let tour = null;
+function startTour() {
+  listOv.classList.remove('open');
+  tour = { i:0, paused:false, start:performance.now(), elapsed:0 };
+  $('#tourbar').classList.add('on'); $('#tourBtn').textContent = '■ 結束導覽';
+  curTab = 0; select(byId[ORDER[0]], { dur:2 }); updTourText();
+}
+function updTourText() { $('#tourText').textContent = `導覽中 ${tour.i + 1}/${ORDER.length}・${byId[ORDER[tour.i]].name}`; $('#tourPause').textContent = tour.paused ? '繼續' : '暫停'; }
+function stopTour() { if (!tour) return; tour = null; $('#tourbar').classList.remove('on'); $('#tourBtn').textContent = '▶ 島嶼導覽'; }
+function stopAutoTourOnUser() { if (tour && !tour.paused) { tour.paused = true; updTourText(); } }
+function tickTour(now) {
+  if (!tour) return;
+  if (tour.paused) { tour.start = now - tour.elapsed; return; }
+  tour.elapsed = now - tour.start;
+  $('#tourProg').style.width = Math.min(100, tour.elapsed / TOUR_MS * 100) + '%';
+  if (tour.elapsed > TOUR_MS) {
+    tour.i++;
+    if (tour.i >= ORDER.length) { stopTour(); closePanel(false); setView('overview'); toast('導覽結束，歡迎自由探索每一座島！'); return; }
+    tour.start = now; tour.elapsed = 0; curTab = 0; select(byId[ORDER[tour.i]], { dur:2 }); updTourText();
+  }
+}
+$('#tourBtn').onclick = () => tour ? stopTour() : startTour();
+$('#tourPause').onclick = () => { tour.paused = !tour.paused; updTourText(); };
+$('#tourStop').onclick = () => stopTour();
+
+/* ---------- 開關 ---------- */
+const tog = (id, fn) => { const b = $(id); b.onclick = () => fn(b); };
+tog('#tLabels', b => { b.classList.toggle('on'); document.body.classList.toggle('nolabels', !b.classList.contains('on')); });
+tog('#tFx', b => { b.classList.toggle('on'); const on = b.classList.contains('on'); fxObjects.forEach(o => o.visible = on); });
+tog('#tRotate', b => { b.classList.toggle('on'); controls.autoRotate = b.classList.contains('on'); });
+let timeMode = 0;
+tog('#tTime', b => { timeMode = (timeMode + 1) % TIME_MODES.length; b.textContent = TIME_MODES[timeMode].label; b.classList.toggle('on', timeMode !== 0); $('#skyMode').textContent = timeMode ? '手動天色' : '即時天色'; });
+
+/* ---------- 小語與時鐘 ---------- */
+let qi = new Date().getDate() % QUOTES.length;
+$('#quoteText').textContent = QUOTES[qi];
+$('#quoteBtn').onclick = () => { qi = (qi + 1) % QUOTES.length; $('#quoteText').textContent = QUOTES[qi]; };
+const WEEK = '日一二三四五六';
+function tickClock() {
+  const d = new Date();
+  $('#clkDate').textContent = `${d.getMonth() + 1} 月 ${d.getDate()} 日`;
+  $('#clkTime').textContent = `星期${WEEK[d.getDay()]}・${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`;
+  const [ic, nm] = skyNameOf(curHour); $('#skyIcon').textContent = ic; $('#skyName').textContent = nm;
+}
+setInterval(tickClock, 1000);
+
+/* =========================================================
+   主迴圈
+   ========================================================= */
+const clock = new THREE.Clock(), vtmp = new THREE.Vector3();
+function loop() {
+  requestAnimationFrame(loop);
+  const dt = Math.min(clock.getDelta(), .05), t = clock.elapsedTime, now = performance.now();
+  const target = timeMode === 0 ? nowHour() : TIME_MODES[timeMode].k;
+  const diff = ((target - curHour + 36) % 24) - 12;
+  curHour = (curHour + diff * Math.min(1, dt * 1.6) + 24) % 24;
+  applySky(curHour);
+  for (const isl of islands) {
+    const want = (isl.hover || isl === selected) ? (isl.kind === 'grade' ? .7 : .4) : 0;
+    isl.lift += (want - isl.lift) * Math.min(1, dt * 5);
+    isl.group.position.y = isl.base.y + Math.sin(t * .55 + isl.phase) * (isl.kind === 'grade' ? .28 : .15) + isl.lift;
+    isl.ring.material.opacity = (isl.hover || isl === selected) ? .55 + Math.sin(t * 4) * .25 : Math.max(0, isl.ring.material.opacity - dt * 2);
+  }
+  for (const f of updaters) f(t, dt);
+  if (tween) {
+    const k = Math.min(1, (now - tween.s) / tween.dur), e = ease(k);
+    camera.position.lerpVectors(tween.p0, tween.p1, e);
+    controls.target.lerpVectors(tween.t0, tween.t1, e);
+    camera.position.y += Math.sin(k * PI) * tween.p0.distanceTo(tween.p1) * .12;
+    if (k >= 1) { tween = null; controls.enabled = true; }
+  }
+  controls.update();
+  if (pointerDirty && !tween) { pointerDirty = false; const gm = pickGem(); if (gm) { setHover(null); renderer.domElement.style.cursor = 'pointer'; } else setHover(pick()); }
+  tickTour(now);
+  renderer.render(scene, camera);
+  const W = innerWidth, H = innerHeight;
+  for (const isl of islands) {
+    vtmp.copy(isl.group.position); vtmp.y += isl.labelY; vtmp.project(camera);
+    const vis = vtmp.z < 1 && Math.abs(vtmp.x) < 1.15 && Math.abs(vtmp.y) < 1.15;
+    isl.el.style.visibility = vis ? 'visible' : 'hidden';
+    if (vis) isl.el.style.transform = `translate(${(vtmp.x * .5 + .5) * W}px,${(-vtmp.y * .5 + .5) * H}px) translate(-50%,-100%)`;
+  }
+}
+addEventListener('resize', () => { camera.aspect = innerWidth / innerHeight; camera.updateProjectionMatrix(); renderer.setSize(innerWidth, innerHeight); });
+
+/* =========================================================
+   開場
+   ========================================================= */
+const loadBar = $('#loadBar'), loadStep = $('#loadStep');
+const nextFrame = () => new Promise(r => requestAnimationFrame(() => r()));
+async function boot() {
+  const steps = [['正在喚醒天空之城…', 10], ['升起六座浮空島…', 45], ['架設吊橋，藏好小綠寶石…', 70], ['放飛白雲與飛鳥…', 90]];
+  const setStep = ([txt, p]) => { loadStep.textContent = txt; loadBar.style.width = p + '%'; };
+  setStep(steps[0]);
+  try { await Promise.race([document.fonts.load('900 64px "Noto Serif TC"', '瑞興國小濱海綠寶石大樹棟樑百歲宴固碳魔法環保皂工坊綠能未來藍碳低碳綠生活'), new Promise(r => setTimeout(r, 2500))]); } catch (e) {}
+  setStep(steps[1]); await nextFrame();
+  buildIslands();
+  setStep(steps[2]); await nextFrame();
+  buildBridges(); buildGems();
+  setStep(steps[3]); await nextFrame();
+  buildBirds(); renderStamps(); renderGems(); tickClock(); applySky(curHour);
+  loop();
+  loadBar.style.width = '100%'; loadStep.textContent = '準備完成，歡迎登島！';
+  const finish = () => {
+    if (finish.done) return; finish.done = true;
+    $('#loader').classList.add('hide');
+    const hashIsl = byId[location.hash.slice(1)];
+    if (hashIsl) select(hashIsl, { dur:2.6 }); else flyTo(viewPose('overview'), 2.8);
+  };
+  $('#skipBtn').onclick = finish;
+  setTimeout(finish, 900);
+}
+boot();
+</script>
+</body>
+</html>

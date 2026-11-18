@@ -1,0 +1,1017 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>濱海綠寶石：四年級永續綠生活互動教學網</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Canvas Confetti -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        emerald: {
+                            50: '#ecfdf5',
+                            100: '#d1fae5',
+                            500: '#10b981',
+                            600: '#059669',
+                            700: '#047857',
+                            800: '#065f46',
+                            900: '#064e3b',
+                        },
+                        coastal: {
+                            100: '#e0f2fe',
+                            500: '#0ea5e9',
+                            700: '#0369a1',
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['"Noto Sans TC"', 'Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&display=swap');
+        
+        body {
+            font-family: 'Noto Sans TC', sans-serif;
+            background-color: #f4fbf7;
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+        }
+
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #10b981;
+            border-radius: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #e1f5fe;
+        }
+        
+        /* 圖片淡入動畫 */
+        #storyImage {
+            transition: opacity 0.3s ease-in-out;
+        }
+    </style>
+</head>
+<body class="text-gray-800 antialiased min-h-screen flex flex-col justify-between">
+
+    <!-- 頂部導覽列 -->
+    <header class="sticky top-0 z-50 bg-emerald-800 text-white shadow-lg">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-between items-center h-16">
+            <div class="flex items-center space-x-3 cursor-pointer" onclick="switchTab('hero')">
+                <span class="text-2xl"><i class="fa-solid fa-gem text-emerald-300"></i></span>
+                <span class="font-bold text-lg sm:text-xl tracking-wide">濱海綠寶石 ‧ 互動教學網</span>
+            </div>
+            
+            <!-- Desktop Nav -->
+            <nav class="hidden md:flex space-x-1 lg:space-x-2 text-sm font-medium">
+                <button onclick="switchTab('storybook')" class="nav-btn px-3 py-2 rounded-lg hover:bg-emerald-700 transition"><i class="fa-solid fa-book-open mr-1.5"></i>繪本導讀</button>
+                <button onclick="switchTab('unit1')" class="nav-btn px-3 py-2 rounded-lg hover:bg-emerald-700 transition"><i class="fa-solid fa-soap mr-1.5"></i>單元一：天然環保皂</button>
+                <button onclick="switchTab('unit2')" class="nav-btn px-3 py-2 rounded-lg hover:bg-emerald-700 transition"><i class="fa-solid fa-leaf mr-1.5"></i>單元二：低碳與固碳</button>
+                <button onclick="switchTab('pledge')" class="nav-btn px-3 py-2 rounded-lg hover:bg-emerald-700 transition"><i class="fa-solid fa-award mr-1.5"></i>小公民承諾</button>
+                <button onclick="switchTab('quiz')" class="nav-btn px-3 py-2 rounded-lg hover:bg-emerald-700 transition"><i class="fa-solid fa-circle-question mr-1.5"></i>綠寶石大挑戰</button>
+                <button onclick="switchTab('teacher')" class="nav-btn bg-emerald-600 px-3 py-2 rounded-lg hover:bg-emerald-500 transition text-amber-200"><i class="fa-solid fa-chalkboard-user mr-1.5"></i>教案與備課</button>
+            </nav>
+
+            <!-- Mobile Menu Toggle -->
+            <div class="md:hidden flex items-center">
+                <button id="mobileMenuBtn" class="text-white focus:outline-none text-2xl">
+                    <i class="fa-solid fa-bars"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Mobile Nav Menu -->
+        <div id="mobileMenu" class="hidden md:hidden bg-emerald-900 px-4 pt-2 pb-4 space-y-2 border-t border-emerald-700">
+            <button onclick="switchTab('storybook')" class="w-full text-left py-2 px-3 text-sm hover:bg-emerald-800 rounded"><i class="fa-solid fa-book-open mr-2"></i>繪本導讀</button>
+            <button onclick="switchTab('unit1')" class="w-full text-left py-2 px-3 text-sm hover:bg-emerald-800 rounded"><i class="fa-solid fa-soap mr-2"></i>單元一：天然環保皂</button>
+            <button onclick="switchTab('unit2')" class="w-full text-left py-2 px-3 text-sm hover:bg-emerald-800 rounded"><i class="fa-solid fa-leaf mr-2"></i>單元二：低碳與固碳</button>
+            <button onclick="switchTab('pledge')" class="w-full text-left py-2 px-3 text-sm hover:bg-emerald-800 rounded"><i class="fa-solid fa-award mr-2"></i>小公民承諾</button>
+            <button onclick="switchTab('quiz')" class="w-full text-left py-2 px-3 text-sm hover:bg-emerald-800 rounded"><i class="fa-solid fa-circle-question mr-2"></i>綠寶石大挑戰</button>
+            <button onclick="switchTab('teacher')" class="w-full text-left py-2 px-3 text-sm text-amber-200 hover:bg-emerald-800 rounded"><i class="fa-solid fa-chalkboard-user mr-2"></i>教案與備課</button>
+        </div>
+    </header>
+
+    <!-- 主體內容區域 -->
+    <main class="flex-grow max-w-7xl w-full mx-auto p-4 sm:p-6 lg:p-8">
+
+        <!-- ===== HERO SECTION / 首頁 ===== -->
+        <section id="tab-hero" class="tab-content">
+            <div class="relative bg-gradient-to-r from-emerald-700 via-teal-700 to-coastal-700 rounded-3xl overflow-hidden shadow-2xl text-white p-8 sm:p-12 mb-8">
+                <div class="relative z-10 max-w-2xl">
+                    <span class="bg-amber-400 text-emerald-950 font-extrabold text-xs sm:text-sm px-3 py-1 rounded-full uppercase tracking-wider mb-4 inline-block shadow">國小四年級校訂永續課程</span>
+                    <h1 class="text-3xl sm:text-5xl font-black mb-4 leading-tight">尋找濱海綠寶石<br><span class="text-emerald-300 text-2xl sm:text-3xl font-bold">天然植物皂 ‧ 綠生活 ‧ 碳權價值</span></h1>
+                    <p class="text-emerald-100 text-base sm:text-lg mb-8 leading-relaxed">
+                        跟著沐晴與秉勳的足跡，一起踏上濱海森林冒險之旅！發現大樹的化學天然替代妙方，體驗手作環保皂，計算低碳生活價值，成為守護地球的「國際小公民」。
+                    </p>
+                    <div class="flex flex-wrap gap-4">
+                        <button onclick="switchTab('storybook')" class="bg-amber-400 hover:bg-amber-300 text-emerald-950 font-bold px-6 py-3 rounded-xl shadow-lg transition transform hover:-translate-y-0.5 flex items-center">
+                            <i class="fa-solid fa-play mr-2"></i> 開始故事探索
+                        </button>
+                        <button onclick="switchTab('unit1')" class="bg-white/20 hover:bg-white/30 backdrop-blur-md text-white font-semibold px-6 py-3 rounded-xl transition border border-white/30 flex items-center">
+                            <i class="fa-solid fa-flask mr-2"></i> 進入單元體驗
+                        </button>
+                    </div>
+                </div>
+                <div class="absolute right-4 bottom-4 opacity-15 sm:opacity-25 pointer-events-none text-9xl text-white">
+                    <i class="fa-solid fa-tree"></i>
+                </div>
+            </div>
+
+            <!-- 核心學習模組快選 -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div onclick="switchTab('storybook')" class="glass-card p-6 rounded-2xl shadow-md hover:shadow-xl transition cursor-pointer border-t-4 border-emerald-500 group">
+                    <div class="w-14 h-14 bg-emerald-100 text-emerald-700 rounded-2xl flex items-center justify-center text-2xl mb-4 group-hover:scale-110 transition">
+                        <i class="fa-solid fa-book-open-reader"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-2 group-hover:text-emerald-600 transition">1. 繪本故事導讀</h3>
+                    <p class="text-gray-600 text-sm">全劇10頁繪本導覽，了解沐晴與秉勳發現天然清潔與大樹固碳的精采故事。</p>
+                </div>
+
+                <div onclick="switchTab('unit1')" class="glass-card p-6 rounded-2xl shadow-md hover:shadow-xl transition cursor-pointer border-t-4 border-teal-500 group">
+                    <div class="w-14 h-14 bg-teal-100 text-teal-700 rounded-2xl flex items-center justify-center text-2xl mb-4 group-hover:scale-110 transition">
+                        <i class="fa-solid fa-pump-soap"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-2 group-hover:text-teal-600 transition">2. 天然環保皂工作坊</h3>
+                    <p class="text-gray-600 text-sm">認識無患子與油脂皂化，模擬調配專屬環保皂，學習保護海洋水資源。</p>
+                </div>
+
+                <div onclick="switchTab('unit2')" class="glass-card p-6 rounded-2xl shadow-md hover:shadow-xl transition cursor-pointer border-t-4 border-emerald-600 group">
+                    <div class="w-14 h-14 bg-emerald-100 text-emerald-800 rounded-2xl flex items-center justify-center text-2xl mb-4 group-hover:scale-110 transition">
+                        <i class="fa-solid fa-seedling"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-2 group-hover:text-emerald-700 transition">3. 碳足跡與大樹固碳</h3>
+                    <p class="text-gray-600 text-sm">計算日常低碳行動減碳量，了解樹木碳吸塵器與碳權生態價值的秘密。</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- ===== TAB 1: STORYBOOK READ-ALONG / 繪本導讀 ===== -->
+        <section id="tab-storybook" class="tab-content hidden">
+            <div class="bg-white rounded-3xl shadow-lg p-6 sm:p-8 mb-8 border border-emerald-100">
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 border-b pb-4 gap-4">
+                    <div>
+                        <span class="text-xs font-bold text-emerald-600 bg-emerald-100 px-3 py-1 rounded-full uppercase">繪本線上看</span>
+                        <h2 class="text-2xl sm:text-3xl font-extrabold text-gray-800 mt-1">《尋找濱海綠寶石》完整導讀</h2>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <button id="prevPageBtn" onclick="changePage(-1)" class="bg-emerald-100 hover:bg-emerald-200 text-emerald-800 p-2.5 rounded-full transition disabled:opacity-40">
+                            <i class="fa-solid fa-chevron-left text-lg"></i>
+                        </button>
+                        <span id="pageIndicator" class="font-bold text-gray-700 px-3">第 1 / 10 頁</span>
+                        <button id="nextPageBtn" onclick="changePage(1)" class="bg-emerald-100 hover:bg-emerald-200 text-emerald-800 p-2.5 rounded-full transition">
+                            <i class="fa-solid fa-chevron-right text-lg"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Storybook Viewer -->
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center min-h-[380px]">
+                    <div class="lg:col-span-5 flex justify-center">
+                        <!-- 修改後的視覺區塊，顯示實體圖片 -->
+                        <div id="storyVisual" class="w-full max-w-sm h-72 sm:h-80 rounded-2xl bg-gray-100 flex flex-col items-center justify-center shadow-inner border-2 border-emerald-200 relative overflow-hidden">
+                            <img id="storyImage" src="p01.jpg" alt="繪本插圖" class="w-full h-full object-cover">
+                            <div class="absolute top-4 right-4 bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full shadow-sm border border-white/50 text-sm font-bold flex items-center">
+                                <i id="storyIcon" class="fa-solid fa-map-location-dot mr-2 text-emerald-600"></i>
+                                <span id="storyBadge" class="text-gray-800">發現探索地圖</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="lg:col-span-7 flex flex-col justify-between h-full">
+                        <div>
+                            <div class="text-xs font-bold text-emerald-600 uppercase tracking-widest mb-2" id="storyChapter">【 第一章：古老的地圖 】</div>
+                            <p id="storyText" class="text-gray-700 text-lg leading-relaxed mb-6 font-medium bg-emerald-50/50 p-6 rounded-2xl border border-emerald-100">
+                                陽光灑在海岸邊的綠色森林上。小學四年級的沐晴與秉勳，在學校的樹木角落發現了一張泛黃的探索地圖。地圖上赫然寫著：「沿著海岸尋找，就能找到守護地球的『濱海綠寶石』！」兩個好朋友充滿好奇，踏上了這場未知的綠色冒險之旅。
+                            </p>
+                        </div>
+                        
+                        <div class="bg-amber-50 p-4 rounded-xl border border-amber-200 flex items-start space-x-3">
+                            <i class="fa-solid fa-lightbulb text-amber-500 text-xl mt-1"></i>
+                            <div>
+                                <h4 class="font-bold text-amber-900 text-sm">學習點撥：</h4>
+                                <p id="storyTakeaway" class="text-amber-800 text-xs sm:text-sm">環境倫理與自然探索：從觀察校園與周遭海岸生態開始，培養對大自然的好奇心與愛護心。</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Thumbnail Navigation -->
+                <div class="mt-8 pt-4 border-t border-gray-100 flex space-x-2 overflow-x-auto custom-scrollbar pb-2" id="thumbnailBar">
+                    <!-- JS generated thumbnails -->
+                </div>
+            </div>
+        </section>
+
+        <!-- ===== TAB 2: UNIT 1 - SOAP & WATER / 單元一：天然環保皂 ===== -->
+        <section id="tab-unit1" class="tab-content hidden">
+            <div class="mb-8">
+                <span class="bg-teal-100 text-teal-800 font-bold text-xs px-3 py-1 rounded-full uppercase">四年級專屬單元一</span>
+                <h2 class="text-3xl font-extrabold text-gray-800 mt-1">樹與生活應用—清潔一把皂</h2>
+                <p class="text-gray-600 mt-1">認識植物中的天然清潔成分，體驗手作「綠寶石天然環保皂」，守護水資源與海洋！</p>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                <!-- 虛擬配方調配與模擬器 -->
+                <div class="lg:col-span-7 bg-white rounded-3xl p-6 sm:p-8 shadow-lg border border-teal-100">
+                    <h3 class="text-xl font-bold text-teal-900 mb-4 flex items-center">
+                        <i class="fa-solid fa-flask-vial text-teal-600 mr-2"></i> 專屬「綠寶石環保皂」虛擬配方工坊
+                    </h3>
+                    <p class="text-sm text-gray-600 mb-6">選擇天然植物原料，並調配屬於你的植物清潔皂吧！</p>
+
+                    <form id="soapForm" onsubmit="event.preventDefault(); makeSoap();" class="space-y-5">
+                        <div>
+                            <label class="block text-sm font-bold text-gray-700 mb-2">1. 選擇植物清潔基底 (必選)：</label>
+                            <div class="grid grid-cols-2 gap-3">
+                                <label class="border-2 border-emerald-200 p-3 rounded-xl cursor-pointer hover:bg-emerald-50 flex items-center space-x-3 transition">
+                                    <input type="radio" name="base" value="sapindus" checked class="text-emerald-600 focus:ring-emerald-500">
+                                    <div>
+                                        <div class="font-bold text-sm text-gray-800">無患子萃取</div>
+                                        <div class="text-xs text-gray-500">天然皂素，起泡豐富</div>
+                                    </div>
+                                </label>
+                                <label class="border-2 border-emerald-200 p-3 rounded-xl cursor-pointer hover:bg-emerald-50 flex items-center space-x-3 transition">
+                                    <input type="radio" name="base" value="teaseed" class="text-emerald-600 focus:ring-emerald-500">
+                                    <div>
+                                        <div class="font-bold text-sm text-gray-800">苦茶粉成分</div>
+                                        <div class="text-xs text-gray-500">溫和去油，自然分解</div>
+                                    </div>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-bold text-gray-700 mb-2">2. 加入天然植物油脂 (滋潤度)：</label>
+                            <select id="soapOil" class="w-full border-2 border-emerald-100 rounded-xl p-3 text-sm focus:border-emerald-500 focus:outline-none">
+                                <option value="coconut">椰子油 (提升硬度與清洗力)</option>
+                                <option value="olive">橄欖油 (溫和滋潤肌膚)</option>
+                                <option value="shea">乳木果油 (深層保濕防護)</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-bold text-gray-700 mb-2">3. 添加天然香氛或植物粉：</label>
+                            <div class="flex flex-wrap gap-3">
+                                <label class="bg-gray-100 px-3 py-2 rounded-lg text-xs font-semibold text-gray-700 cursor-pointer flex items-center space-x-2">
+                                    <input type="checkbox" name="scent" value="mint" class="rounded text-emerald-600">
+                                    <span>薄荷葉 (清涼舒服)</span>
+                                </label>
+                                <label class="bg-gray-100 px-3 py-2 rounded-lg text-xs font-semibold text-gray-700 cursor-pointer flex items-center space-x-2">
+                                    <input type="checkbox" name="scent" value="tea" class="rounded text-emerald-600">
+                                    <span>綠茶粉 (抗氧化香氛)</span>
+                                </label>
+                                <label class="bg-gray-100 px-3 py-2 rounded-lg text-xs font-semibold text-gray-700 cursor-pointer flex items-center space-x-2">
+                                    <input type="checkbox" name="scent" value="lemon" class="rounded text-emerald-600">
+                                    <span>檸檬草 (芳香精油)</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-bold text-gray-700 mb-2">4. 選擇手工皂造型模具：</label>
+                            <div class="grid grid-cols-3 gap-3">
+                                <button type="button" onclick="selectShape('leaf')" id="btn-leaf" class="shape-btn border-2 border-emerald-500 bg-emerald-50 p-2 rounded-xl text-center text-xs font-bold text-emerald-800">
+                                    <i class="fa-solid fa-leaf text-2xl text-emerald-600 block mb-1"></i>樹葉造型
+                                </button>
+                                <button type="button" onclick="selectShape('gem')" id="btn-gem" class="shape-btn border-2 border-gray-200 p-2 rounded-xl text-center text-xs font-bold text-gray-600">
+                                    <i class="fa-solid fa-gem text-2xl text-teal-600 block mb-1"></i>寶石造型
+                                </button>
+                                <button type="button" onclick="selectShape('tree')" id="btn-tree" class="shape-btn border-2 border-gray-200 p-2 rounded-xl text-center text-xs font-bold text-gray-600">
+                                    <i class="fa-solid fa-tree text-2xl text-emerald-700 block mb-1"></i>大樹造型
+                                </button>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="w-full bg-gradient-to-r from-teal-600 to-emerald-600 hover:from-teal-500 hover:to-emerald-500 text-white font-bold py-3 rounded-xl shadow-lg transition">
+                            <i class="fa-solid fa-wand-magic-sparkles mr-2"></i> 開始倒模並凝固環保皂
+                        </button>
+                    </form>
+                </div>
+
+                <!-- 模擬結果與知識卡片 -->
+                <div class="lg:col-span-5 space-y-6">
+                    <!-- 成果展示 -->
+                    <div id="soapResultBox" class="bg-emerald-950 text-white rounded-3xl p-6 shadow-lg text-center flex flex-col items-center justify-center min-h-[260px] relative overflow-hidden">
+                        <div id="soapIconDisplay" class="w-24 h-24 rounded-2xl bg-emerald-800 border-4 border-emerald-400 flex items-center justify-center text-5xl mb-3 shadow-inner">
+                            <i class="fa-solid fa-leaf text-emerald-300"></i>
+                        </div>
+                        <h4 id="soapTitle" class="text-xl font-bold text-emerald-300">天然綠樹葉環保皂</h4>
+                        <p id="soapDesc" class="text-xs text-emerald-100 mt-2 max-w-xs">使用無患子天然皂素，可在自然界100%快速分解，保護水資源不生病！</p>
+                        <div class="mt-4 bg-emerald-900/80 px-4 py-2 rounded-lg border border-emerald-700 text-xs text-amber-300 font-bold">
+                            🌱 估計減少化學洗劑排水：約 500 ml / 塊
+                        </div>
+                    </div>
+
+                    <!-- 知識補充卡片 -->
+                    <div class="bg-white rounded-3xl p-6 shadow-md border border-emerald-100">
+                        <h4 class="font-bold text-gray-800 mb-3 flex items-center text-sm">
+                            <i class="fa-solid fa-droplet text-blue-500 mr-2"></i> 為什麼天然植物皂能保護海洋？
+                        </h4>
+                        <ul class="text-xs text-gray-600 space-y-2 leading-relaxed">
+                            <li class="flex items-start">
+                                <span class="text-emerald-500 mr-1.5">•</span>
+                                市售化學清潔劑常含界面活性劑與合成香精，容易殘留在河川，造成水質富營養化。
+                            </li>
+                            <li class="flex items-start">
+                                <span class="text-emerald-500 mr-1.5">•</span>
+                                無患子果實含有天然界面活性劑「皂素」（Saponin），加水搓揉就能產生細緻泡沫！
+                            </li>
+                            <li class="flex items-start">
+                                <span class="text-emerald-500 mr-1.5">•</span>
+                                天然植物皂進入水體後，微生物能快速將其分解為無害物質，讓海洋生物健康生活。
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ===== TAB 3: UNIT 2 - CARBON FOOTPRINT & TREES / 單元二：低碳與固碳 ===== -->
+        <section id="tab-unit2" class="tab-content hidden">
+            <div class="mb-8">
+                <span class="bg-emerald-100 text-emerald-800 font-bold text-xs px-3 py-1 rounded-full uppercase">四年級專屬單元二</span>
+                <h2 class="text-3xl font-extrabold text-gray-800 mt-1">綠生活—碳權價值高</h2>
+                <p class="text-gray-600 mt-1">大樹是地球的「碳吸塵器」！算算你的生活碳足跡，一起幫地球降溫。</p>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                <!-- 碳足跡與固碳計算器 -->
+                <div class="lg:col-span-7 bg-white rounded-3xl p-6 sm:p-8 shadow-lg border border-emerald-100">
+                    <h3 class="text-xl font-bold text-emerald-900 mb-4 flex items-center">
+                        <i class="fa-solid fa-calculator text-emerald-600 mr-2"></i> 個人週碳足跡與大樹固碳換算機
+                    </h3>
+                    <p class="text-sm text-gray-600 mb-6">勾選你在這一週內落實的低碳綠生活習慣：</p>
+
+                    <div class="space-y-4">
+                        <label class="flex items-center justify-between p-4 rounded-2xl border-2 border-emerald-100 hover:bg-emerald-50 cursor-pointer transition">
+                            <div class="flex items-center space-x-3">
+                                <input type="checkbox" onchange="calculateCarbon()" class="carbon-check rounded text-emerald-600 w-5 h-5" value="1.2">
+                                <div>
+                                    <div class="font-bold text-gray-800 text-sm">出門自備環保餐具與餐盒</div>
+                                    <div class="text-xs text-gray-500">減少一次性塑膠製造與廢棄碳排</div>
+                                </div>
+                            </div>
+                            <span class="text-xs font-extrabold text-emerald-600 bg-emerald-100 px-2.5 py-1 rounded-full">-1.2 kg CO₂/週</span>
+                        </label>
+
+                        <label class="flex items-center justify-between p-4 rounded-2xl border-2 border-emerald-100 hover:bg-emerald-50 cursor-pointer transition">
+                            <div class="flex items-center space-x-3">
+                                <input type="checkbox" onchange="calculateCarbon()" class="carbon-check rounded text-emerald-600 w-5 h-5" value="2.5">
+                                <div>
+                                    <div class="font-bold text-gray-800 text-sm">每週至少 3 天選擇在地蔬食飲食</div>
+                                    <div class="text-xs text-gray-500">減少肉類與長途食物運輸碳足跡</div>
+                                </div>
+                            </div>
+                            <span class="text-xs font-extrabold text-emerald-600 bg-emerald-100 px-2.5 py-1 rounded-full">-2.5 kg CO₂/週</span>
+                        </label>
+
+                        <label class="flex items-center justify-between p-4 rounded-2xl border-2 border-emerald-100 hover:bg-emerald-50 cursor-pointer transition">
+                            <div class="flex items-center space-x-3">
+                                <input type="checkbox" onchange="calculateCarbon()" class="carbon-check rounded text-emerald-600 w-5 h-5" value="1.8">
+                                <div>
+                                    <div class="font-bold text-gray-800 text-sm">多步行或騎腳踏車替代家長接送</div>
+                                    <div class="text-xs text-gray-500">減少汽機車化石燃料排放</div>
+                                </div>
+                            </div>
+                            <span class="text-xs font-extrabold text-emerald-600 bg-emerald-100 px-2.5 py-1 rounded-full">-1.8 kg CO₂/週</span>
+                        </label>
+
+                        <label class="flex items-center justify-between p-4 rounded-2xl border-2 border-emerald-100 hover:bg-emerald-50 cursor-pointer transition">
+                            <div class="flex items-center space-x-3">
+                                <input type="checkbox" onchange="calculateCarbon()" class="carbon-check rounded text-emerald-600 w-5 h-5" value="0.9">
+                                <div>
+                                    <div class="font-bold text-gray-800 text-sm">選用天然植物皂清洗（非化學洗精）</div>
+                                    <div class="text-xs text-gray-500">降低廢水處理過程耗能</div>
+                                </div>
+                            </div>
+                            <span class="text-xs font-extrabold text-emerald-600 bg-emerald-100 px-2.5 py-1 rounded-full">-0.9 kg CO₂/週</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- 計算面板與固碳等值圖 -->
+                <div class="lg:col-span-5 space-y-6">
+                    <div class="bg-gradient-to-br from-emerald-800 to-teal-900 text-white rounded-3xl p-6 shadow-lg text-center flex flex-col justify-between min-h-[320px]">
+                        <div>
+                            <span class="text-xs font-bold uppercase tracking-wider text-emerald-300">每週估算減碳總量</span>
+                            <div class="text-5xl font-black text-amber-300 my-4" id="totalCarbonVal">0.0 <span class="text-lg text-white font-normal">kg CO₂</span></div>
+                            <p class="text-xs text-emerald-100 leading-relaxed px-4">
+                                一棵成年大樹一年約可吸收 12 kg 二氧化碳（平均每週約 0.23 kg）。
+                            </p>
+                        </div>
+
+                        <div class="bg-white/10 backdrop-blur-md rounded-2xl p-4 border border-white/20 mt-4">
+                            <div class="text-xs text-emerald-200 mb-1">相當於為地球提供了：</div>
+                            <div class="text-2xl font-bold text-white flex items-center justify-center space-x-2" id="treeEquivalent">
+                                <i class="fa-solid fa-tree text-emerald-400"></i>
+                                <span>相當於 0 棵大樹整週的固碳量！</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 碳權小常識 -->
+                    <div class="bg-white rounded-3xl p-6 shadow-md border border-emerald-100">
+                        <h4 class="font-bold text-gray-800 mb-2 flex items-center text-sm">
+                            <i class="fa-solid fa-scale-balanced text-amber-500 mr-2"></i> 什麼是「碳權」與「固碳」？
+                        </h4>
+                        <p class="text-xs text-gray-600 leading-relaxed">
+                            樹木在進行光合作用時，會把空氣中的二氧化碳吸收並儲存在樹幹與根部，這就是**「固碳」**。當森林保護得越好，能夠儲存的碳量越多，這些減碳效益在國際上可以換算為**「碳權」**價值，是保護地球非常珍貴的資產！
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ===== TAB 4: PLEDGE & BADGE / 國際小公民承諾與徽章 ===== -->
+        <section id="tab-pledge" class="tab-content hidden">
+            <div class="mb-8">
+                <span class="bg-amber-100 text-amber-800 font-bold text-xs px-3 py-1 rounded-full uppercase">綜藝劇場與實踐產出</span>
+                <h2 class="text-3xl font-extrabold text-gray-800 mt-1">國際小公民—綠生活承諾書</h2>
+                <p class="text-gray-600 mt-1">簽署你的永續承諾，獲得專屬「綠生活國際小公民」數位徽章！</p>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                <!-- 承諾書表單 -->
+                <div class="lg:col-span-6 bg-white rounded-3xl p-6 sm:p-8 shadow-lg border border-emerald-100">
+                    <h3 class="text-xl font-bold text-emerald-900 mb-4 flex items-center">
+                        <i class="fa-solid fa-pen-nib text-emerald-600 mr-2"></i> 簽署綠色行動承諾
+                    </h3>
+                    
+                    <form id="pledgeForm" onsubmit="event.preventDefault(); generateBadge();" class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-bold text-gray-700 mb-1">小公民姓名：</label>
+                            <input type="text" id="studentName" required placeholder="例如：林沐晴" class="w-full border-2 border-emerald-100 rounded-xl p-3 text-sm focus:border-emerald-500 focus:outline-none">
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-bold text-gray-700 mb-1">班級 / 座號：</label>
+                            <input type="text" id="studentClass" required placeholder="例如：四年一班 12號" class="w-full border-2 border-emerald-100 rounded-xl p-3 text-sm focus:border-emerald-500 focus:outline-none">
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-bold text-gray-700 mb-2">我的低碳減碳承諾 (可複選)：</label>
+                            <div class="space-y-2 text-xs">
+                                <label class="flex items-center space-x-2 bg-emerald-50 p-2.5 rounded-lg border border-emerald-200 cursor-pointer">
+                                    <input type="checkbox" class="pledge-opt text-emerald-600 rounded" checked value="出門自備環保餐具與水壺">
+                                    <span>出門自備環保餐具與水壺，不使用一次性塑膠。</span>
+                                </label>
+                                <label class="flex items-center space-x-2 bg-emerald-50 p-2.5 rounded-lg border border-emerald-200 cursor-pointer">
+                                    <input type="checkbox" class="pledge-opt text-emerald-600 rounded" checked value="使用天然植物清潔皂保護海洋水資源">
+                                    <span>優先使用天然植物清潔皂，減少化學污染保護海洋。</span>
+                                </label>
+                                <label class="flex items-center space-x-2 bg-emerald-50 p-2.5 rounded-lg border border-emerald-200 cursor-pointer">
+                                    <input type="checkbox" class="pledge-opt text-emerald-600 rounded" checked value="選擇在地食材，落實低碳飲食">
+                                    <span>選擇在地原型食材與蔬食，落實低碳飲食減碳。</span>
+                                </label>
+                                <label class="flex items-center space-x-2 bg-emerald-50 p-2.5 rounded-lg border border-emerald-200 cursor-pointer">
+                                    <input type="checkbox" class="pledge-opt text-emerald-600 rounded" value="愛護樹木與森林，珍惜廢木再生資源">
+                                    <span>愛護樹木與森林，支持廢木再利用（如百變廢木匙）。</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="w-full bg-gradient-to-r from-amber-500 to-emerald-600 hover:from-amber-400 hover:to-emerald-500 text-white font-bold py-3 rounded-xl shadow-lg transition">
+                            <i class="fa-solid fa-certificate mr-2"></i> 生成小公民證書與徽章
+                        </button>
+                    </form>
+                </div>
+
+                <!-- 數位徽章預覽卡片 -->
+                <div class="lg:col-span-6">
+                    <div id="badgeCard" class="bg-gradient-to-b from-amber-50 via-emerald-50 to-teal-100 rounded-3xl p-8 shadow-xl border-4 border-amber-300 text-center relative overflow-hidden flex flex-col items-center justify-between min-h-[420px]">
+                        <div class="absolute top-2 right-2 text-amber-300 opacity-20 text-8xl pointer-events-none">
+                            <i class="fa-solid fa-ribbon"></i>
+                        </div>
+
+                        <div>
+                            <span class="text-xs font-black tracking-widest text-emerald-800 bg-amber-300 px-4 py-1 rounded-full uppercase shadow-sm">濱海綠寶石 ‧ 永續認證</span>
+                            <h3 class="text-2xl font-black text-emerald-950 mt-4">國際小公民承諾證書</h3>
+                        </div>
+
+                        <!-- Badge Icon -->
+                        <div class="my-6 relative">
+                            <div class="w-32 h-32 rounded-full bg-gradient-to-tr from-emerald-600 to-teal-500 text-white flex flex-col items-center justify-center shadow-2xl border-4 border-white relative z-10 mx-auto">
+                                <i class="fa-solid fa-earth-americas text-4xl mb-1 text-amber-300"></i>
+                                <span class="text-[10px] font-black tracking-wider uppercase">Eco-Citizen</span>
+                            </div>
+                            <div class="absolute -bottom-2 left-1/2 transform -translate-x-1/2 bg-amber-400 text-emerald-950 font-black text-xs px-3 py-0.5 rounded-full shadow border border-white whitespace-nowrap">
+                                4th Grade Certified
+                            </div>
+                        </div>
+
+                        <div>
+                            <div id="badgeStudent" class="text-lg font-bold text-gray-800">立承諾人：林沐晴 (四年一班)</div>
+                            <p id="badgeSummary" class="text-xs text-gray-600 mt-2 px-6 line-clamp-2">
+                                我承諾落實自備餐具、選用天然皂與在地低碳飲食，用行動守護海洋與濱海綠寶石！
+                            </p>
+                        </div>
+
+                        <div class="w-full pt-4 mt-4 border-t border-emerald-200/60 flex justify-between items-center text-[11px] text-emerald-800">
+                            <span>發證單位：濱海綠寶石校訂課程團隊</span>
+                            <span id="badgeDate">2026/11/11</span>
+                        </div>
+                    </div>
+
+                    <div class="mt-4 flex justify-center">
+                        <button onclick="printBadge()" class="bg-emerald-700 hover:bg-emerald-800 text-white font-bold px-5 py-2.5 rounded-xl shadow transition text-sm flex items-center">
+                            <i class="fa-solid fa-print mr-2"></i> 列印 / 儲存承諾書
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ===== TAB 5: QUIZ / 綠寶石大挑戰 ===== -->
+        <section id="tab-quiz" class="tab-content hidden">
+            <div class="mb-8 text-center max-w-2xl mx-auto">
+                <span class="bg-emerald-100 text-emerald-800 font-bold text-xs px-3 py-1 rounded-full uppercase">知識隨堂測驗</span>
+                <h2 class="text-3xl font-extrabold text-gray-800 mt-1">濱海綠寶石 ‧ 永續大挑戰</h2>
+                <p class="text-gray-600 mt-1">考考你！看看你對天然清潔皂與低碳生活了解多少？</p>
+            </div>
+
+            <div class="max-w-2xl mx-auto bg-white rounded-3xl p-6 sm:p-8 shadow-xl border border-emerald-100">
+                <div id="quizContainer">
+                    <div class="flex justify-between items-center mb-6 border-b pb-3">
+                        <span id="quizProgress" class="text-xs font-bold text-emerald-700 bg-emerald-100 px-3 py-1 rounded-full">題目 1 / 5</span>
+                        <span id="quizScore" class="text-xs font-bold text-amber-700 bg-amber-100 px-3 py-1 rounded-full">得分：0</span>
+                    </div>
+
+                    <h3 id="quizQuestion" class="text-lg font-bold text-gray-800 mb-6 leading-snug">
+                        載入中...
+                    </h3>
+
+                    <div id="quizOptions" class="space-y-3">
+                        <!-- Options generated dynamically -->
+                    </div>
+
+                    <div id="quizFeedback" class="mt-6 p-4 rounded-2xl hidden text-sm font-medium"></div>
+
+                    <div class="mt-6 flex justify-end">
+                        <button id="nextQuizBtn" onclick="nextQuestion()" class="hidden bg-emerald-600 hover:bg-emerald-500 text-white font-bold px-6 py-2.5 rounded-xl transition">
+                            下一題 <i class="fa-solid fa-arrow-right ml-1"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Quiz Complete View -->
+                <div id="quizComplete" class="hidden text-center py-8">
+                    <div class="w-20 h-20 bg-amber-100 text-amber-500 rounded-full flex items-center justify-center text-4xl mx-auto mb-4">
+                        <i class="fa-solid fa-trophy"></i>
+                    </div>
+                    <h3 class="text-2xl font-black text-gray-800 mb-2">挑戰完成！</h3>
+                    <p id="finalScoreText" class="text-gray-600 text-base mb-6">你的最終得分：100 分</p>
+                    <button onclick="resetQuiz()" class="bg-emerald-600 hover:bg-emerald-500 text-white font-bold px-6 py-3 rounded-xl shadow transition">
+                        <i class="fa-solid fa-rotate-right mr-2"></i> 重新挑戰
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- ===== TAB 6: TEACHER & LESSON PLAN / 教案與備課專區 ===== -->
+        <section id="tab-teacher" class="tab-content hidden">
+            <div class="bg-white rounded-3xl p-6 sm:p-8 shadow-lg border border-amber-200 mb-8">
+                <div class="flex items-center space-x-3 border-b pb-4 mb-6">
+                    <div class="w-12 h-12 bg-amber-100 text-amber-800 rounded-2xl flex items-center justify-center text-2xl">
+                        <i class="fa-solid fa-chalkboard-user"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-2xl font-extrabold text-gray-800">四年級「濱海綠寶石」2節課（80分鐘）教案備課專區</h2>
+                        <p class="text-xs text-gray-500 mt-0.5">對應校訂課程架構圖與核心素養對照表</p>
+                    </div>
+                </div>
+
+                <!-- Lesson Info Cards -->
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+                    <div class="bg-emerald-50 p-4 rounded-2xl border border-emerald-100">
+                        <div class="text-xs font-bold text-emerald-700">適用年級</div>
+                        <div class="text-lg font-black text-emerald-950 mt-1">國小四年級</div>
+                    </div>
+                    <div class="bg-teal-50 p-4 rounded-2xl border border-teal-100">
+                        <div class="text-xs font-bold text-teal-700">總節數</div>
+                        <div class="text-lg font-black text-teal-950 mt-1">2 節課 (80分鐘)</div>
+                    </div>
+                    <div class="bg-amber-50 p-4 rounded-2xl border border-amber-100">
+                        <div class="text-xs font-bold text-amber-700">評量方式</div>
+                        <div class="text-lg font-black text-amber-950 mt-1">綜藝劇場 / 國際小公民</div>
+                    </div>
+                    <div class="bg-coastal-100/60 p-4 rounded-2xl border border-coastal-100">
+                        <div class="text-xs font-bold text-coastal-700">融入素養</div>
+                        <div class="text-lg font-black text-coastal-700 mt-1">學習力、合作力、包容力</div>
+                    </div>
+                </div>
+
+                <!-- Detailed Breakdown -->
+                <div class="space-y-6">
+                    <!-- Period 1 -->
+                    <div class="border-2 border-emerald-100 rounded-2xl p-5 hover:border-emerald-300 transition">
+                        <div class="flex items-center justify-between mb-3">
+                            <span class="bg-emerald-700 text-white font-bold text-xs px-3 py-1 rounded-full">第一節課（40分鐘）</span>
+                            <span class="text-xs font-bold text-emerald-700">主題：樹與生活應用—清潔一把皂</span>
+                        </div>
+                        <ul class="text-sm text-gray-700 space-y-2 leading-relaxed">
+                            <li><strong class="text-emerald-800">1. 引起動機 (10 min)：</strong>「天然 vs. 化學清潔劑大比拚」展示無患子與天然油脂，討論清潔用品來源。</li>
+                            <li><strong class="text-emerald-800">2. 發展活動 (20 min)：</strong>「植物清潔皂的奇幻旅程」講解皂化原理與分解效益，進行網頁虛擬環保皂設計體驗。</li>
+                            <li><strong class="text-emerald-800">3. 評量展演 (10 min)：</strong>「綜藝劇場：環保清潔小達人」分組展演推廣天然皂保護海洋水資源。</li>
+                        </ul>
+                    </div>
+
+                    <!-- Period 2 -->
+                    <div class="border-2 border-teal-100 rounded-2xl p-5 hover:border-teal-300 transition">
+                        <div class="flex items-center justify-between mb-3">
+                            <span class="bg-teal-700 text-white font-bold text-xs px-3 py-1 rounded-full">第二節課（40分鐘）</span>
+                            <span class="text-xs font-bold text-teal-700">主題：綠生活—碳權價值高</span>
+                        </div>
+                        <ul class="text-sm text-gray-700 space-y-2 leading-relaxed">
+                            <li><strong class="text-teal-800">1. 引起動機 (10 min)：</strong>「什麼是碳足跡與碳權？」討論生活碳排放與大樹「碳吸塵器」固碳功能。</li>
+                            <li><strong class="text-teal-800">2. 發展活動 (20 min)：</strong>「班級綠色減碳小算盤」使用互動計算機換算個人低碳行動，規劃減碳清單。</li>
+                            <li><strong class="text-teal-800">3. 評量展演 (10 min)：</strong>「國際小公民：綠生活承諾簽署」線上填寫承諾書並頒發國際小公民數位徽章。</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- 頁尾Footer -->
+    <footer class="bg-emerald-900 text-emerald-200 text-xs py-6 border-t border-emerald-800">
+        <div class="max-w-7xl mx-auto px-4 text-center space-y-2">
+            <p class="font-bold">濱海綠寶石校訂永續課程 ‧ 四年級互動教學平台</p>
+            <p class="opacity-75">本網頁內容整合《尋找濱海綠寶石》繪本與環境倫理、能資源永續主題單元</p>
+        </div>
+    </footer>
+
+    <!-- JavaScript Logic -->
+    <script>
+        // --- 繪本資料集 (10頁) ---
+        const storyData = [
+            {
+                page: 1,
+                chapter: "【 第一章：古老的地圖 】",
+                text: "陽光灑在海岸邊的綠色森林上。小學四年級的沐晴與秉勳，在學校的樹木角落發現了一張泛黃的探索地圖。地圖上赫然寫著：「沿著海岸尋找，就能找到守護地球的『濱海綠寶石』！」兩個好朋友充滿好奇，踏上了這場未知的綠色冒險之旅。",
+                takeaway: "環境倫理與自然探索：從觀察校園與周遭海岸生態開始，培養對大自然的好奇心與愛護心。",
+                icon: "fa-map-location-dot",
+                badge: "發現探索地圖"
+            },
+            {
+                page: 2,
+                chapter: "【 第二章：清澈的溪水 】",
+                text: "他們沿著海岸步道前行，伴隨著浪花聲與微風，來到了清澈的小溪旁。沐晴蹲在溪水邊，看著水面倒映出的藍天與綠樹。她想起老師曾說過，乾淨的水資源是大地最寶貴的禮物，但如果使用太多化學清潔劑，河流與海洋就會生病。",
+                takeaway: "水資源保護意識：化學洗劑會造成水質富營養化，影響海洋生命健康。",
+                icon: "fa-water",
+                badge: "關懷水資源"
+            },
+            {
+                page: 3,
+                chapter: "【 第三章：無患子的泡沫 】",
+                text: "突然，秉勳在步道旁的大樹下發現了許多黃褐色的果實。「看！這是無患子樹！」秉勳興奮地撿起果實，加了一點水在掌心中搓揉，居然冒出了綿密細緻的白色泡沫！原來樹木與植物本身就藏著天然的清潔妙方，不需要化學添加物就能溫和地洗淨髒污，保護水資源。",
+                takeaway: "植物天然應用：無患子含有天然皂素，是替代化學清潔劑的環保寶物。",
+                icon: "fa-soap",
+                badge: "發現天然皂素"
+            },
+            {
+                page: 4,
+                chapter: "【 第四章：天然環保皂 】",
+                text: "帶著無患子與天然植物油脂，沐晴與秉勳一起動手製作專屬的天然清潔皂。沐晴細心地把植物皂液倒進樹葉形狀的模具中，秉勳則在旁邊用木棒輕輕攪拌。這塊散發著淡淡植物香氣的「天然綠環保皂」，能自然分解、不污染海洋，正是他們找到的第一顆小寶石。",
+                takeaway: "手作綠色實踐：自己動手調配植物皂，體驗綠色消費與循環生活。",
+                icon: "fa-pump-soap",
+                badge: "手作環保皂"
+            },
+            {
+                page: 5,
+                chapter: "【 第五章：森林的光影 】",
+                text: "帶著做好的天然皂，兩人繼續往森林深處探索。林蔭間灑下斑駁的光影，涼爽的微風吹過葉片，傳來陣陣清香。秉勳停下腳步，深深地吸了一口新鮮空氣，感覺整個人都充滿了活力與能量。",
+                takeaway: "森林的生態系服務：森林能調節氣候、淨化空氣並提供療癒身心的場域。",
+                icon: "fa-sun-plant-wilt",
+                badge: "沉浸森林浴"
+            },
+            {
+                page: 6,
+                chapter: "【 第六章：大樹碳吸塵器 】",
+                text: "沐晴抱住一棵粗壯的大樹，興奮地對秉勳說：「你知道嗎？樹木就像是地球的『碳吸塵器』！」大樹在生長過程中會吸收空氣中的二氧化碳並儲存起來，這就是『固碳』。森林保護得越好，累積的『碳權』與生態價值就越高，能幫地球減輕好多的負擔呢！",
+                takeaway: "碳吸塵器與碳權概念：瞭解樹木光合作用固碳的機制，認識森林的碳權價值。",
+                icon: "fa-tree",
+                badge: "大樹碳吸塵器"
+            },
+            {
+                page: 7,
+                chapter: "【 第七章：低碳生活小撇步 】",
+                text: "秉勳從背包裡拿出自備的廢木雕刻小木匙與在地採摘的水果。他領悟到：「除了依靠大樹固碳，我們在日常生活中選擇低碳飲食、減少使用一次性塑膠，就能減少自己的『碳足跡』！」每一個小小的綠色選擇，都是在幫地球降溫。",
+                takeaway: "生活碳足跡：減少一次性餐具、選擇在地食物與廢木再利用，落實減碳生活。",
+                icon: "fa-utensils",
+                badge: "廢木匙與低碳餐"
+            },
+            {
+                page: 8,
+                chapter: "【 第八章：頂峰的綠寶石 】",
+                text: "他們終於爬上了海岸森林的頂峰，眺望遠方。只見鬱鬱蔥蔥的綠樹與蔚藍的海洋在海岸線相接，在陽光下閃耀著奪目的光芒。沐晴與秉勳相視而笑，原來地圖上所說的「濱海綠寶石」，並不是埋在地下的珍寶，而是這片受到好好愛護、生生不息的綠色大地與海洋！",
+                takeaway: "綠寶石真諦：濱海綠寶石象徵受到妥善保護的森林、海洋與永續生態環境。",
+                icon: "fa-gem",
+                badge: "看見綠寶石"
+            },
+            {
+                page: 9,
+                chapter: "【 第九章：綠生活承諾 】",
+                text: "為了守護這顆美麗的綠寶石，沐晴坐在山頂的木椅上，認真地在卡片上寫下自己的低碳生活承諾：「出門自備環保餐具、選用天然植物皂、多走路少開車。」她決定從身邊的每一件小事做起，減碳愛地球。",
+                takeaway: "個人承諾與行動：將永續觀念轉化為明確、具體的日常生活小事行動。",
+                icon: "fa-file-signature",
+                badge: "撰寫低碳承諾"
+            },
+            {
+                page: 10,
+                chapter: "【 第十章：國際小公民 】",
+                text: "秉勳與沐晴並肩站在藍天下，高高舉起他們簽署完成的「綠生活承諾書」與木製徽章。他們不只學會了樹木與水資源的秘密，更下定決心要帶著這份關懷與知識，把環保行動推廣給更多人，正式成為愛護地球、守護永續環境的「國際小公民」！",
+                takeaway: "國際小公民素養：展現團隊合作與國際理解，發揮影響力傳播永續環境理念。",
+                icon: "fa-earth-americas",
+                badge: "國際小公民"
+            }
+        ];
+
+        let currentPage = 0;
+        let selectedShape = 'leaf';
+
+        // --- 測驗題目資料集 ---
+        const quizQuestions = [
+            {
+                q: "1. 繪本中沐晴與秉勳在海岸樹林發現的天然清潔好幫手是什麼？",
+                options: ["洗潔精粉", "無患子果實", "塑膠顆粒", "化學香精"],
+                answer: 1,
+                explain: "無患子含有天然皂素，加水搓揉就能產生泡沫，是天然無污染的清潔原料。"
+            },
+            {
+                q: "2. 為什麼使用天然植物清潔皂對海洋與水資源比較友善？",
+                options: ["因為泡泡顏色漂亮", "因為價格最便宜", "因為能自然分解，不殘留化學毒性", "因為不會產生任何泡泡"],
+                answer: 2,
+                explain: "天然植物皂進入水體後能快速被微生物分解，不造成水質惡化與海洋污染。"
+            },
+            {
+                q: "3. 樹木被稱為地球的「碳吸塵器」，主要發揮了哪種生態功能？",
+                options: ["光合作用吸附並儲存二氧化碳（固碳）", "吸收泥土中的垃圾", "排放大量溫室氣體", "製造塑膠製品"],
+                answer: 0,
+                explain: "樹木透過光合作用將空氣中的 CO₂ 轉化並儲存於樹幹根部，稱為固碳。"
+            },
+            {
+                q: "4. 下列哪一種日常行為能幫助減少自己的「碳足跡」？",
+                options: ["餐餐叫遠程外送並使用一次性餐具", "出門自備環保水壺與餐具", "每天開車上下學不走路", "冷氣開到最低溫不關門"],
+                answer: 1,
+                explain: "自備環保餐具與水壺能減少一次性塑膠垃圾及生產過程中的碳排放。"
+            },
+            {
+                q: "5. 故事最終地圖上的「濱海綠寶石」是指什麼？",
+                options: ["埋在地下的綠色鑽石", "高價值的黃金寶藏", "受到好好愛護、生生不息的綠色大地與海岸森林", "昂貴的手錶"],
+                answer: 2,
+                explain: "濱海綠寶石象徵我們身邊寶貴且生生不息的海岸綠色森林與永續生態環境。"
+            }
+        ];
+
+        let currentQuizIndex = 0;
+        let quizScore = 0;
+
+        // Initialize Page
+        window.onload = function() {
+            renderStoryPage(0);
+            generateThumbnails();
+            loadQuiz();
+        };
+
+        // Mobile menu toggle
+        document.getElementById('mobileMenuBtn').addEventListener('click', function() {
+            const menu = document.getElementById('mobileMenu');
+            menu.classList.toggle('hidden');
+        });
+
+        // Tab Switching Logic
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            const target = document.getElementById('tab-' + tabId);
+            if (target) {
+                target.classList.remove('hidden');
+            }
+            // Close mobile menu if open
+            document.getElementById('mobileMenu').classList.add('hidden');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // 格式化數字為兩位數 (如: 1 -> "01")
+        function formatPageNum(num) {
+            return num < 10 ? '0' + num : num;
+        }
+
+        // Storybook Renderer
+        function renderStoryPage(index) {
+            const data = storyData[index];
+            document.getElementById('storyChapter').innerText = data.chapter;
+            document.getElementById('storyText').innerText = data.text;
+            document.getElementById('storyTakeaway').innerText = data.takeaway;
+            document.getElementById('storyBadge').innerText = data.badge;
+            document.getElementById('storyIcon').className = `fa-solid ${data.icon} mr-2 text-emerald-600`;
+            document.getElementById('pageIndicator').innerText = `第 ${data.page} / ${storyData.length} 頁`;
+
+            // 更新圖片並加入淡入淡出效果
+            const storyImg = document.getElementById('storyImage');
+            storyImg.style.opacity = 0;
+            setTimeout(() => {
+                storyImg.src = `p${formatPageNum(data.page)}.jpg`;
+                storyImg.style.opacity = 1;
+            }, 150);
+
+            // Button status
+            document.getElementById('prevPageBtn').disabled = (index === 0);
+            document.getElementById('nextPageBtn').disabled = (index === storyData.length - 1);
+
+            // Highlight thumbnail
+            document.querySelectorAll('.thumb-btn').forEach((btn, idx) => {
+                if (idx === index) {
+                    btn.classList.add('ring-2', 'ring-emerald-500', 'bg-emerald-100');
+                } else {
+                    btn.classList.remove('ring-2', 'ring-emerald-500', 'bg-emerald-100');
+                }
+            });
+        }
+
+        function changePage(direction) {
+            currentPage += direction;
+            if (currentPage < 0) currentPage = 0;
+            if (currentPage >= storyData.length) currentPage = storyData.length - 1;
+            renderStoryPage(currentPage);
+        }
+
+        function generateThumbnails() {
+            const container = document.getElementById('thumbnailBar');
+            container.innerHTML = '';
+            storyData.forEach((item, idx) => {
+                const btn = document.createElement('button');
+                btn.className = `thumb-btn flex-shrink-0 px-3 py-1.5 rounded-xl border border-emerald-200 text-xs font-bold text-gray-700 bg-white hover:bg-emerald-50 transition`;
+                btn.innerHTML = `<i class="fa-solid ${item.icon} mr-1 text-emerald-600"></i> P.${item.page}`;
+                btn.onclick = () => {
+                    currentPage = idx;
+                    renderStoryPage(idx);
+                };
+                container.appendChild(btn);
+            });
+        }
+
+        // Unit 1: Soap Maker
+        function selectShape(shape) {
+            selectedShape = shape;
+            document.querySelectorAll('.shape-btn').forEach(b => {
+                b.classList.remove('border-emerald-500', 'bg-emerald-50', 'text-emerald-800');
+                b.classList.add('border-gray-200', 'text-gray-600');
+            });
+            const selectedBtn = document.getElementById('btn-' + shape);
+            selectedBtn.classList.add('border-emerald-500', 'bg-emerald-50', 'text-emerald-800');
+            selectedBtn.classList.remove('border-gray-200', 'text-gray-600');
+        }
+
+        function makeSoap() {
+            const base = document.querySelector('input[name="base"]:checked').value;
+            const oil = document.getElementById('soapOil').value;
+            const scents = Array.from(document.querySelectorAll('input[name="scent"]:checked')).map(c => c.value);
+
+            let iconClass = "fa-leaf";
+            let shapeName = "樹葉";
+            if (selectedShape === 'gem') { iconClass = "fa-gem"; shapeName = "寶石"; }
+            if (selectedShape === 'tree') { iconClass = "fa-tree"; shapeName = "大樹"; }
+
+            let baseName = base === 'sapindus' ? '無患子' : '苦茶柑橘';
+            let title = `天然綠${shapeName}環保皂 (${baseName}特調)`;
+            
+            let desc = `特選${baseName}配方與天然植物油，搭配${scents.length > 0 ? scents.join('與') : '清新天然原味'}。自然分解不剩毒素，守護海洋！`;
+
+            document.getElementById('soapIconDisplay').innerHTML = `<i class="fa-solid ${iconClass} text-emerald-300"></i>`;
+            document.getElementById('soapTitle').innerText = title;
+            document.getElementById('soapDesc').innerText = desc;
+
+            confetti({
+                particleCount: 50,
+                spread: 60,
+                origin: { y: 0.7 }
+            });
+        }
+
+        // Unit 2: Carbon Calculator
+        function calculateCarbon() {
+            let total = 0;
+            document.querySelectorAll('.carbon-check:checked').forEach(c => {
+                total += parseFloat(c.value);
+            });
+
+            document.getElementById('totalCarbonVal').innerHTML = `${total.toFixed(1)} <span class="text-lg text-white font-normal">kg CO₂</span>`;
+            
+            // 1 adult tree ~ 0.23 kg CO2 per week
+            let trees = (total / 0.23).toFixed(1);
+            document.getElementById('treeEquivalent').innerHTML = `<i class="fa-solid fa-tree text-emerald-400"></i><span>相當於 ${trees} 棵大樹整週的固碳量！</span>`;
+        }
+
+        // Unit 3: Pledge & Badge Generator
+        function generateBadge() {
+            const name = document.getElementById('studentName').value || '林沐晴';
+            const className = document.getElementById('studentClass').value || '四年一班';
+            
+            const selectedOpts = Array.from(document.querySelectorAll('.pledge-opt:checked')).map(c => c.value);
+            let summary = selectedOpts.length > 0 ? selectedOpts.join('；') + '。' : '我承諾實踐低碳生活，守護濱海綠寶石！';
+
+            document.getElementById('badgeStudent').innerText = `立承諾人：${name} (${className})`;
+            document.getElementById('badgeSummary').innerText = `我承諾：${summary}`;
+            
+            const today = new Date();
+            document.getElementById('badgeDate').innerText = `${today.getFullYear()}/${today.getMonth()+1}/${today.getDate()}`;
+
+            confetti({
+                particleCount: 80,
+                spread: 70,
+                origin: { y: 0.6 }
+            });
+        }
+
+        function printBadge() {
+            window.print();
+        }
+
+        // Quiz Logic
+        function loadQuiz() {
+            if (currentQuizIndex >= quizQuestions.length) {
+                document.getElementById('quizContainer').classList.add('hidden');
+                document.getElementById('quizComplete').classList.remove('hidden');
+                document.getElementById('finalScoreText').innerText = `你的最終得分：${quizScore} / 100 分！`;
+                return;
+            }
+
+            const q = quizQuestions[currentQuizIndex];
+            document.getElementById('quizProgress').innerText = `題目 ${currentQuizIndex + 1} / ${quizQuestions.length}`;
+            document.getElementById('quizScore').innerText = `得分：${quizScore}`;
+            document.getElementById('quizQuestion').innerText = q.q;
+
+            const optionsContainer = document.getElementById('quizOptions');
+            optionsContainer.innerHTML = '';
+            
+            document.getElementById('quizFeedback').classList.add('hidden');
+            document.getElementById('nextQuizBtn').classList.add('hidden');
+
+            q.options.forEach((opt, idx) => {
+                const btn = document.createElement('button');
+                btn.className = "w-full text-left p-4 rounded-2xl border-2 border-emerald-100 hover:bg-emerald-50 font-medium text-sm text-gray-700 transition flex items-center justify-between";
+                btn.innerHTML = `<span>${String.fromCharCode(65 + idx)}. ${opt}</span> <i class="fa-regular fa-circle text-gray-300"></i>`;
+                btn.onclick = () => checkAnswer(idx);
+                optionsContainer.appendChild(btn);
+            });
+        }
+
+        function checkAnswer(selectedIdx) {
+            const q = quizQuestions[currentQuizIndex];
+            const feedback = document.getElementById('quizFeedback');
+            const options = document.getElementById('quizOptions').children;
+
+            // Disable all options
+            for (let btn of options) {
+                btn.disabled = true;
+            }
+
+            if (selectedIdx === q.answer) {
+                quizScore += 20;
+                feedback.className = "mt-6 p-4 rounded-2xl text-sm font-medium bg-emerald-100 text-emerald-900 border border-emerald-200";
+                feedback.innerHTML = `<i class="fa-solid fa-circle-check text-emerald-600 mr-2"></i> 答對了！${q.explain}`;
+                options[selectedIdx].classList.add('bg-emerald-100', 'border-emerald-500', 'text-emerald-900');
+            } else {
+                feedback.className = "mt-6 p-4 rounded-2xl text-sm font-medium bg-red-100 text-red-900 border border-red-200";
+                feedback.innerHTML = `<i class="fa-solid fa-circle-xmark text-red-600 mr-2"></i> 答錯囉！正確答案是：${q.options[q.answer]}。<br>${q.explain}`;
+                options[selectedIdx].classList.add('bg-red-100', 'border-red-400', 'text-red-900');
+                options[q.answer].classList.add('bg-emerald-100', 'border-emerald-500');
+            }
+
+            document.getElementById('quizScore').innerText = `得分：${quizScore}`;
+            feedback.classList.remove('hidden');
+            document.getElementById('nextQuizBtn').classList.remove('hidden');
+        }
+
+        function nextQuestion() {
+            currentQuizIndex++;
+            loadQuiz();
+        }
+
+        function resetQuiz() {
+            currentQuizIndex = 0;
+            quizScore = 0;
+            document.getElementById('quizContainer').classList.remove('hidden');
+            document.getElementById('quizComplete').classList.add('hidden');
+            loadQuiz();
+        }
+    </script>
+</body>
+</html>

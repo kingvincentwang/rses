@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>濱海小綠寶石的固碳魔法</title>
+    <style>
+        body {
+            font-family: 'Comic Sans MS', 'Microsoft JhengHei', sans-serif;
+            background-color: #e0f7fa;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            overflow: hidden;
+        }
+        #book-container {
+            width: 90%;
+            max-width: 800px;
+            height: 85vh;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        .page {
+            display: none;
+            flex: 1;
+            padding: 30px;
+            text-align: center;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            animation: fadeIn 0.4s ease-in-out;
+            position: relative;
+        }
+        .page.active {
+            display: flex;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.98); }
+            to { opacity: 1; transform: scale(1); }
+        }
+        h1 { color: #00796b; font-size: 2.2em; margin-bottom: 10px; }
+        p { font-size: 1.4em; color: #333; line-height: 1.6; }
+        
+        /* 圖片區塊 */
+        .illustration {
+            width: 100%;
+            height: 280px;
+            background-color: #b2dfdb;
+            border-radius: 15px;
+            margin: 15px 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 5em;
+            border: 3px dashed #00796b;
+            position: relative;
+            overflow: hidden;
+        }
+        .illustration img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 12px;
+        }
+
+        /* 底部控制列 */
+        .controls {
+            display: none; /* 在主選單時隱藏 */
+            justify-content: space-between;
+            padding: 15px 30px;
+            background: #00796b;
+            color: white;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 1.2em;
+            border: none;
+            border-radius: 10px;
+            background-color: #ffca28;
+            color: #333;
+            cursor: pointer;
+            font-weight: bold;
+            transition: transform 0.1s, background-color 0.2s;
+        }
+        button:hover:not(:disabled) { background-color: #ffc107; }
+        button:active:not(:disabled) { transform: scale(0.95); }
+        button:disabled { background-color: #ccc; cursor: not-allowed; }
+        
+        /* 頂部 UI (回首頁 & 頁碼) */
+        .top-ui {
+            position: absolute;
+            top: 20px;
+            width: 100%;
+            display: none; /* 主選單隱藏 */
+            justify-content: space-between;
+            pointer-events: none; /* 讓點擊穿透 */
+        }
+        .top-btn {
+            pointer-events: auto; /* 恢復點擊 */
+            background: #ff5252;
+            color: white;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 1em;
+            margin-left: 20px;
+        }
+        .top-btn:hover { background: #ff1744; }
+        .page-badge {
+            background: #ffb300;
+            color: #fff;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-weight: bold;
+            margin-right: 20px;
+            font-size: 1.1em;
+        }
+
+        /* 首頁選單樣式 */
+        .menu-title { font-size: 2.5em; color: #00796b; margin-bottom: 30px; font-weight: bold; }
+        .menu-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            width: 80%;
+        }
+        .menu-btn {
+            padding: 25px;
+            font-size: 1.5em;
+            border-radius: 15px;
+            background: #81d4fa;
+            border: 3px solid #0288d1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+        }
+        .menu-btn:hover { background: #4fc3f7; transform: translateY(-3px); }
+        .menu-btn span { font-size: 2em; }
+
+        /* 測驗與遊戲樣式 */
+        .quiz-container {
+            background: #fff9c4;
+            padding: 20px;
+            border-radius: 15px;
+            border: 3px dashed #ffb300;
+            width: 85%;
+            margin-top: 15px;
+        }
+        .quiz-btn {
+            background-color: #81d4fa;
+            margin: 8px 0;
+            padding: 12px;
+            font-size: 1.2em;
+            border-radius: 8px;
+            width: 100%;
+        }
+        .quiz-feedback {
+            font-weight: bold; margin-top: 15px; height: 1.5em; font-size: 1.2em;
+        }
+        #game-area {
+            width: 100%; height: 250px; background-color: #81d4fa; border-radius: 15px; position: relative; overflow: hidden; margin-top: 10px;
+        }
+        .co2-bubble {
+            position: absolute; font-size: 2em; cursor: pointer; user-select: none; animation: floatUp linear forwards;
+        }
+        @keyframes floatUp { from { top: 100%; } to { top: -20%; } }
+        #score-board { font-size: 1.5em; color: #d32f2f; font-weight: bold; }
+
+        /* 證書樣式 */
+        #certificate {
+            border: 5px solid #ffca28; padding: 30px; border-radius: 15px; background: #fff9c4; display: none; flex-direction: column; align-items: center;
+        }
+        input[type="text"] {
+            padding: 10px; font-size: 1.2em; border-radius: 5px; border: 2px solid #00796b; text-align: center;
+        }
+    </style>
+</head>
+<body>
+
+<div id="book-container">
+    
+    <!-- 頂部浮動 UI (回首頁 & 頁碼) -->
+    <div class="top-ui" id="top-ui">
+        <button class="top-btn" onclick="goToMenu()">🏠 回首頁</button>
+        <div class="page-badge"><span id="page-counter">1 / 1</span></div>
+    </div>
+
+    <!-- ================== 【主選單】 ================== -->
+    <div class="page active" id="menu">
+        <div class="menu-title">濱海小綠寶石<br>🌿 固碳魔法學習網 🌿</div>
+        <div class="menu-grid">
+            <button class="menu-btn" onclick="startModule('story')"><span>📖</span> 聽故事</button>
+            <button class="menu-btn" onclick="startModule('learn')" style="background:#a5d6a7; border-color:#2e7d32;"><span>📝</span> 教學活動</button>
+            <button class="menu-btn" onclick="startModule('quiz')" style="background:#ffe082; border-color:#ff8f00;"><span>🎯</span> 知識小測驗</button>
+            <button class="menu-btn" onclick="startModule('game')" style="background:#f48fb1; border-color:#c2185b;"><span>🎮</span> 小遊戲與證書</button>
+        </div>
+    </div>
+
+    <!-- ================== 【模組 1：故事繪本】 ================== -->
+    <div class="page" id="s1">
+        <h1>濱海小綠寶石的固碳魔法 🌿</h1>
+        <div class="illustration"><img src="p01.jpg" alt="封面插圖" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"><span>🌊🌱✨</span></div>
+        <p>歡迎來到美麗的海岸線！<br>準備好認識我們神奇的植物好朋友了嗎？</p>
+    </div>
+    <div class="page" id="s2">
+        <h1>我是濱海小綠寶石！</h1>
+        <div class="illustration"><img src="p02.jpg" alt="植物介紹" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"><span>🌿😎</span></div>
+        <p>大家好！我生長在海邊，不怕鹹鹹的海風和海水。<br>大家叫我「濱海植物」，就像海岸邊的小綠寶石！</p>
+    </div>
+    <div class="page" id="s3">
+        <h1>地球發燒了 🤒</h1>
+        <div class="illustration"><img src="p03.jpg" alt="暖化危機" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"><span>🌍🔥🚗</span></div>
+        <p>現在地球上有太多的「二氧化碳」壞氣體，<br>像給地球蓋了厚厚的棉被，讓地球生病發燒了！</p>
+    </div>
+    <div class="page" id="s4">
+        <h1>啟動魔法：光合作用 ☀️</h1>
+        <div class="illustration"><img src="p04.jpg" alt="光合作用" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"><span>☀️🌿💨</span></div>
+        <p>不用怕！我有神奇的魔法叫「光合作用」。<br>我可以把陽光、水和二氧化碳通通吸進肚子裡！</p>
+    </div>
+    <div class="page" id="s5">
+        <h1>固碳大師：藍碳秘密 🌊</h1>
+        <div class="illustration"><img src="p05.jpg" alt="藍碳" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"><span>🌱⬇️🪨</span></div>
+        <p>我會把吸進來的碳，緊緊鎖在葉子、根部，還有泥土裡。<br>這叫做「固碳」，海邊儲存的碳，我們稱它為「藍碳」！</p>
+    </div>
+    <div class="page" id="s6">
+        <h1>保護海岸的小尖兵 🛡️</h1>
+        <div class="illustration"><img src="p06.jpg" alt="保護生態" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"><span>🌪️🌿🦀</span></div>
+        <p>我強壯的根不只可以把碳藏起來，還可以抓緊泥土，<br>抵抗颱風和海浪，保護住在海邊的小動物們！</p>
+    </div>
+    <div class="page" id="s7">
+        <h1>我們需要你的幫忙 🤝</h1>
+        <div class="illustration"><img src="p07.jpg" alt="環保行動" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"><span>🚯🚮👦👧</span></div>
+        <p>但是，亂丟垃圾和破壞環境會讓我失去魔法。<br>請大家一起愛護海邊，讓我能繼續為地球降溫！</p>
+    </div>
+    <div class="page" id="s8">
+        <h1>故事結束囉！ ✨</h1>
+        <div class="illustration"><img src="p08.jpg" alt="準備遊戲" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"><span>🧑‍🤝‍🧑🌍💚</span></div>
+        <p>繪本看完了！接下來請回到首頁，<br>選擇「教學活動」或「知識測驗」來挑戰自己吧！</p>
+    </div>
+
+    <!-- ================== 【模組 2：教學活動】 ================== -->
+    <div class="page" id="l1">
+        <h1>📖 教學 1：發燒的地球</h1>
+        <div class="illustration" style="height: 200px;"><span>🌍🌡️💨</span></div>
+        <div style="background: #e8f5e9; padding: 20px; border-radius: 15px; border: 3px dashed #4caf50; width: 85%;">
+            <p style="margin:0; text-align:left; color:#1b5e20;">工廠和汽車排放了太多的<strong>「二氧化碳」</strong>。這些氣體像厚棉被把熱氣包在地球裡散不出去，這就是<strong>「溫室效應」</strong>。</p>
+        </div>
+    </div>
+    <div class="page" id="l2">
+        <h1>📖 教學 2：植物的冷氣魔法</h1>
+        <div class="illustration" style="height: 200px;"><span>☀️🌱🔄</span></div>
+        <div style="background: #e8f5e9; padding: 20px; border-radius: 15px; border: 3px dashed #4caf50; width: 85%;">
+            <p style="margin:0; text-align:left; color:#1b5e20;">植物透過<strong>「光合作用」</strong>，在曬太陽時吸進二氧化碳，吐出新鮮氧氣，就像天然冷氣機幫地球降溫！</p>
+        </div>
+    </div>
+    <div class="page" id="l3">
+        <h1>📖 教學 3：海岸的隱藏寶庫</h1>
+        <div class="illustration" style="height: 200px;"><span>🌊🌿🪨</span></div>
+        <div style="background: #e8f5e9; padding: 20px; border-radius: 15px; border: 3px dashed #4caf50; width: 85%;">
+            <p style="margin:0; text-align:left; color:#1b5e20;">長在海邊的植物（如木麻黃、紅樹林）和底下泥土儲存的碳，因為靠近藍色的大海，所以特別被稱為<strong>「藍碳」</strong>！</p>
+        </div>
+    </div>
+
+    <!-- ================== 【模組 3：小測驗】 ================== -->
+    <div class="page" id="q1">
+        <h1>🎯 小測驗：第 1 關</h1>
+        <div class="quiz-container">
+            <h2 style="color:#00796b;">請問讓地球生病發燒的壞氣體是什麼？</h2>
+            <div style="display:flex; flex-direction:column; gap:5px; margin-top:15px;">
+                <button class="quiz-btn" onclick="checkAnswer('q1', false, this)">氧氣</button>
+                <button class="quiz-btn" onclick="checkAnswer('q1', true, this)">二氧化碳</button>
+                <button class="quiz-btn" onclick="checkAnswer('q1', false, this)">水蒸氣</button>
+            </div>
+            <p id="feedback-q1" class="quiz-feedback"></p>
+        </div>
+    </div>
+    <div class="page" id="q2">
+        <h1>🎯 小測驗：第 2 關</h1>
+        <div class="quiz-container">
+            <h2 style="color:#00796b;">濱海植物吸收二氧化碳的神奇魔法叫什麼？</h2>
+            <div style="display:flex; flex-direction:column; gap:5px; margin-top:15px;">
+                <button class="quiz-btn" onclick="checkAnswer('q2', true, this)">光合作用</button>
+                <button class="quiz-btn" onclick="checkAnswer('q2', false, this)">呼吸作用</button>
+                <button class="quiz-btn" onclick="checkAnswer('q2', false, this)">消化作用</button>
+            </div>
+            <p id="feedback-q2" class="quiz-feedback"></p>
+        </div>
+    </div>
+    <div class="page" id="q3">
+        <h1>🎯 小測驗：第 3 關</h1>
+        <div class="quiz-container">
+            <h2 style="color:#00796b;">儲存在海邊植物和泥土裡的碳，我們稱為什麼？</h2>
+            <div style="display:flex; flex-direction:column; gap:5px; margin-top:15px;">
+                <button class="quiz-btn" onclick="checkAnswer('q3', false, this)">綠碳</button>
+                <button class="quiz-btn" onclick="checkAnswer('q3', false, this)">黑碳</button>
+                <button class="quiz-btn" onclick="checkAnswer('q3', true, this)">藍碳</button>
+            </div>
+            <p id="feedback-q3" class="quiz-feedback"></p>
+        </div>
+    </div>
+
+    <!-- ================== 【模組 4：遊戲與證書】 ================== -->
+    <div class="page" id="g1">
+        <h1>🎮 實戰：抓 CO2！</h1>
+        <p style="margin-bottom:5px;">點擊飄浮的二氧化碳 (☁️)，幫忙吸收它們！</p>
+        <div id="score-board">已吸收: <span id="score">0</span> / 10</div>
+        <div id="game-area"></div>
+        <button id="finish-game-btn" style="display: none; margin-top: 10px;" onclick="nextPage()">過關！領取證書 ➡️</button>
+    </div>
+    <div class="page" id="g2">
+        <h1>太棒了！挑戰成功 🎉</h1>
+        <div id="cert-form">
+            <p>請輸入你的名字：</p>
+            <input type="text" id="student-name" placeholder="你的名字">
+            <button onclick="generateCertificate()" style="margin-top: 10px;">領取榮譽卡</button>
+        </div>
+        <div id="certificate">
+            <h2 style="color: #00796b;">🏆 固碳魔法小尖兵 🏆</h2>
+            <h3 id="cert-name" style="font-size: 2em; border-bottom: 2px solid #333; padding-bottom: 10px; margin-top:10px;"></h3>
+            <p>成功完成挑戰，並幫助小綠寶石吸收二氧化碳！<br>特發此證，以茲鼓勵。</p>
+            <div style="font-size: 3em;">🌍🌿👏</div>
+        </div>
+    </div>
+
+    <!-- 底部控制列 -->
+    <div class="controls" id="controls">
+        <button id="prev-btn" onclick="prevPage()">⬅️ 上一頁</button>
+        <button id="read-btn" onclick="readContent()">🔊 聽文字</button>
+        <button id="next-btn" onclick="nextPage()">下一頁 ➡️</button>
+    </div>
+</div>
+
+<script>
+    // 定義四大模組的頁面 ID
+    const modules = {
+        menu: ['menu'],
+        story: ['s1', 's2', 's3', 's4', 's5', 's6', 's7', 's8'],
+        learn: ['l1', 'l2', 'l3'],
+        quiz: ['q1', 'q2', 'q3'],
+        game: ['g1', 'g2']
+    };
+
+    let currentModule = 'menu';
+    let currentIndex = 0;
+    
+    // 遊戲與測驗變數
+    let score = 0;
+    let gameInterval;
+    let synth = window.speechSynthesis;
+    let quizStatus = { 'q1': false, 'q2': false, 'q3': false };
+
+    // --- 核心導航邏輯 ---
+    function goToMenu() {
+        if(gameInterval) clearInterval(gameInterval); // 離開遊戲時停止計時
+        synth.cancel(); // 停止語音
+        currentModule = 'menu';
+        currentIndex = 0;
+        updateUI();
+    }
+
+    function startModule(moduleName) {
+        currentModule = moduleName;
+        currentIndex = 0;
+        updateUI();
+    }
+
+    function updateUI() {
+        // 隱藏所有頁面
+        document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+        
+        // 顯示當前頁面
+        const pageId = modules[currentModule][currentIndex];
+        document.getElementById(pageId).classList.add('active');
+
+        // 主選單與內容區的介面切換
+        if (currentModule === 'menu') {
+            document.getElementById('controls').style.display = 'none';
+            document.getElementById('top-ui').style.display = 'none';
+        } else {
+            document.getElementById('controls').style.display = 'flex';
+            document.getElementById('top-ui').style.display = 'flex';
+            
+            // 更新頁碼
+            const total = modules[currentModule].length;
+            document.getElementById('page-counter').innerText = (currentIndex + 1) + ' / ' + total;
+
+            // 上一頁按鈕邏輯
+            document.getElementById('prev-btn').disabled = (currentIndex === 0);
+
+            // 下一頁按鈕鎖定邏輯
+            let disableNext = false;
+            
+            if (currentModule === 'quiz' && !quizStatus[pageId]) {
+                disableNext = true; // 測驗未答對前鎖定
+            } else if (currentModule === 'game' && pageId === 'g1') {
+                if (score < 10) {
+                    disableNext = true;
+                    startGame(); // 進入遊戲頁面自動開始
+                }
+            }
+
+            document.getElementById('next-btn').disabled = disableNext;
+
+            // 判斷是否為該模組最後一頁，改變按鈕文字
+            if (currentIndex === total - 1) {
+                document.getElementById('next-btn').innerText = "完成 🏠";
+                document.getElementById('next-btn').style.backgroundColor = "#66bb6a"; // 綠色
+            } else {
+                document.getElementById('next-btn').innerText = "下一頁 ➡️";
+                document.getElementById('next-btn').style.backgroundColor = "#ffca28"; // 黃色
+            }
+        }
+        synth.cancel();
+    }
+
+    function nextPage() {
+        const total = modules[currentModule].length;
+        if (currentIndex < total - 1) {
+            currentIndex++;
+            updateUI();
+        } else {
+            goToMenu(); // 最後一頁按鈕為「完成」，點擊回首頁
+        }
+    }
+
+    function prevPage() {
+        if (currentIndex > 0) {
+            currentIndex--;
+            updateUI();
+        }
+    }
+
+    // --- 測驗系統 ---
+    function checkAnswer(pageId, isCorrect, btnElement) {
+        const feedback = document.getElementById('feedback-' + pageId);
+        const allBtns = document.getElementById(pageId).querySelectorAll('.quiz-btn');
+        allBtns.forEach(b => b.disabled = true); // 暫時鎖定
+
+        if (isCorrect) {
+            btnElement.style.backgroundColor = '#66bb6a'; 
+            btnElement.style.color = '#fff';
+            feedback.style.color = '#388e3c';
+            feedback.innerText = "⭕ 答對了！好棒！";
+            quizStatus[pageId] = true;
+            document.getElementById('next-btn').disabled = false; // 解鎖下一頁
+        } else {
+            btnElement.style.backgroundColor = '#ef5350'; 
+            btnElement.style.color = '#fff';
+            feedback.style.color = '#d32f2f';
+            feedback.innerText = "❌ 答錯囉，再想想看！";
+            
+            setTimeout(() => {
+                allBtns.forEach(b => b.disabled = false);
+                btnElement.style.backgroundColor = '#81d4fa';
+                btnElement.style.color = '#333';
+                feedback.innerText = '';
+            }, 1200);
+        }
+    }
+
+    // --- 遊戲系統 ---
+    function startGame() {
+        if (score >= 10) return;
+        score = 0;
+        document.getElementById('score').innerText = score;
+        document.getElementById('game-area').innerHTML = '';
+        document.getElementById('finish-game-btn').style.display = 'none';
+        
+        if(gameInterval) clearInterval(gameInterval);
+        gameInterval = setInterval(createCO2, 1000);
+    }
+
+    function createCO2() {
+        if (currentModule !== 'game' || currentIndex !== 0) {
+            clearInterval(gameInterval);
+            return;
+        }
+        if (score >= 10) return;
+
+        const gameArea = document.getElementById('game-area');
+        const co2 = document.createElement('div');
+        co2.classList.add('co2-bubble');
+        co2.innerText = '☁️';
+        
+        co2.style.left = (Math.random() * 80 + 10) + '%';
+        const duration = Math.random() * 2 + 2; 
+        co2.style.animationDuration = duration + 's';
+
+        co2.onclick = function() {
+            if (score < 10) {
+                score++;
+                document.getElementById('score').innerText = score;
+                this.remove(); 
+                if (score >= 10) {
+                    clearInterval(gameInterval);
+                    document.getElementById('finish-game-btn').style.display = 'inline-block';
+                    document.getElementById('next-btn').disabled = false;
+                    document.getElementById('game-area').innerHTML = '<h2 style="color:white; padding-top:100px;">任務完成！</h2>';
+                }
+            }
+        };
+
+        gameArea.appendChild(co2);
+        setTimeout(() => { if(co2.parentNode) co2.remove(); }, duration * 1000);
+    }
+
+    // --- 證書系統 ---
+    function generateCertificate() {
+        const nameInput = document.getElementById('student-name').value;
+        if (nameInput.trim() === "") { alert("請輸入名字喔！"); return; }
+        document.getElementById('cert-name').innerText = nameInput + " 小朋友";
+        document.getElementById('cert-form').style.display = 'none';
+        document.getElementById('certificate').style.display = 'flex';
+    }
+
+    // --- 語音系統 ---
+    function readContent() {
+        synth.cancel();
+        const pageId = modules[currentModule][currentIndex];
+        const currentDiv = document.getElementById(pageId);
+        
+        let textToRead = "";
+        
+        if (currentModule === 'quiz') {
+            const h1 = currentDiv.querySelector('h1').innerText;
+            const q = currentDiv.querySelector('h2').innerText;
+            textToRead = h1 + "。" + q;
+        } else {
+            const h1 = currentDiv.querySelector('h1');
+            const p = currentDiv.querySelector('p');
+            if(h1) textToRead += h1.innerText + "。 ";
+            if(p) textToRead += p.innerText;
+        }
+
+        if (textToRead) {
+            const utterThis = new SpeechSynthesisUtterance(textToRead);
+            utterThis.lang = 'zh-TW';
+            utterThis.rate = 0.9; 
+            synth.speak(utterThis);
+        }
+    }
+</script>
+</body>
+</html>

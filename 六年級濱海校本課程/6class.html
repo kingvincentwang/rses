@@ -1,0 +1,870 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>濱海綠寶石：紅樹林濕地與藍碳保育 - 六年級校訂互動教學網頁</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Canvas Confetti -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        emerald: {
+                            50: '#ecfdf5',
+                            100: '#d1fae5',
+                            500: '#10b981',
+                            600: '#059669',
+                            700: '#047857',
+                            800: '#065f46',
+                            900: '#064e3b',
+                        },
+                        teal: {
+                            600: '#0d9488',
+                            700: '#0f766e',
+                            800: '#115e59',
+                            900: '#134e4a',
+                        },
+                        amber: {
+                            100: '#fef3c7',
+                            700: '#b45309',
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'Microsoft JhengHei', 'PingFang TC', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .glass-card {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+        .tab-btn.active {
+            background-color: #047857;
+            color: #ffffff;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-8px); }
+        }
+        .animate-float {
+            animation: float 4s ease-in-out infinite;
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-teal-50 via-emerald-50 to-cyan-50 min-h-screen text-slate-800 flex flex-col font-sans">
+
+    <!-- 頂部導覽列 -->
+    <header class="sticky top-0 z-50 bg-teal-900/95 text-white backdrop-blur shadow-md border-b border-teal-700">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center space-x-3">
+                    <div class="bg-emerald-500 text-teal-950 p-2 rounded-xl text-xl animate-float">
+                        <i class="fa-solid fa-gem"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-lg md:text-xl font-bold tracking-wide">濱海綠寶石</h1>
+                        <p class="text-xs text-emerald-300">六年級校訂課程：紅樹林濕地與藍碳保育</p>
+                    </div>
+                </div>
+                <div class="hidden md:flex items-center space-x-2 text-sm bg-teal-800/60 px-3 py-1.5 rounded-full border border-teal-600">
+                    <span class="bg-emerald-400 text-teal-950 px-2 py-0.5 rounded-full font-bold text-xs">六年級專屬</span>
+                    <span>3 節課 (120分鐘) 系統化探索</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- 主頁面容器 -->
+    <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
+
+        <!-- 頁籤導覽列 (Tabs) -->
+        <div class="flex overflow-x-auto space-x-2 p-1.5 bg-slate-200/80 rounded-2xl mb-6 shadow-inner no-scrollbar text-xs md:text-sm font-medium">
+            <button onclick="switchTab('storybook')" id="tab-storybook" class="tab-btn active flex-1 min-w-[110px] py-2.5 px-3 rounded-xl transition duration-200 flex items-center justify-center space-x-1.5">
+                <i class="fa-solid fa-book-open"></i><span>故事繪本</span>
+            </button>
+            <button onclick="switchTab('anatomy')" id="tab-anatomy" class="tab-btn flex-1 min-w-[110px] py-2.5 px-3 rounded-xl transition duration-200 flex items-center justify-center space-x-1.5">
+                <i class="fa-solid fa-tree"></i><span>生存特異功能</span>
+            </button>
+            <button onclick="switchTab('bluecarbon')" id="tab-bluecarbon" class="tab-btn flex-1 min-w-[110px] py-2.5 px-3 rounded-xl transition duration-200 flex items-center justify-center space-x-1.5">
+                <i class="fa-solid fa-water"></i><span>藍碳與食物網</span>
+            </button>
+            <button onclick="switchTab('theater')" id="tab-theater" class="tab-btn flex-1 min-w-[110px] py-2.5 px-3 rounded-xl transition duration-200 flex items-center justify-center space-x-1.5">
+                <i class="fa-solid fa-masks-theater"></i><span>綜藝劇場</span>
+            </button>
+            <button onclick="switchTab('quiz')" id="tab-quiz" class="tab-btn flex-1 min-w-[110px] py-2.5 px-3 rounded-xl transition duration-200 flex items-center justify-center space-x-1.5">
+                <i class="fa-solid fa-award"></i><span>保育大使測驗</span>
+            </button>
+            <button onclick="switchTab('curriculum')" id="tab-curriculum" class="tab-btn flex-1 min-w-[110px] py-2.5 px-3 rounded-xl transition duration-200 flex items-center justify-center space-x-1.5">
+                <i class="fa-solid fa-clipboard-list"></i><span>教案總覽</span>
+            </button>
+        </div>
+
+        <!-- 內容區塊 1：故事繪本閱讀器 -->
+        <section id="sec-storybook" class="tab-content space-y-6">
+            <div class="glass-card rounded-3xl p-6 shadow-xl border border-emerald-100">
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4 border-b pb-4">
+                    <div>
+                        <span class="text-xs uppercase tracking-wider text-emerald-700 font-semibold">Storybook Reader</span>
+                        <h2 class="text-2xl font-bold text-teal-900">《濱海綠寶石：藍碳小守護者》</h2>
+                        <p class="text-sm text-slate-600">跟隨宥安與芷蔚的足跡，探索紅樹林生態奇蹟與藍碳保衛戰</p>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <button onclick="speakCurrentPage()" class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-xl text-sm font-medium transition flex items-center space-x-2 shadow">
+                            <i class="fa-solid fa-volume-high"></i><span id="speech-btn-text">朗讀本頁</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 繪本卡片內容 display -->
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
+                    <!-- 左側/上方：繪本圖片展演區 -->
+                    <div class="lg:col-span-6 bg-gradient-to-b from-teal-800 to-emerald-950 rounded-2xl p-6 text-white min-h-[340px] flex flex-col justify-between shadow-inner relative overflow-hidden">
+                        <div class="absolute -right-8 -bottom-8 opacity-10 text-9xl pointer-events-none">
+                            <i class="fa-solid fa-seedling"></i>
+                        </div>
+                        <div class="flex justify-between items-center text-xs text-emerald-300 font-semibold tracking-wide relative z-10">
+                            <span id="story-page-num">頁數 1 / 10</span>
+                            <span class="bg-emerald-800/80 px-3 py-1 rounded-full border border-emerald-500/30" id="story-chapter-tag">潮間帶探險</span>
+                        </div>
+                        <div class="my-4 text-center px-2 relative z-10">
+                            <!-- 繪本插圖顯示區 (保留 p1.jpeg ~ p10.jpeg 連結) -->
+                            <div class="mb-3 flex flex-col items-center justify-center">
+                                <img id="story-image" src="p1.jpeg" alt="綠寶石海岸的邀請"
+                                     onerror="this.classList.add('hidden'); document.getElementById('story-fallback-box').classList.remove('hidden');"
+                                     class="w-full max-h-60 object-contain rounded-xl shadow-lg border border-emerald-400/30 bg-teal-950/50">
+                                <!-- 若本地尚未放入 p1.jpeg~p10.jpeg 時的備援圖示與檔名提示 -->
+                                <div id="story-fallback-box" class="hidden py-4 flex flex-col items-center">
+                                    <div id="story-visual-icon" class="text-6xl text-emerald-400 mb-3 animate-bounce">
+                                        <i class="fa-solid fa-gem"></i>
+                                    </div>
+                                    <span id="story-image-filename" class="text-[11px] font-mono bg-teal-950/80 text-emerald-300 px-2.5 py-0.5 rounded-full border border-emerald-500/30">
+                                        圖片連結：p1.jpeg
+                                    </span>
+                                </div>
+                            </div>
+                            <h3 id="story-page-title" class="text-xl md:text-2xl font-bold mb-1 text-emerald-200">綠寶石海岸的邀請</h3>
+                        </div>
+                        <div class="flex justify-between items-center pt-4 border-t border-emerald-800/50 relative z-10">
+                            <button onclick="prevPage()" id="btn-prev" class="px-4 py-2 bg-teal-700/60 hover:bg-teal-700 rounded-lg text-xs font-semibold disabled:opacity-40 transition">
+                                <i class="fa-solid fa-chevron-left mr-1"></i> 上一頁
+                            </button>
+                            <div class="flex space-x-1" id="page-dots"></div>
+                            <button onclick="nextPage()" id="btn-next" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg text-xs font-semibold transition">
+                                下一頁 <i class="fa-solid fa-chevron-right ml-1"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- 右側/下方：繪本內文與引導問題 -->
+                    <div class="lg:col-span-6 space-y-4">
+                        <div class="bg-amber-50/70 border-l-4 border-amber-500 p-4 rounded-r-2xl">
+                            <h4 class="text-sm font-bold text-amber-800 mb-1 flex items-center">
+                                <i class="fa-solid fa-lightbulb mr-2"></i>核心導讀概念
+                            </h4>
+                            <p id="story-concept" class="text-xs text-amber-900">認識河口潮間帶的環境特質與紅樹林分佈。</p>
+                        </div>
+                        <div class="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm min-h-[160px] flex items-center">
+                            <p id="story-text" class="text-base text-slate-700 leading-relaxed font-normal">
+                                在海與河交界的高鹽度潮間帶，繁茂的紅樹林像是一串鑲嵌在海岸線上的綠寶石。六年級的宥安與芷蔚踏上木棧道，展開了一場濕地生態探險。眼前一片翠綠的樹冠下，藏著無數適應潮汐漲退的生命奇蹟。
+                            </p>
+                        </div>
+                        <div class="bg-emerald-50 p-4 rounded-2xl border border-emerald-200">
+                            <h5 class="text-xs font-bold text-emerald-900 mb-1 flex items-center">
+                                <i class="fa-solid fa-circle-question mr-1.5 text-emerald-600"></i>動動腦時間：
+                            </h5>
+                            <p id="story-question" class="text-xs text-emerald-800">你有觀察過海水與淡水交界處的植被有何特別之處嗎？</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 內容區塊 2：紅樹林生存特異功能 (解剖學與適應性) -->
+        <section id="sec-anatomy" class="tab-content hidden space-y-6">
+            <div class="glass-card rounded-3xl p-6 shadow-xl border border-emerald-100">
+                <div class="mb-6 border-b pb-4">
+                    <span class="text-xs uppercase tracking-wider text-emerald-700 font-semibold">Lesson 1: Survival Mechanics</span>
+                    <h2 class="text-2xl font-bold text-teal-900">水陸交界處的奇蹟—紅樹林生存術</h2>
+                    <p class="text-sm text-slate-600">點擊下方器官圖示或選單，探索水筆仔如何征服高鹽、缺氧與強風海浪的考驗</p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <!-- 器官卡片 1：胎生苗 -->
+                    <div onclick="selectOrgan('viviparous')" id="organ-card-viviparous" class="organ-card cursor-pointer bg-white p-6 rounded-2xl border-2 border-emerald-500 shadow-md hover:shadow-lg transition transform hover:-translate-y-1">
+                        <div class="w-12 h-12 bg-emerald-100 text-emerald-700 rounded-xl flex items-center justify-center text-2xl mb-4">
+                            <i class="fa-solid fa-seedling"></i>
+                        </div>
+                        <span class="text-xs bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded-full font-bold">繁衍奇跡</span>
+                        <h3 class="text-lg font-bold text-slate-800 mt-2">胎生現象 (Propagule)</h3>
+                        <p class="text-xs text-slate-500 mt-1">種子在母樹上直接發育發芽，避免鹽水浸泡淹死...</p>
+                    </div>
+
+                    <!-- 器官卡片 2：支柱根 -->
+                    <div onclick="selectOrgan('prop-root')" id="organ-card-prop-root" class="organ-card cursor-pointer bg-white p-6 rounded-2xl border-2 border-slate-200 shadow-md hover:shadow-lg transition transform hover:-translate-y-1">
+                        <div class="w-12 h-12 bg-teal-100 text-teal-700 rounded-xl flex items-center justify-center text-2xl mb-4">
+                            <i class="fa-solid fa-shield-halved"></i>
+                        </div>
+                        <span class="text-xs bg-teal-100 text-teal-800 px-2 py-0.5 rounded-full font-bold">抗浪地基</span>
+                        <h3 class="text-lg font-bold text-slate-800 mt-2">支柱根 (Prop Roots)</h3>
+                        <p class="text-xs text-slate-500 mt-1">如多腳腳架從樹幹支撐延伸，穩固抓緊泥沙抵禦海浪...</p>
+                    </div>
+
+                    <!-- 器官卡片 3：呼吸根 -->
+                    <div onclick="selectOrgan('pneumatophore')" id="organ-card-pneumatophore" class="organ-card cursor-pointer bg-white p-6 rounded-2xl border-2 border-slate-200 shadow-md hover:shadow-lg transition transform hover:-translate-y-1">
+                        <div class="w-12 h-12 bg-cyan-100 text-cyan-700 rounded-xl flex items-center justify-center text-2xl mb-4">
+                            <i class="fa-solid fa-wind"></i>
+                        </div>
+                        <span class="text-xs bg-cyan-100 text-cyan-800 px-2 py-0.5 rounded-full font-bold">泥潭潛望鏡</span>
+                        <h3 class="text-lg font-bold text-slate-800 mt-2">呼吸根 (Pneumatophores)</h3>
+                        <p class="text-xs text-slate-500 mt-1">向上伸出泥灘表面的氣根，解決淤泥內部缺氧危機...</p>
+                    </div>
+                </div>
+
+                <!-- 詳細互動解密面板 -->
+                <div class="mt-6 bg-gradient-to-r from-teal-900 to-emerald-900 text-white rounded-2xl p-6 shadow-inner">
+                    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
+                        <div class="lg:col-span-4 flex justify-center">
+                            <div id="organ-detail-icon" class="w-32 h-32 bg-emerald-500/20 border-2 border-emerald-400/40 rounded-full flex items-center justify-center text-6xl text-emerald-300">
+                                <i class="fa-solid fa-seedling"></i>
+                            </div>
+                        </div>
+                        <div class="lg:col-span-8 space-y-3">
+                            <div class="flex items-center space-x-2">
+                                <h3 id="organ-detail-title" class="text-2xl font-bold text-emerald-300">水筆仔胎生苗機制</h3>
+                                <span id="organ-detail-tag" class="bg-emerald-500 text-teal-950 text-xs px-2.5 py-0.5 rounded-full font-bold">胎生繁殖</span>
+                            </div>
+                            <p id="organ-detail-desc" class="text-sm leading-relaxed text-slate-200">
+                                一般植物的種子落在高鹽度海水中會脫水無法發芽。水筆仔演化出獨特的「胎生」機制：果實成熟後不掉落，種子直接在母樹上發育延伸成「筆狀胚軸（胎生苗）」。吸飽母體養分後成熟脫落，筆端重重插入泥灘立即可成長；若遇到漲潮，則可隨水漂流長達數月，直到落腳泥灘生根。
+                            </p>
+                            <div class="bg-teal-800/80 p-3 rounded-xl border border-teal-600 text-xs text-emerald-100 flex items-start space-x-2">
+                                <i class="fa-solid fa-graduation-cap text-amber-400 text-sm mt-0.5"></i>
+                                <div>
+                                    <strong class="text-amber-300">系統思考分析：</strong>
+                                    <span id="organ-detail-system">適應極端鹽濕與強風潮汐環境，展現生命高度智慧。</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 內容區塊 3：藍碳與濕地生態食物網 -->
+        <section id="sec-bluecarbon" class="tab-content hidden space-y-6">
+            <!-- 藍碳固碳試算器 -->
+            <div class="glass-card rounded-3xl p-6 shadow-xl border border-emerald-100">
+                <div class="mb-6 border-b pb-4">
+                    <span class="text-xs uppercase tracking-wider text-emerald-700 font-semibold">Lesson 2: Blue Carbon Calculator</span>
+                    <h2 class="text-2xl font-bold text-teal-900">氣候變遷英雄：藍碳固碳效能試算器</h2>
+                    <p class="text-sm text-slate-600">紅樹林單位面積的封碳能力是陸地熱帶雨林的 3 到 5 倍！拖動滑桿體驗紅樹林保育的減碳貢獻。</p>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
+                    <div class="lg:col-span-6 space-y-6 bg-white p-6 rounded-2xl border border-slate-100 shadow-sm">
+                        <div>
+                            <div class="flex justify-between items-center mb-2">
+                                <label class="text-sm font-bold text-slate-700">保護紅樹林面積 (公頃)：</label>
+                                <span id="area-val" class="text-xl font-bold text-emerald-600">50 公頃</span>
+                            </div>
+                            <input type="range" id="area-slider" min="5" max="200" value="50" oninput="updateBlueCarbon()" class="w-full accent-emerald-600 h-2 bg-slate-200 rounded-lg cursor-pointer">
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-4">
+                            <div class="bg-emerald-50 p-4 rounded-xl border border-emerald-200 text-center">
+                                <span class="text-xs text-emerald-800 font-semibold">每年封存藍碳 (公噸 CO₂)</span>
+                                <div id="carbon-absorbed" class="text-2xl font-extrabold text-emerald-700 mt-1">400 噸</div>
+                            </div>
+                            <div class="bg-teal-50 p-4 rounded-xl border border-teal-200 text-center">
+                                <span class="text-xs text-teal-800 font-semibold">相當於少開汽車 (公里)</span>
+                                <div id="car-km" class="text-2xl font-extrabold text-teal-700 mt-1">1,600,000 km</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="lg:col-span-6 bg-gradient-to-br from-teal-800 to-slate-900 text-white p-6 rounded-2xl shadow-inner space-y-3">
+                        <h4 class="text-lg font-bold text-emerald-300 flex items-center">
+                            <i class="fa-solid fa-cloud-meatball mr-2"></i>什麼是「藍碳 (Blue Carbon)」？
+                        </h4>
+                        <p class="text-xs leading-relaxed text-slate-300">
+                            藍碳指由海岸與海洋生態系（如紅樹林、鹽沼、海草床）所捕獲並儲存的碳。紅樹林樹葉與木質部吸收二氧化碳後，落葉被埋入缺氧泥灘中，分解速度極慢，能將碳固定在底泥中數百年甚至數千年！
+                        </p>
+                        <div class="bg-slate-800/80 p-3 rounded-lg border border-slate-700 text-xs text-amber-300">
+                            <i class="fa-solid fa-triangle-exclamation mr-1"></i>警告：破壞 1 公頃紅樹林，會釋放出儲存在泥底沉積物中累積數百年的巨大溫室氣體！
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 生態食物網互動互動 -->
+            <div class="glass-card rounded-3xl p-6 shadow-xl border border-emerald-100">
+                <h3 class="text-xl font-bold text-teal-900 mb-2">潮間帶濕地碎屑食物網</h3>
+                <p class="text-sm text-slate-600 mb-4">點擊生物卡片，觀看紅樹林落葉如何滋養豐富的海岸生物多樣性：</p>
+
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                    <div onclick="showFoodDetail('leaf')" class="bg-white p-4 rounded-xl text-center border hover:border-emerald-500 cursor-pointer transition shadow-sm">
+                        <div class="text-3xl text-emerald-600 mb-2"><i class="fa-solid fa-leaf"></i></div>
+                        <h4 class="font-bold text-sm text-slate-800">紅樹林落葉</h4>
+                        <span class="text-[10px] bg-slate-100 text-slate-600 px-2 py-0.5 rounded-full">食物網起點</span>
+                    </div>
+                    <div onclick="showFoodDetail('crab')" class="bg-white p-4 rounded-xl text-center border hover:border-emerald-500 cursor-pointer transition shadow-sm">
+                        <div class="text-3xl text-amber-600 mb-2"><i class="fa-solid fa-crab"></i></div>
+                        <h4 class="font-bold text-sm text-slate-800">弧邊招潮蟹</h4>
+                        <span class="text-[10px] bg-amber-100 text-amber-800 px-2 py-0.5 rounded-full">底棲分解者</span>
+                    </div>
+                    <div onclick="showFoodDetail('fish')" class="bg-white p-4 rounded-xl text-center border hover:border-emerald-500 cursor-pointer transition shadow-sm">
+                        <div class="text-3xl text-teal-600 mb-2"><i class="fa-solid fa-fish"></i></div>
+                        <h4 class="font-bold text-sm text-slate-800">彈塗魚</h4>
+                        <span class="text-[10px] bg-teal-100 text-teal-800 px-2 py-0.5 rounded-full">兩棲跳躍者</span>
+                    </div>
+                    <div onclick="showFoodDetail('bird')" class="bg-white p-4 rounded-xl text-center border hover:border-emerald-500 cursor-pointer transition shadow-sm">
+                        <div class="text-3xl text-cyan-600 mb-2"><i class="fa-solid fa-dove"></i></div>
+                        <h4 class="font-bold text-sm text-slate-800">大白鷺/候鳥</h4>
+                        <span class="text-[10px] bg-cyan-100 text-cyan-800 px-2 py-0.5 rounded-full">頂級掠食者</span>
+                    </div>
+                </div>
+                <div id="food-detail-box" class="mt-4 p-4 bg-emerald-50 rounded-xl border border-emerald-200 text-xs text-slate-700">
+                    💡 點擊上方任意生物，了解其在濕地生態系中的防護與食物鏈角色！
+                </div>
+            </div>
+        </section>
+
+        <!-- 內容區塊 4：綜藝劇場與創作編輯器 -->
+        <section id="sec-theater" class="tab-content hidden space-y-6">
+            <div class="glass-card rounded-3xl p-6 shadow-xl border border-emerald-100">
+                <div class="mb-6 border-b pb-4">
+                    <span class="text-xs uppercase tracking-wider text-emerald-700 font-semibold">Lesson 3: Variety Theatre Workshop</span>
+                    <h2 class="text-2xl font-bold text-teal-900">綜藝劇場：綠寶石倡議劇本生成器</h2>
+                    <p class="text-sm text-slate-600">第三節課的重頭戲！選擇角色與倡議主題，快速組合出小組 2 分鐘的環境保育快閃劇本。</p>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                    <!-- 左側設定區 -->
+                    <div class="lg:col-span-5 space-y-4 bg-white p-5 rounded-2xl border border-slate-200">
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 mb-1">1. 選擇劇場主題</label>
+                            <select id="skit-theme" onchange="generateSkit()" class="w-full text-xs p-2.5 border rounded-xl bg-slate-50 focus:ring-2 focus:ring-emerald-500">
+                                <option value="viviparous">【主題一】胎生苗的冒險旅程 (適應機制)</option>
+                                <option value="bluecarbon">【主題二】藍碳巨星與氣候危機 (碳匯價值)</option>
+                                <option value="cleanup">【主題三】棲地守護大作戰 (淨灘行動)</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 mb-1">2. 輸入組名與小組成員</label>
+                            <input type="text" id="skit-group" value="綠寶石第一小隊" oninput="generateSkit()" class="w-full text-xs p-2 border rounded-xl mb-2" placeholder="請輸入小組名稱">
+                            <input type="text" id="skit-actor1" value="宥安 (飾 胎生苗/守護者)" oninput="generateSkit()" class="w-full text-xs p-2 border rounded-xl mb-2" placeholder="角色 1">
+                            <input type="text" id="skit-actor2" value="芷蔚 (飾 招潮蟹/氣候博士)" oninput="generateSkit()" class="w-full text-xs p-2 border rounded-xl" placeholder="角色 2">
+                        </div>
+                        <button onclick="window.print()" class="w-full bg-teal-800 hover:bg-teal-900 text-white py-2.5 rounded-xl text-xs font-bold flex items-center justify-center space-x-2">
+                            <i class="fa-solid fa-print"></i><span>列印 / 匯出劇場劇本</span>
+                        </button>
+                    </div>
+
+                    <!-- 右側劇本預覽區 -->
+                    <div class="lg:col-span-7 bg-slate-900 text-slate-100 p-6 rounded-2xl shadow-inner font-mono text-xs leading-relaxed border border-slate-800 space-y-3">
+                        <div class="flex justify-between border-b border-slate-700 pb-2 text-emerald-400 font-bold">
+                            <span>🎭 劇本預覽 (綜藝劇場 2 分鐘短劇)</span>
+                            <span id="script-group-tag">隊伍：綠寶石第一小隊</span>
+                        </div>
+                        <div id="skit-preview" class="space-y-3 min-h-[220px]">
+                            <!-- 動態生成劇本內容 -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 內容區塊 5：保育大使互動測驗與證書 -->
+        <section id="sec-quiz" class="tab-content hidden space-y-6">
+            <div class="glass-card rounded-3xl p-6 shadow-xl border border-emerald-100">
+                <div class="mb-6 border-b pb-4">
+                    <span class="text-xs uppercase tracking-wider text-emerald-700 font-semibold">Assessment & Certification</span>
+                    <h2 class="text-2xl font-bold text-teal-900">綠寶石生態守護大使認證測驗</h2>
+                    <p class="text-sm text-slate-600">完成 4 道極速挑戰題，獲得「綠寶石生態守護大使」榮譽電子證書！</p>
+                </div>
+
+                <!-- 測驗內容區 -->
+                <div id="quiz-container" class="space-y-6">
+                    <div id="quiz-card" class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-4">
+                        <div class="flex justify-between items-center text-xs font-bold text-emerald-700">
+                            <span id="quiz-progress">題目 1 / 4</span>
+                            <span id="quiz-score-tag">目前得分: 0</span>
+                        </div>
+                        <h3 id="quiz-question" class="text-base font-bold text-slate-800">紅樹林的水筆仔具有什麼特殊的繁殖構造，使其種子能在海水中成功發育？</h3>
+                        <div id="quiz-options" class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                            <!-- 動態選項 -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 證書生成區 (預設隱藏) -->
+                <div id="certificate-box" class="hidden space-y-6">
+                    <div class="bg-gradient-to-br from-amber-50 via-emerald-50 to-teal-50 border-8 border-double border-emerald-600 p-8 rounded-3xl text-center space-y-4 shadow-2xl relative overflow-hidden">
+                        <div class="text-5xl text-amber-500 mb-2"><i class="fa-solid fa-award"></i></div>
+                        <span class="text-xs font-bold uppercase tracking-widest text-emerald-800">Honorary Certificate</span>
+                        <h2 class="text-3xl font-extrabold text-teal-950">綠寶石生態守護大使證書</h2>
+                        <p class="text-sm text-slate-700">茲證明</p>
+                        <input type="text" id="cert-name" value="六年級同學" class="text-2xl font-bold text-center text-emerald-800 bg-transparent border-b-2 border-emerald-600 focus:outline-none px-4 py-1" placeholder="輸入您的名字">
+                        <p class="text-xs text-slate-600 max-w-md mx-auto leading-relaxed">
+                            順利完成「濱海綠寶石」六年級校訂課程《紅樹林濕地與藍碳保育》研習，精通濕地生物多樣性與系統思考，特頒此證以資鼓勵。
+                        </p>
+                        <div class="pt-4 text-xs text-slate-500 border-t border-emerald-200 flex justify-around">
+                            <span>頒發單位：濱海綠寶石課程組</span>
+                            <span>日期：<span id="cert-date">2026-11-11</span></span>
+                        </div>
+                    </div>
+                    <button onclick="resetQuiz()" class="mx-auto block bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-2.5 rounded-xl font-bold text-xs">
+                        重新測驗 <i class="fa-solid fa-rotate-right ml-1"></i>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- 內容區塊 6：教案總覽與教師備課區 -->
+        <section id="sec-curriculum" class="tab-content hidden space-y-6">
+            <div class="glass-card rounded-3xl p-6 shadow-xl border border-emerald-100 space-y-6">
+                <div class="border-b pb-4 flex justify-between items-center">
+                    <div>
+                        <span class="text-xs uppercase tracking-wider text-emerald-700 font-semibold">Teacher's Guide</span>
+                        <h2 class="text-2xl font-bold text-teal-900">全校校訂課程教案大綱 (六年級)</h2>
+                    </div>
+                    <span class="bg-teal-100 text-teal-800 px-3 py-1 rounded-full text-xs font-bold">總節數：3 節課 (120分鐘)</span>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <!-- 第一節 -->
+                    <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm space-y-3">
+                        <div class="bg-emerald-600 text-white text-xs font-bold px-3 py-1 rounded-full w-max">第一節 (40分鐘)</div>
+                        <h3 class="font-bold text-base text-teal-950">水陸交界處的奇蹟—紅樹林生存術</h3>
+                        <ul class="text-xs text-slate-600 space-y-1.5 list-disc list-inside">
+                            <li>認識胎生苗、支柱根與呼吸根構造。</li>
+                            <li>理解防風定砂與護岸防護功能。</li>
+                            <li>產出：小組繪製紅樹林特徵解剖圖。</li>
+                        </ul>
+                    </div>
+
+                    <!-- 第二節 -->
+                    <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm space-y-3">
+                        <div class="bg-teal-600 text-white text-xs font-bold px-3 py-1 rounded-full w-max">第二節 (40分鐘)</div>
+                        <h3 class="font-bold text-base text-teal-950">生態寶庫與藍碳巨星—濕地多樣性</h3>
+                        <ul class="text-xs text-slate-600 space-y-1.5 list-disc list-inside">
+                            <li>理解底棲生物與候鳥棲地食物鏈。</li>
+                            <li>認識「藍碳 (Blue Carbon)」減碳價值。</li>
+                            <li>產出：建立濕地碎屑食物網關係。</li>
+                        </ul>
+                    </div>
+
+                    <!-- 第三節 -->
+                    <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm space-y-3">
+                        <div class="bg-amber-600 text-white text-xs font-bold px-3 py-1 rounded-full w-max">第三節 (40分鐘)</div>
+                        <h3 class="font-bold text-base text-teal-950">綠寶石倡議行動—綜藝劇場與宣言</h3>
+                        <ul class="text-xs text-slate-600 space-y-1.5 list-disc list-inside">
+                            <li>運用戲劇或倡議演講呈現保育議題。</li>
+                            <li>展現「國際小公民」永續行動力。</li>
+                            <li>評量：發表 2-3 分鐘「綜藝劇場」。</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="bg-slate-800 text-white p-5 rounded-2xl space-y-2 text-xs">
+                    <h4 class="font-bold text-emerald-300">🎯 融入核心素養與學習評量對應：</h4>
+                    <p class="text-slate-300">
+                        【學習力】系統思考紅樹林適應機制與碳匯作用；【合作力】小組共同發表綜藝劇場；【包容力】理解全球氣候變遷與國際藍碳保育趨勢。
+                    </p>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- 頁尾 -->
+    <footer class="bg-teal-950 text-slate-400 py-6 text-center text-xs border-t border-teal-800">
+        <p>濱海綠寶石 六年級校訂課程專用互動教學網頁 | 響應 SDG 14 水下生命與 SDG 13 氣候行動</p>
+    </footer>
+
+    <!-- JavaScript 腳本 -->
+    <script>
+        // 1. 頁籤切換系統
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+            
+            document.getElementById(`sec-${tabId}`).classList.remove('hidden');
+            document.getElementById(`tab-${tabId}`).classList.add('active');
+        }
+
+        // 2. 故事繪本閱讀器數據與邏輯
+        const storyPages = [
+            {
+                num: "1 / 10",
+                chapter: "潮間帶探險",
+                image: "p1.jpeg",
+                icon: "fa-gem",
+                title: "綠寶石海岸的邀請",
+                text: "在海與河交界的高鹽度潮間帶，繁茂的紅樹林像是一串鑲嵌在海岸線上的綠寶石。六年級的宥安與芷蔚踏上木棧道，展開了一場濕地生態探險。眼前一片翠綠的樹冠下，藏著無數適應潮汐漲退的生命奇蹟。",
+                concept: "認識河口潮間帶的極端環境與植被景觀。",
+                question: "你有觀察過淡水與海水交界處的植物有什麼特徵嗎？"
+            },
+            {
+                num: "2 / 10",
+                chapter: "生命奇蹟",
+                image: "p2.jpeg",
+                icon: "fa-seedling",
+                title: "水筆仔胎生苗的秘密",
+                text: "宥安靠近樹枝細看，懸掛在枝頭的竟是一支支如綠筆般的「水筆仔胎生苗」。這些胎生苗在母樹上吸取營養成長，待成熟後掉落，直接如長槍般扎入鬆軟泥灘，或是隨潮水漂流到新天地落地生根。這種特殊的繁殖方式，讓紅樹林得以在強風豪浪中代代相傳。",
+                concept: "胎生現象 (Vivipary) 能避免種子在鹹水中淹死脫水。",
+                question: "為什麼水筆仔需要讓種子先在母樹上發芽長大呢？"
+            },
+            {
+                num: "3 / 10",
+                chapter: "根系結構",
+                image: "p3.jpeg",
+                icon: "fa-shield-halved",
+                title: "堅韌的支柱根與呼吸根",
+                text: "除了神奇的胎生苗，紅樹林的根部更是一絕。芷蔚彎下身，看見從幹基向下盤錯伸展的「支柱根」，如同無數堅固的腳架抓住泥沙，抵禦潮水的強烈侵蝕；而土壤深處缺氧時，地面上密密麻麻冒出的「呼吸根」，則像是一根根伸出泥潭的呼吸管，呼吸著新鮮空氣。",
+                concept: "支柱根抗浪防風，呼吸根解決深層淤泥缺氧問題。",
+                question: "如果沒有支柱根，潮間帶的樹木會面臨什麼危險？"
+            },
+            {
+                num: "4 / 10",
+                chapter: "生物多樣性",
+                image: "p4.jpeg",
+                icon: "fa-crab",
+                title: "潮間帶的熱鬧樂園",
+                text: "錯綜複雜的根系形成了天然的防護網，成為潮間帶生物的繁華樂園。揮舞著巨大單螯的招潮蟹在泥灘上跳躍舞動，彈塗魚靠着胸鰭在濕泥上靈巧躍動；遠處大白鷺優雅地踱步捕食。紅樹林落葉腐爛後形成的食物網，養育了這片生機勃勃的海岸。",
+                concept: "落葉腐殖質形成的碎屑食物網養育無數底棲生物與水鳥。",
+                question: "紅樹林的落葉掉下來後，會被誰吃掉呢？"
+            },
+            {
+                num: "5 / 10",
+                chapter: "藍碳巨星",
+                image: "p5.jpeg",
+                icon: "fa-cloud-meatball",
+                title: "對抗全球暖化的藍碳巨星",
+                text: "探險途中，芷蔚閱讀著告示牌上的重要資訊：紅樹林不只是生物的家，更是對抗全球暖化的「藍碳巨星」！雖然紅樹林僅占全球海洋面積的一小部分，但其泥潭與根系能將大量碳元素封存於地底數百年，固碳效率遠高於陸地森林，是極為關鍵的藍碳儲存庫。",
+                concept: "藍碳 (Blue Carbon) 是儲存在海洋與濕地生態系中的高效碳匯。",
+                question: "為什麼紅樹林固碳的效率比一般陸地森林還要高？"
+            },
+            {
+                num: "6 / 10",
+                chapter: "環境危機",
+                image: "p6.jpeg",
+                icon: "fa-triangle-exclamation",
+                title: "瀕臨破壞的濱海綠寶石",
+                text: "然而，這顆濱海綠寶石正面臨嚴重威脅。宥安憂心忡忡地看著飄浮在泥灘上的塑膠瓶、保麗龍與廢棄漁網。當紅樹林遭到人為開墾或污染破壞時，原本封存於底泥中的巨大藍碳庫就會快速釋放，轉化為溫室氣體，加劇全球氣候危機。",
+                concept: "濕地破壞會導致沉積物中的藍碳大量轉化為二氧化碳釋放。",
+                question: "海洋垃圾對水筆仔幼苗長大會造成什麼影響？"
+            },
+            {
+                num: "7 / 10",
+                chapter: "綠色行動",
+                image: "p7.jpeg",
+                icon: "fa-hands-holding-circle",
+                title: "守護濕地的即刻行動",
+                text: "「保護紅樹林，就是守護我們的地球！」宥安與芷蔚挽起袖子，發動隨手撿拾海岸垃圾的行動。他們小心翼翼地拿開纏繞在胎生苗上的廢棄物，並記錄下濕地受創的情形。他們決定將這次探訪的所見所聞，轉化為號召更多人行動的力量。",
+                concept: "從小地方做起，清理垃圾並記錄海岸生態狀況。",
+                question: "日常生活中我們可以做什麼來減少海洋塑膠垃圾？"
+            },
+            {
+                num: "8 / 10",
+                chapter: "籌備劇場",
+                image: "p8.jpeg",
+                icon: "fa-scissors",
+                title: "綜藝劇場的籌備工作",
+                text: "回到學校後，兩人展開「綜藝劇場」的籌備工作。宥安興奮地製作著水筆仔造型的道具帽子與呼吸根支架，打算用生動的肢體戲劇呈現紅樹林的生存智慧與藍碳危機。他們要把科學知識變成感人的故事，喚起同學對海洋保育的共鳴。",
+                concept: "透過戲劇展演（綜藝劇場）進行環境倡議與表達溝通。",
+                question: "你覺得用戲劇方式傳遞環保觀念有什麼好處？"
+            },
+            {
+                num: "9 / 10",
+                chapter: "舞台發表",
+                image: "p9.jpeg",
+                icon: "fa-masks-theater",
+                title: "為紅樹林深情發聲",
+                text: "在學校的發表會上，舞台燈光亮起。芷蔚身穿藍色與綠色拼接的戲服，飾演海岸守護者，以豐富的對白演繹紅樹林如何用根系穩固海岸、用泥土鎖住藍碳，並向台下觀眾大聲疾呼：「當我們失去濕地，也就失去了對抗氣候變遷的防線！」",
+                concept: "展現高年級學生的系統表達力與國際公民素養。",
+                question: "如果是你站在舞台上，你會對人類說什麼一句話？"
+            },
+            {
+                num: "10 / 10",
+                chapter: "永續宣言",
+                image: "p10.jpeg",
+                icon: "fa-award",
+                title: "綠寶石永續保育承諾",
+                text: "劇場發表贏得全校掌聲，宥安與芷蔚更帶領全體同學共同發表「綠寶石永續宣言」：減少塑膠垃圾、守護海岸濕地、推廣藍碳知識。只要人人成為生態守護大使，這顆鑲嵌在陸地與海洋交界處的濱海綠寶石，將持續散發璀璨的光芒。",
+                concept: "實踐永續承諾，成為國際綠色生態守護大使。",
+                question: "你願意一起許下守護濕地的承諾嗎？"
+            }
+        ];
+
+        let currentStoryIndex = 0;
+
+        function updateStoryCard() {
+            const page = storyPages[currentStoryIndex];
+            document.getElementById('story-page-num').innerText = `頁數 ${page.num}`;
+            document.getElementById('story-chapter-tag').innerText = page.chapter;
+            document.getElementById('story-visual-icon').innerHTML = `<i class="fa-solid ${page.icon}"></i>`;
+            document.getElementById('story-image-filename').innerText = `圖片連結：${page.image}`;
+            document.getElementById('story-page-title').innerText = page.title;
+            document.getElementById('story-text').innerText = page.text;
+            document.getElementById('story-concept').innerText = page.concept;
+            document.getElementById('story-question').innerText = page.question;
+
+            // 更新圖片連結 (p1.jpeg ~ p10.jpeg) 並重置備援狀態
+            const imgEl = document.getElementById('story-image');
+            const fallbackBox = document.getElementById('story-fallback-box');
+            imgEl.classList.remove('hidden');
+            fallbackBox.classList.add('hidden');
+            imgEl.src = page.image;
+            imgEl.alt = page.title;
+
+            document.getElementById('btn-prev').disabled = currentStoryIndex === 0;
+            document.getElementById('btn-next').disabled = currentStoryIndex === storyPages.length - 1;
+
+            // 更新 Dots
+            const dotsContainer = document.getElementById('page-dots');
+            dotsContainer.innerHTML = '';
+            storyPages.forEach((_, idx) => {
+                const dot = document.createElement('div');
+                dot.className = `w-2 h-2 rounded-full ${idx === currentStoryIndex ? 'bg-emerald-400 w-4' : 'bg-teal-700'} transition-all`;
+                dotsContainer.appendChild(dot);
+            });
+        }
+
+        function nextPage() {
+            if (currentStoryIndex < storyPages.length - 1) {
+                currentStoryIndex++;
+                updateStoryCard();
+            }
+        }
+
+        function prevPage() {
+            if (currentStoryIndex > 0) {
+                currentStoryIndex--;
+                updateStoryCard();
+            }
+        }
+
+        // 語音朗讀功能
+        function speakCurrentPage() {
+            const btnText = document.getElementById('speech-btn-text');
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel();
+                const text = storyPages[currentStoryIndex].text;
+                const utterance = new SpeechSynthesisUtterance(text);
+                utterance.lang = 'zh-TW';
+                utterance.rate = 0.95;
+                window.speechSynthesis.speak(utterance);
+                
+                btnText.innerText = "朗讀中...";
+                utterance.onend = () => { btnText.innerText = "朗讀本頁"; };
+            } else {
+                btnText.innerText = "不支援語音";
+                setTimeout(() => { btnText.innerText = "朗讀本頁"; }, 2000);
+            }
+        }
+
+        // 3. 器官解密互動邏輯
+        const organData = {
+            'viviparous': {
+                title: "水筆仔胎生苗機制",
+                tag: "胎生繁殖",
+                icon: "fa-seedling",
+                desc: "一般植物的種子落在高鹽度海水中會脫水無法發芽。水筆仔演化出獨特的「胎生」機制：果實成熟後不掉落，種子直接在母樹上發育延伸成「筆狀胚軸（胎生苗）」。吸飽母體養分後成熟脫落，筆端重重插入泥灘立即可成長；若遇到漲潮，則可隨水漂流長達數月，直到落腳泥灘生根。",
+                system: "系統思考：解決海水高鹽度與潮汐沖刷對種子發芽的限制。"
+            },
+            'prop-root': {
+                title: "支柱根系 (Prop Roots)",
+                tag: "力學抗浪",
+                icon: "fa-shield-halved",
+                desc: "海岸邊風浪極大且泥灘鬆軟，紅樹林幹基會向四周長出弓形彎曲的「支柱根」。這些根系廣布於泥層表面與四周，如同多腳三腳架將樹體牢牢固定在軟泥中，大幅提升抗風防浪的能力，更能為海岸定砂擋浪。",
+                system: "系統思考：提供穩固物理支撐，並減緩水流侵蝕海岸。"
+            },
+            'pneumatophore': {
+                title: "呼吸根 (Pneumatophores)",
+                tag: "氣體交換",
+                icon: "fa-wind",
+                desc: "濕地土壤長年浸水且充滿有機腐殖質，屬於極度缺氧的環境。紅樹林地下根系會向上生長，突破泥灘表面形成密集如竹筍般的「呼吸根」。呼吸根表面有皮孔，可以在退潮時迅速吸收空氣中的氧氣傳送給地下根。",
+                system: "系統思考：克服淤泥缺氧環境，維繫植物地下組織運作。"
+            }
+        };
+
+        function selectOrgan(key) {
+            document.querySelectorAll('.organ-card').forEach(c => {
+                c.classList.remove('border-emerald-500');
+                c.classList.add('border-slate-200');
+            });
+            document.getElementById(`organ-card-${key}`).classList.add('border-emerald-500');
+            document.getElementById(`organ-card-${key}`).classList.remove('border-slate-200');
+
+            const data = organData[key];
+            document.getElementById('organ-detail-title').innerText = data.title;
+            document.getElementById('organ-detail-tag').innerText = data.tag;
+            document.getElementById('organ-detail-desc').innerText = data.desc;
+            document.getElementById('organ-detail-system').innerText = data.system;
+            document.getElementById('organ-detail-icon').innerHTML = `<i class="fa-solid ${data.icon}"></i>`;
+        }
+
+        // 4. 藍碳計算器邏輯
+        function updateBlueCarbon() {
+            const area = document.getElementById('area-slider').value;
+            document.getElementById('area-val').innerText = `${area} 公頃`;
+            
+            // 估算：1 公頃紅樹林每年約可封存 8 公噸 CO2
+            const carbon = area * 8;
+            document.getElementById('carbon-absorbed').innerText = `${carbon} 噸`;
+            
+            // 相當於汽車行駛公里數 (約 1 噸 CO2 = 4000 km)
+            const km = carbon * 4000;
+            document.getElementById('car-km').innerText = `${km.toLocaleString()} km`;
+        }
+
+        // 食物網細節
+        const foodDetails = {
+            leaf: "🌱 **紅樹林落葉**：含有大量有機質。落葉掉入水中經真菌與細菌分解後，成為富含營養的「有機碎屑」，是整座濕地食物鏈的基礎。",
+            crab: "🦀 **弧邊招潮蟹**：以紅樹林落葉碎屑與泥灘微藻為食，挖洞行為能讓空氣進入深層泥土，是濕地的「耕耘機」。",
+            fish: "🐟 **彈塗魚**：吃泥灘上的碎屑與小蟲，利用發育發達的胸鰭在濕泥上爬行，並靠濕潤皮膚輔助呼吸。",
+            bird: "🐦 **大白鷺與候鳥**：處於濕地食物網頂端，捕食彈塗魚、小魚與小蟹，是紅樹林健康狀況的關鍵指標。"
+        };
+        function showFoodDetail(type) {
+            document.getElementById('food-detail-box').innerHTML = foodDetails[type];
+        }
+
+        // 5. 綜藝劇場劇本生成器
+        function generateSkit() {
+            const theme = document.getElementById('skit-theme').value;
+            const group = document.getElementById('skit-group').value || "綠寶石第一隊";
+            const actor1 = document.getElementById('skit-actor1').value || "角色A";
+            const actor2 = document.getElementById('skit-actor2').value || "角色B";
+
+            document.getElementById('script-group-tag').innerText = `隊伍：${group}`;
+
+            let scriptHTML = "";
+
+            if (theme === 'viviparous') {
+                scriptHTML = `
+                    <p class="text-amber-300">【場景：河口強風咆哮，潮水漲落】</p>
+                    <p><strong class="text-emerald-400">${actor1}：</strong> （站立在台中央，手比向天際）「哇！我是掛在水筆仔母樹上的綠色長槍—胎生苗！」</p>
+                    <p><strong class="text-cyan-400">${actor2}：</strong> （擺出海浪動作）「大浪來了！鹽水這麼鹹，你敢掉下來嗎？」</p>
+                    <p><strong class="text-emerald-400">${actor1}：</strong> 「我不怕！我已經在母樹上吸飽了營養，等我直直插進泥灘，立刻就能發芽長成大樹！」</p>
+                    <p><strong class="text-amber-300">【全體齊聲倡议】</strong> 「這就是紅樹林的生存智慧，守護濕地從了解開始！」</p>
+                `;
+            } else if (theme === 'bluecarbon') {
+                scriptHTML = `
+                    <p class="text-amber-300">【場景：地球氣候大會現場】</p>
+                    <p><strong class="text-emerald-400">${actor1}：</strong> （拿著碳匯盾牌）「大家別慌！我是海岸的藍碳巨星—紅樹林濕地！」</p>
+                    <p><strong class="text-cyan-400">${actor2}：</strong> （扮演溫室氣體）「看我的二氧化碳熱浪！我要讓地球變熱！」</p>
+                    <p><strong class="text-emerald-400">${actor1}：</strong> 「看我的根系把碳全部鎖進深層泥灘！我們的固碳能力可是陸地森林的 5 倍！」</p>
+                    <p><strong class="text-amber-300">【全體齊聲倡议】</strong> 「藍碳守護濕地，就是守護氣候的最後防線！」</p>
+                `;
+            } else {
+                scriptHTML = `
+                    <p class="text-amber-300">【場景：海岸木棧道與泥灘垃圾區】</p>
+                    <p><strong class="text-emerald-400">${actor1}：</strong> （撿起保麗龍塑膠袋）「天啊！看這些纏在胎生苗上的塑膠袋，招潮蟹都快沒家了！」</p>
+                    <p><strong class="text-cyan-400">${actor2}：</strong> （拿著記錄板）「如果紅樹林被污染破壞，泥土裡封存的藍碳就會釋放出來，災難就大了！」</p>
+                    <p><strong class="text-emerald-400">${actor1}：</strong> 「我們一起手牽手淨灘，減塑護海岸！」</p>
+                    <p><strong class="text-amber-300">【全體齊聲倡议】</strong> 「濱海綠寶石，需要你我共同守護！」</p>
+                `;
+            }
+
+            document.getElementById('skit-preview').innerHTML = scriptHTML;
+        }
+
+        // 6. 測驗與證書邏輯
+        const quizData = [
+            {
+                q: "紅樹林的水筆仔具有什麼特殊的繁殖構造，使其種子能在海水高鹽環境中成功存活？",
+                options: ["球根", "胎生苗 (胚軸)", "氣球果實", "孢子"],
+                ans: 1
+            },
+            {
+                q: "紅樹林在缺氧的深層淤泥中，依靠地上出現的什麼器官來進行氣體交換？",
+                options: ["支柱根", "呼吸根", "鹽腺", "葉脈"],
+                ans: 1
+            },
+            {
+                q: "關於「藍碳 (Blue Carbon)」的敘述，下列何者正確？",
+                options: ["藍色的氣體", "海洋與濕地生態系所捕獲並封存的碳", "只有藍色魚類會產生的碳", "人工合成的塑膠碳"],
+                ans: 1
+            },
+            {
+                q: "下列哪一種生物是紅樹林濕地落葉碎屑食物鏈中的底棲分解者？",
+                options: ["北極熊", "弧邊招潮蟹", "梅花鹿", "老鷹"],
+                ans: 1
+            }
+        ];
+
+        let currentQuizIndex = 0;
+        let score = 0;
+
+        function loadQuizQuestion() {
+            const q = quizData[currentQuizIndex];
+            document.getElementById('quiz-progress').innerText = `題目 ${currentQuizIndex + 1} / ${quizData.length}`;
+            document.getElementById('quiz-score-tag').innerText = `目前得分: ${score}`;
+            document.getElementById('quiz-question').innerText = q.q;
+
+            const optsBox = document.getElementById('quiz-options');
+            optsBox.innerHTML = '';
+            q.options.forEach((opt, idx) => {
+                const btn = document.createElement('button');
+                btn.className = "p-3 bg-slate-50 hover:bg-emerald-50 border border-slate-200 hover:border-emerald-500 rounded-xl text-xs font-semibold text-left transition flex items-center justify-between";
+                btn.innerHTML = `<span>${idx + 1}. ${opt}</span><i class="fa-regular fa-circle text-slate-300"></i>`;
+                btn.onclick = () => checkAnswer(idx);
+                optsBox.appendChild(btn);
+            });
+        }
+
+        function checkAnswer(selectedIdx) {
+            if (selectedIdx === quizData[currentQuizIndex].ans) {
+                score += 25;
+            }
+            currentQuizIndex++;
+            if (currentQuizIndex < quizData.length) {
+                loadQuizQuestion();
+            } else {
+                showCertificate();
+            }
+        }
+
+        function showCertificate() {
+            document.getElementById('quiz-container').classList.add('hidden');
+            document.getElementById('certificate-box').classList.remove('hidden');
+            document.getElementById('cert-date').innerText = new Date().toISOString().split('T')[0];
+            
+            // 慶祝特效
+            if (typeof confetti === 'function') {
+                confetti({
+                    particleCount: 100,
+                    spread: 70,
+                    origin: { y: 0.6 }
+                });
+            }
+        }
+
+        function resetQuiz() {
+            currentQuizIndex = 0;
+            score = 0;
+            document.getElementById('certificate-box').classList.add('hidden');
+            document.getElementById('quiz-container').classList.remove('hidden');
+            loadQuizQuestion();
+        }
+
+        // 初始化執行
+        window.onload = function() {
+            updateStoryCard();
+            generateSkit();
+            loadQuizQuestion();
+        };
+    </script>
+</body>
+</html>

@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>濱海綠寶石 - 一年級跨領域主題教學網</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@500;700;900&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Zen Maru Gothic', sans-serif, system-ui;
+            background-color: #f4fbf7;
+        }
+        .tab-btn.active {
+            background-color: #059669;
+            color: white;
+            box-shadow: 0 4px 12px rgba(5, 150, 105, 0.3);
+        }
+        .quiz-opt {
+            transition: all 0.2s ease;
+        }
+        .quiz-opt:hover {
+            transform: translateY(-2px);
+        }
+        canvas {
+            touch-action: none;
+        }
+    </style>
+</head>
+<body class="text-slate-800 antialiased min-h-screen flex flex-col justify-between">
+
+    <!-- Header Navigation -->
+    <header class="bg-emerald-600 text-white sticky top-0 z-50 shadow-md">
+        <div class="max-w-6xl mx-auto px-4 py-3 flex flex-wrap justify-between items-center gap-2">
+            <div class="flex items-center space-x-3 cursor-pointer" onclick="switchTab('home')">
+                <div class="bg-white text-emerald-600 w-10 h-10 rounded-full flex items-center justify-center font-bold text-xl shadow">
+                    💎
+                </div>
+                <div>
+                    <h1 class="text-xl md:text-2xl font-black tracking-wide">濱海綠寶石</h1>
+                    <p class="text-xs text-emerald-100">一年級鄉土與自然探索主題網</p>
+                </div>
+            </div>
+
+            <!-- Voice Synthesizer / Audio Helper Button -->
+            <button onclick="toggleAudioHelp()" class="bg-emerald-700 hover:bg-emerald-800 px-3 py-1.5 rounded-full text-xs md:text-sm font-bold flex items-center gap-2 transition">
+                <i class="fa-solid fa-volume-high text-amber-300"></i>
+                <span>語音朗讀助手</span>
+            </button>
+        </div>
+    </header>
+
+    <!-- Main Content Area -->
+    <main class="max-w-6xl mx-auto px-4 py-6 flex-grow w-full">
+
+        <!-- Navigation Tabs -->
+        <nav class="flex flex-wrap gap-2 mb-6 justify-center md:justify-start">
+            <button onclick="switchTab('home')" id="tab-home" class="tab-btn active px-4 py-2.5 rounded-2xl font-bold text-slate-700 bg-white border border-emerald-100 hover:bg-emerald-50 transition shadow-sm flex items-center gap-2">
+                <i class="fa-solid fa-house"></i> 探索首頁
+            </button>
+            <button onclick="switchTab('story')" id="tab-story" class="tab-btn px-4 py-2.5 rounded-2xl font-bold text-slate-700 bg-white border border-emerald-100 hover:bg-emerald-50 transition shadow-sm flex items-center gap-2">
+                <i class="fa-solid fa-book-open"></i> 綠寶石故事館
+            </button>
+            <button onclick="switchTab('blackbean')" id="tab-blackbean" class="tab-btn px-4 py-2.5 rounded-2xl font-bold text-slate-700 bg-white border border-emerald-100 hover:bg-emerald-50 transition shadow-sm flex items-center gap-2">
+                <i class="fa-solid fa-[#5c4033] fa-seedling"></i> 黑豆小博士
+            </button>
+            <button onclick="switchTab('game')" id="tab-game" class="tab-btn px-4 py-2.5 rounded-2xl font-bold text-slate-700 bg-white border border-emerald-100 hover:bg-emerald-50 transition shadow-sm flex items-center gap-2">
+                <i class="fa-solid fa-gamepad"></i> 互動遊戲與繪圖
+            </button>
+            <button onclick="switchTab('badges')" id="tab-badges" class="tab-btn px-4 py-2.5 rounded-2xl font-bold text-slate-700 bg-white border border-emerald-100 hover:bg-emerald-50 transition shadow-sm flex items-center gap-2">
+                <i class="fa-solid fa-award text-amber-500"></i> 我的學習成就
+            </button>
+        </nav>
+
+        <!-- SECTION: HOME -->
+        <section id="sec-home" class="space-y-6">
+            <div class="bg-gradient-to-r from-emerald-500 to-teal-600 rounded-3xl p-6 md:p-8 text-white shadow-xl flex flex-col md:flex-row items-center justify-between gap-6">
+                <div class="space-y-3 max-w-xl">
+                    <span class="bg-emerald-700 text-emerald-100 text-xs px-3 py-1 rounded-full font-bold">小學一年級專屬課程</span>
+                    <h2 class="text-3xl md:text-4xl font-black leading-tight">歡迎來到濱海綠寶石的奇幻世界！</h2>
+                    <p class="text-emerald-50 text-base md:text-lg">
+                        你知道我們家鄉的海邊有什麼特別的綠色寶石嗎？一起來探索風沙中的植物勇士與營養豐富的黑豆吧！
+                    </p>
+                    <div class="pt-2 flex flex-wrap gap-3">
+                        <button onclick="switchTab('story')" class="bg-amber-400 hover:bg-amber-300 text-slate-900 font-black px-5 py-2.5 rounded-xl shadow-lg transition">
+                            進入故事館 ➔
+                        </button>
+                        <button onclick="speakText('歡迎來到濱海綠寶石主題教學網，讓我們一起認識大自然吧！')" class="bg-white/20 hover:bg-white/30 text-white font-bold px-4 py-2.5 rounded-xl backdrop-blur transition">
+                            <i class="fa-solid fa-volume-high mr-1"></i> 聽聽看簡介
+                        </button>
+                    </div>
+                </div>
+                <div class="w-48 h-48 md:w-64 md:h-64 bg-white/10 rounded-full flex items-center justify-center text-8xl shadow-inner border-4 border-white/20">
+                    🌱
+                </div>
+            </div>
+
+            <!-- 學習主題簡介 -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-emerald-100 hover:shadow-md transition">
+                    <div class="w-12 h-12 bg-emerald-100 rounded-xl flex items-center justify-center text-2xl text-emerald-600 mb-4">
+                        🍃
+                    </div>
+                    <h3 class="text-xl font-bold mb-2">海岸的植物勇士</h3>
+                    <p class="text-slate-600 text-sm leading-relaxed">
+                        濱海植物耐風又耐鹽，像防風林與海濱綠植，守護著我們的海岸線防範沙塵！
+                    </p>
+                </div>
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-emerald-100 hover:shadow-md transition">
+                    <div class="w-12 h-12 bg-amber-100 rounded-xl flex items-center justify-center text-2xl text-amber-600 mb-4">
+                        🫘
+                    </div>
+                    <h3 class="text-xl font-bold mb-2">在地好味：黑豆</h3>
+                    <p class="text-slate-600 text-sm leading-relaxed">
+                        認識黑豆的成長過程！從種子到發芽，黑豆不僅好吃，還有超高的營養價值喔！
+                    </p>
+                </div>
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-emerald-100 hover:shadow-md transition">
+                    <div class="w-12 h-12 bg-sky-100 rounded-xl flex items-center justify-center text-2xl text-sky-600 mb-4">
+                        🎨
+                    </div>
+                    <h3 class="text-xl font-bold mb-2">趣味畫畫與挑戰</h3>
+                    <p class="text-slate-600 text-sm leading-relaxed">
+                        透過線上小遊戲與創意畫布，畫出你心中的綠寶石，解鎖屬於你的榮譽徽章！
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION: STORY -->
+        <section id="sec-story" class="hidden space-y-6">
+            <div class="bg-white rounded-3xl p-6 shadow-sm border border-emerald-100">
+                <div class="flex flex-col md:flex-row gap-6 items-center">
+                    <div class="w-full md:w-1/2 aspect-video bg-emerald-100 rounded-2xl overflow-hidden flex items-center justify-center text-7xl shadow-inner relative" id="storyIllustration">
+                        🌊🌱
+                    </div>
+                    <div class="w-full md:w-1/2 space-y-4">
+                        <span class="bg-emerald-100 text-emerald-800 text-xs px-3 py-1 rounded-full font-bold" id="storyChapterTag">第一集：風沙中的綠色奇蹟</span>
+                        <h2 class="text-2xl font-black text-slate-800" id="storyTitle">海岸邊的綠色大衣</h2>
+                        <p class="text-slate-600 leading-relaxed text-base" id="storyContent">
+                            很久很久以前，濱海小鎮常吹起狂風沙。後來人們種下了堅韌的濱海植物，像綠色的寶石一樣鋪滿海岸，擋住了強風與海浪！
+                        </p>
+                        <div class="flex items-center gap-3">
+                            <button onclick="readCurrentStory()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-4 py-2 rounded-xl text-sm transition flex items-center gap-2">
+                                <i class="fa-solid fa-volume-high"></i> 朗讀故事
+                            </button>
+                            <button onclick="nextStory()" class="bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold px-4 py-2 rounded-xl text-sm transition">
+                                下一頁 ➔
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Story Selector Thumbs -->
+                <div class="grid grid-cols-3 gap-3 mt-6 pt-6 border-t border-slate-100" id="storyThumbs">
+                    <!-- Dynamic Javascript generated buttons -->
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION: BLACK BEAN -->
+        <section id="sec-blackbean" class="hidden space-y-6">
+            <div class="bg-white rounded-3xl p-6 shadow-sm border border-emerald-100">
+                <h2 class="text-2xl font-black text-slate-800 mb-2 flex items-center gap-2">
+                    <span>🫘</span> 黑豆小博士的成長探索
+                </h2>
+                <p class="text-slate-600 text-sm mb-6">點擊小卡片，了解黑豆是如何慢慢長大的吧！</p>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div onclick="exploreBeanKnowledge(1, '黑豆種子', '圓圓黑黑的種子，睡在溫暖的泥土裡。')" class="cursor-pointer bg-amber-50 hover:bg-amber-100 p-5 rounded-2xl border-2 border-amber-200 transition text-center space-y-3">
+                        <div class="text-5xl">🫘</div>
+                        <h3 class="font-black text-amber-900">1. 種子時期</h3>
+                        <p class="text-xs text-amber-700">小黑豆沉睡在泥土裡，等待水分與陽光。</p>
+                    </div>
+                    <div onclick="exploreBeanKnowledge(2, '發芽與綠葉', '吸飽水後發出綠色的小芽，伸展嫩葉。')" class="cursor-pointer bg-emerald-50 hover:bg-emerald-100 p-5 rounded-2xl border-2 border-emerald-200 transition text-center space-y-3">
+                        <div class="text-5xl">🌱</div>
+                        <h3 class="font-black text-emerald-900">2. 發芽成長</h3>
+                        <p class="text-xs text-emerald-700">長出嫩綠的芽與葉子，努力曬太陽光合作用。</p>
+                    </div>
+                    <div onclick="exploreBeanKnowledge(3, '結莢收成', '長出豆莢，裡面包著營養美味的黑豆！')" class="cursor-pointer bg-purple-50 hover:bg-purple-100 p-5 rounded-2xl border-2 border-purple-200 transition text-center space-y-3">
+                        <div class="text-5xl">🫛</div>
+                        <h3 class="font-black text-purple-900">3. 結莢採收</h3>
+                        <p class="text-xs text-purple-700">豆莢變黃熟透，就能採收美味健康的黑豆！</p>
+                    </div>
+                </div>
+
+                <!-- Knowledge counter box -->
+                <div class="mt-6 bg-slate-50 p-4 rounded-xl flex justify-between items-center text-sm font-bold">
+                    <span>探索進度：<span id="beanKnowledgeCount" class="text-emerald-600 text-lg">0</span>/3</span>
+                    <span class="text-xs text-slate-500">全部點擊完可獲得「黑豆知識王」徽章！</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION: GAME & CANVAS -->
+        <section id="sec-game" class="hidden space-y-6">
+            <!-- Game Quiz -->
+            <div class="bg-white rounded-3xl p-6 shadow-sm border border-emerald-100 space-y-4">
+                <h2 class="text-2xl font-black text-slate-800 flex items-center gap-2">
+                    <span>❓</span> 綠寶石隨堂測驗
+                </h2>
+                <div id="quizContainer" class="space-y-3">
+                    <p class="font-bold text-slate-700 text-base" id="quizQuestion">問題：海岸邊的防風林植物主要有什麼好處？</p>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3" id="quizOptions">
+                        <button onclick="checkQuiz(this, true, 1)" class="quiz-opt p-3 bg-slate-100 hover:bg-emerald-100 rounded-xl font-bold text-left text-sm">A. 擋風擋沙、保護家園</button>
+                        <button onclick="checkQuiz(this, false, 1)" class="quiz-opt p-3 bg-slate-100 hover:bg-rose-100 rounded-xl font-bold text-left text-sm">B. 吸引暴風雨過來</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Drawing Canvas Worksheet -->
+            <div class="bg-white rounded-3xl p-6 shadow-sm border border-emerald-100 space-y-4">
+                <div class="flex flex-wrap justify-between items-center gap-2">
+                    <div>
+                        <h2 class="text-2xl font-black text-slate-800 flex items-center gap-2">
+                            <span>🎨</span> 畫出你的綠寶石植物
+                        </h2>
+                        <p class="text-xs text-slate-500">在畫布上發揮創意，用畫筆畫出你喜歡的海岸植物吧！</p>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <button onclick="setDrawColor('#059669')" class="w-8 h-8 rounded-full bg-emerald-600 ring-2 ring-offset-2 ring-emerald-600"></button>
+                        <button onclick="setDrawColor('#d97706')" class="w-8 h-8 rounded-full bg-amber-600 hover:ring-2 hover:ring-amber-600"></button>
+                        <button onclick="setDrawColor('#2563eb')" class="w-8 h-8 rounded-full bg-blue-600 hover:ring-2 hover:ring-blue-600"></button>
+                        <button onclick="clearCanvas()" class="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-xs font-bold rounded-xl text-slate-700">
+                            <i class="fa-solid fa-trash mr-1"></i> 清除
+                        </button>
+                    </div>
+                </div>
+
+                <div class="w-full h-64 bg-slate-50 rounded-2xl border-2 border-dashed border-slate-200 relative overflow-hidden">
+                    <canvas id="drawCanvas" class="w-full h-full cursor-crosshair"></canvas>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION: BADGES -->
+        <section id="sec-badges" class="hidden space-y-6">
+            <div class="bg-white rounded-3xl p-6 shadow-sm border border-emerald-100 space-y-6">
+                <div>
+                    <h2 class="text-2xl font-black text-slate-800 flex items-center gap-2">
+                        <span>🏆</span> 我的學習徽章與證書
+                    </h2>
+                    <p class="text-xs text-slate-500">完成各項學習互動任務即可解鎖徽章！</p>
+                </div>
+
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <div id="badge-1" class="p-4 rounded-2xl border-2 border-slate-200 text-center space-y-2 opacity-40 bg-slate-100 transition">
+                        <div class="text-4xl">📖</div>
+                        <div class="font-bold text-sm">故事閱讀大師</div>
+                        <div class="text-[10px] text-slate-500">讀完故事館導覽</div>
+                    </div>
+                    <div id="badge-2" class="p-4 rounded-2xl border-2 border-slate-200 text-center space-y-2 opacity-40 bg-slate-100 transition">
+                        <div class="text-4xl">🫘</div>
+                        <div class="font-bold text-sm">黑豆知識王</div>
+                        <div class="text-[10px] text-slate-500">點擊探索全部黑豆卡片</div>
+                    </div>
+                    <div id="badge-3" class="p-4 rounded-2xl border-2 border-slate-200 text-center space-y-2 opacity-40 bg-slate-100 transition">
+                        <div class="text-4xl">🎯</div>
+                        <div class="font-bold text-sm">答題小天才</div>
+                        <div class="text-[10px] text-slate-500">答對隨堂測驗問題</div>
+                    </div>
+                    <div id="badge-4" class="p-4 rounded-2xl border-2 border-slate-200 text-center space-y-2 opacity-40 bg-slate-100 transition">
+                        <div class="text-4xl">🎨</div>
+                        <div class="font-bold text-sm">小畫家獎章</div>
+                        <div class="text-[10px] text-slate-500">在畫布上進行創作</div>
+                    </div>
+                </div>
+
+                <div class="bg-emerald-50 p-6 rounded-2xl border border-emerald-200 text-center space-y-3">
+                    <h3 class="text-lg font-bold text-emerald-900">榮譽學習小證書</h3>
+                    <p class="text-xs text-emerald-700" id="badgeCounterText">已獲得 0/4 徽章</p>
+                    <button onclick="generateCertificate()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-6 py-2.5 rounded-xl text-sm shadow transition">
+                        查看專屬學習證明
+                    </button>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Certificate Modal -->
+    <div id="certModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden flex items-center justify-center p-4 z-50">
+        <div class="bg-white rounded-3xl p-8 max-w-md w-full border-4 border-amber-300 shadow-2xl text-center space-y-4 relative">
+            <button onclick="closeCertModal()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600 text-xl font-bold">&times;</button>
+            <div class="text-5xl">🎖️</div>
+            <h3 class="text-2xl font-black text-slate-800">濱海綠寶石 學習證明</h3>
+            <p class="text-sm text-slate-600">恭喜你完成一年級「濱海綠寶石」主題課程！成為保護海岸與關心鄉土的綠色小衛士！</p>
+            <div class="bg-amber-50 p-3 rounded-xl border border-amber-200 text-amber-900 text-xs font-bold">
+                頒發日期：<span id="certDate"></span>
+            </div>
+            <button onclick="closeCertModal()" class="w-full bg-slate-800 hover:bg-slate-900 text-white font-bold py-2.5 rounded-xl text-sm">
+                關閉視窗
+            </button>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t border-slate-100 py-4 text-center text-xs text-slate-400">
+        <p>濱海綠寶石 - 一年級主題教學網 &copy; 2026 數位學習教材</p>
+    </footer>
+
+    <!-- JavaScript Application Logic -->
+    <script>
+        // Story Data
+        const stories = [
+            {
+                tag: "第一集：風沙中的綠色奇蹟",
+                title: "海岸邊的綠色大衣",
+                content: "很久很久以前，濱海小鎮常吹起狂風沙。後來人們種下了堅韌的濱海植物，像綠色的寶石一樣鋪滿海岸，擋住了強風與海浪！",
+                icon: "🌊🌱"
+            },
+            {
+                tag: "第二集：神奇的植物勇士",
+                title: "不怕鹹鹹海風的葉子",
+                content: "濱海植物的葉子特別厚實，有些還有蠟質或小細毛，可以鎖住水分，不怕強烈陽光與鹽分！",
+                icon: "☀️🌿"
+            },
+            {
+                tag: "第三集：黑豆的小秘密",
+                title: "土地送給我們的美味",
+                content: "在海岸附近的農田裡，農夫伯伯種植了營養滿分的黑豆。黑豆花謝了之後會結出豆莢，裡面裝著圓圓的寶藏！",
+                icon: "🫘✨"
+            }
+        ];
+
+        let currentStoryIdx = 0;
+        let userBadges = [false, false, false, false];
+
+        // Tab Switching
+        function switchTab(tabId) {
+            ['home', 'story', 'blackbean', 'game', 'badges'].forEach(id => {
+                const sec = document.getElementById(`sec-${id}`);
+                const btn = document.getElementById(`tab-${id}`);
+                if(sec) sec.classList.add('hidden');
+                if(btn) btn.classList.remove('active');
+            });
+
+            const activeSec = document.getElementById(`sec-${tabId}`);
+            const activeBtn = document.getElementById(`tab-${tabId}`);
+            if(activeSec) activeSec.classList.remove('hidden');
+            if(activeBtn) activeBtn.classList.add('active');
+
+            if(tabId === 'game') {
+                setTimeout(initCanvas, 100);
+            }
+        }
+
+        // Story Navigation
+        function initStoryThumbs() {
+            const container = document.getElementById('storyThumbs');
+            if(!container) return;
+            container.innerHTML = stories.map((s, idx) => `
+                <button onclick="loadStory(${idx})" class="p-3 rounded-xl border text-left text-xs font-bold flex flex-col gap-1 transition ${idx === currentStoryIdx ? 'border-emerald-500 bg-emerald-50 text-emerald-800' : 'border-slate-200 hover:bg-slate-50 text-slate-600'}">
+                    <span>${s.icon} ${s.title}</span>
+                </button>
+            `).join('');
+        }
+
+        function loadStory(idx) {
+            currentStoryIdx = idx;
+            const data = stories[idx];
+            document.getElementById('storyChapterTag').innerText = data.tag;
+            document.getElementById('storyTitle').innerText = data.title;
+            document.getElementById('storyContent').innerText = data.content;
+            document.getElementById('storyIllustration').innerText = data.icon;
+            initStoryThumbs();
+
+            if(idx === stories.length - 1) {
+                unlockBadge(0); // 閱讀完成解鎖徽章 1
+            }
+        }
+
+        function nextStory() {
+            currentStoryIdx = (currentStoryIdx + 1) % stories.length;
+            loadStory(currentStoryIdx);
+        }
+
+        function readCurrentStory() {
+            const text = stories[currentStoryIdx].title + "。" + stories[currentStoryIdx].content;
+            speakText(text);
+        }
+
+        // Web Speech API Voice Synthesis
+        function speakText(text) {
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel();
+                const utterance = new SpeechSynthesisUtterance(text);
+                utterance.lang = 'zh-TW';
+                utterance.rate = 0.9;
+                window.speechSynthesis.speak(utterance);
+            } else {
+                alert("您的瀏覽器不支援語音朗讀功能。");
+            }
+        }
+
+        function toggleAudioHelp() {
+            speakText("歡迎使用語音朗讀助手，點擊頁面上的按鈕我可以為您朗讀內容喔！");
+        }
+
+        // Worksheet Drawing Canvas Logic
+        let canvas, ctx, isDrawing = false;
+
+        function initCanvas() {
+            canvas = document.getElementById('drawCanvas');
+            if(!canvas) return;
+            ctx = canvas.getContext('2d');
+            
+            // Adjust resolution to actual displayed size
+            canvas.width = canvas.offsetWidth;
+            canvas.height = canvas.offsetHeight;
+
+            ctx.strokeStyle = "#059669";
+            ctx.lineWidth = 4;
+            ctx.lineCap = "round";
+
+            const getPos = (e) => {
+                const r = canvas.getBoundingClientRect();
+                const clientX = e.clientX || (e.touches && e.touches[0].clientX);
+                const clientY = e.clientY || (e.touches && e.touches[0].clientY);
+                return {
+                    x: clientX - r.left,
+                    y: clientY - r.top
+                };
+            };
+
+            const startDraw = (e) => {
+                isDrawing = true;
+                ctx.beginPath();
+                const pos = getPos(e);
+                ctx.moveTo(pos.x, pos.y);
+            };
+
+            const draw = (e) => {
+                if(!isDrawing) return;
+                const pos = getPos(e);
+                ctx.lineTo(pos.x, pos.y);
+                ctx.stroke();
+                unlockBadge(3); // 解鎖小畫家徽章
+            };
+
+            const stopDraw = () => { isDrawing = false; };
+
+            canvas.onmousedown = startDraw;
+            canvas.onmousemove = draw;
+            canvas.onmouseup = stopDraw;
+            canvas.onmouseleave = stopDraw;
+
+            canvas.ontouchstart = (e) => { startDraw(e); };
+            canvas.ontouchmove = (e) => { draw(e); };
+            canvas.ontouchend = stopDraw;
+        }
+
+        function setDrawColor(color) {
+            if(ctx) ctx.strokeStyle = color;
+        }
+
+        function clearCanvas() {
+            if(ctx && canvas) {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+            }
+        }
+
+        // Quiz Handling
+        function checkQuiz(btn, isCorrect, qIndex) {
+            if(isCorrect) {
+                btn.className = "quiz-opt p-3 bg-emerald-500 text-white rounded-xl font-bold text-left text-sm shadow";
+                btn.innerHTML += " ✅ 正確答案！";
+                unlockBadge(2); // 解鎖答題徽章
+                speakText("太棒了！答對囉！");
+            } else {
+                btn.className = "quiz-opt p-3 bg-rose-400 text-white rounded-xl text-left text-sm shadow";
+                btn.innerHTML += " ❌ 再想想看喔！";
+                speakText("再試試看喔！");
+            }
+        }
+
+        // Black Bean Card Interactive
+        let exploredBeanCards = new Set();
+        function exploreBeanKnowledge(id, title, desc) {
+            exploredBeanCards.add(id);
+            const countEl = document.getElementById('beanKnowledgeCount');
+            if(countEl) countEl.innerText = exploredBeanCards.size;
+            
+            speakText(`${title}。${desc}`);
+            
+            if(exploredBeanCards.size >= 3) {
+                unlockBadge(1); // 解鎖黑豆知識王徽章
+            }
+        }
+
+        // Badges & Certificate Logic
+        function unlockBadge(index) {
+            if(userBadges[index]) return;
+            userBadges[index] = true;
+            const badgeEl = document.getElementById(`badge-${index + 1}`);
+            if(badgeEl) {
+                badgeEl.classList.remove('opacity-40', 'bg-slate-100');
+                badgeEl.classList.add('bg-amber-50', 'border-amber-400', 'shadow-md');
+            }
+            const count = userBadges.filter(Boolean).length;
+            const counterText = document.getElementById('badgeCounterText');
+            if(counterText) counterText.innerText = `已獲得 ${count}/4 徽章`;
+        }
+
+        function generateCertificate() {
+            const dateStr = new Date().toLocaleDateString('zh-TW');
+            document.getElementById('certDate').innerText = dateStr;
+            document.getElementById('certModal').classList.remove('hidden');
+        }
+
+        function closeCertModal() {
+            document.getElementById('certModal').classList.add('hidden');
+        }
+
+        // Window Initializer
+        window.onload = function() {
+            initStoryThumbs();
+            loadStory(0);
+        };
+    </script>
+</body>
+</html>

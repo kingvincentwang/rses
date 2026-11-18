@@ -1,0 +1,863 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>濱海綠寶石大冒險 - 五年級校訂課程互動教學網</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&family=Nunito:wght@600;700;800&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        emeraldBrand: {
+                            50: '#f0fdf4',
+                            100: '#dcfce7',
+                            200: '#bbf7d0',
+                            500: '#10b981',
+                            600: '#059669',
+                            700: '#047857',
+                            800: '#065f46',
+                            900: '#064e3b',
+                        },
+                        ocean: {
+                            50: '#f0f9ff',
+                            100: '#e0f2fe',
+                            500: '#0ea5e9',
+                            600: '#0284c7',
+                            700: '#0369a1',
+                        },
+                        amberWarm: {
+                            100: '#fef3c7',
+                            500: '#f59e0b',
+                            600: '#d97706',
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Noto Sans TC', 'Nunito', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Print styling for Worksheets */
+        @media print {
+            body {
+                background: white !important;
+                color: black !important;
+            }
+            .no-print {
+                display: none !important;
+            }
+            .print-only {
+                display: block !important;
+            }
+            .tab-content {
+                display: block !important;
+            }
+            .card-box {
+                box-shadow: none !important;
+                border: 1px solid #ccc !important;
+                break-inside: avoid;
+            }
+        }
+        
+        .pulse-subtle {
+            animation: pulse-slow 3s infinite ease-in-out;
+        }
+        @keyframes pulse-slow {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.02); }
+        }
+
+        /* Custom scrollbar for better UX */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #10b981;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 font-sans min-h-screen flex flex-col selection:bg-emeraldBrand-200 selection:text-emeraldBrand-900">
+
+    <!-- Top Navigation Header -->
+    <header class="bg-white/90 backdrop-blur-md border-b border-emeraldBrand-100 sticky top-0 z-50 shadow-sm no-print">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-20">
+                <!-- Logo & Title -->
+                <div class="flex items-center space-x-3 cursor-pointer" onclick="switchTab('overview')">
+                    <div class="w-12 h-12 bg-gradient-to-tr from-emeraldBrand-600 to-ocean-500 rounded-2xl flex items-center justify-center text-white text-2xl shadow-md shadow-emeraldBrand-200">
+                        <i class="fa-solid fa-gem"></i>
+                    </div>
+                    <div>
+                        <div class="flex items-center gap-2">
+                            <span class="text-xs font-bold bg-emeraldBrand-100 text-emeraldBrand-800 px-2 py-0.5 rounded-full">五年級校訂課程</span>
+                            <span class="text-xs text-slate-400">120分鐘課程架構</span>
+                        </div>
+                        <h1 class="text-xl sm:text-2xl font-black text-slate-800 tracking-tight">濱海綠寶石大冒險</h1>
+                    </div>
+                </div>
+
+                <!-- Navigation Tabs (Desktop) -->
+                <nav class="hidden md:flex items-center space-x-2">
+                    <button id="nav-overview" onclick="switchTab('overview')" class="nav-btn active-tab flex items-center gap-2 px-4 py-2.5 rounded-xl font-bold text-sm transition-all duration-200 text-emeraldBrand-700 bg-emeraldBrand-50">
+                        <i class="fa-solid fa-compass"></i> 課程大綱
+                    </button>
+                    <button id="nav-storybook" onclick="switchTab('storybook')" class="nav-btn flex items-center gap-2 px-4 py-2.5 rounded-xl font-bold text-sm transition-all duration-200 text-slate-600 hover:text-emeraldBrand-600 hover:bg-slate-100">
+                        <i class="fa-solid fa-book-open"></i> 互動繪本
+                    </button>
+                    <button id="nav-quiz" onclick="switchTab('quiz')" class="nav-btn flex items-center gap-2 px-4 py-2.5 rounded-xl font-bold text-sm transition-all duration-200 text-slate-600 hover:text-emeraldBrand-600 hover:bg-slate-100">
+                        <i class="fa-solid fa-pen-ruler"></i> 隨堂測驗
+                    </button>
+                    <button id="nav-worksheet" onclick="switchTab('worksheet')" class="nav-btn flex items-center gap-2 px-4 py-2.5 rounded-xl font-bold text-sm transition-all duration-200 text-slate-600 hover:text-emeraldBrand-600 hover:bg-slate-100">
+                        <i class="fa-solid fa-clipboard-check"></i> 學習單與評量
+                    </button>
+                </nav>
+
+                <!-- Action Button -->
+                <div class="flex items-center gap-2">
+                    <button onclick="window.print()" class="hidden sm:flex items-center gap-2 bg-slate-100 hover:bg-slate-200 text-slate-700 px-3.5 py-2 rounded-xl text-xs font-bold transition-all">
+                        <i class="fa-solid fa-print"></i> 列印教學檔
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mobile Navigation Sub-bar -->
+        <div class="md:hidden flex overflow-x-auto px-4 py-2 bg-slate-100 border-t border-slate-200 gap-2 no-print">
+            <button id="mob-overview" onclick="switchTab('overview')" class="whitespace-nowrap px-3 py-1.5 rounded-lg text-xs font-bold text-emeraldBrand-800 bg-white shadow-sm">課程大綱</button>
+            <button id="mob-storybook" onclick="switchTab('storybook')" class="whitespace-nowrap px-3 py-1.5 rounded-lg text-xs font-bold text-slate-600">互動繪本</button>
+            <button id="mob-quiz" onclick="switchTab('quiz')" class="whitespace-nowrap px-3 py-1.5 rounded-lg text-xs font-bold text-slate-600">隨堂測驗</button>
+            <button id="mob-worksheet" onclick="switchTab('worksheet')" class="whitespace-nowrap px-3 py-1.5 rounded-lg text-xs font-bold text-slate-600">學習單評量</button>
+        </div>
+    </header>
+
+    <!-- Main Content Area Container -->
+    <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
+
+        <!-- ================= SECTION 1: 課程大綱 (LESSON OVERVIEW) ================= -->
+        <section id="tab-overview" class="tab-content block space-y-8">
+            <!-- Hero Banner -->
+            <div class="relative bg-gradient-to-r from-emeraldBrand-800 via-emeraldBrand-700 to-ocean-700 rounded-3xl p-6 sm:p-10 text-white overflow-hidden shadow-xl">
+                <div class="absolute -right-10 -bottom-10 opacity-15 text-white text-9xl pointer-events-none">
+                    <i class="fa-solid fa-tree"></i>
+                </div>
+                <div class="relative z-10 max-w-3xl space-y-4">
+                    <div class="inline-flex items-center gap-2 bg-white/20 backdrop-blur-md px-3 py-1 rounded-full text-xs font-semibold">
+                        <i class="fa-solid fa-graduation-cap"></i> 學校願景：樂在學習・溫馨關懷・感恩惜福・健康成長
+                    </div>
+                    <h2 class="text-3xl sm:text-4xl font-black tracking-tight">綠寶石大探索家</h2>
+                    <p class="text-emeraldBrand-100 text-sm sm:text-base leading-relaxed">
+                        本課程設計整合國小五年級三大核心主題：「樹與生物多樣性—水生植物」、「玫瑰」與「綠能源」，透過故事探索、情境模擬與手作藍圖，引導學生建立系統思考與永續關懷能力。
+                    </p>
+                    <div class="flex flex-wrap gap-2 pt-2">
+                        <span class="bg-emeraldBrand-900/60 border border-emeraldBrand-400/30 text-emeraldBrand-200 text-xs px-3 py-1 rounded-lg">系統思考（學習力）</span>
+                        <span class="bg-emeraldBrand-900/60 border border-emeraldBrand-400/30 text-emeraldBrand-200 text-xs px-3 py-1 rounded-lg">團隊合作（合作力）</span>
+                        <span class="bg-emeraldBrand-900/60 border border-emeraldBrand-400/30 text-emeraldBrand-200 text-xs px-3 py-1 rounded-lg">國際理解（包容力）</span>
+                        <span class="bg-emeraldBrand-900/60 border border-emeraldBrand-400/30 text-emeraldBrand-200 text-xs px-3 py-1 rounded-lg">生活美學（品賞力）</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 3 Lessons Timeline Grid -->
+            <div>
+                <div class="flex items-center justify-between mb-6">
+                    <h3 class="text-2xl font-bold text-slate-800 flex items-center gap-3">
+                        <i class="fa-solid fa-layer-group text-emeraldBrand-600"></i> 三節課單元架構 (共 120 分鐘)
+                    </h3>
+                    <span class="text-xs text-slate-500 bg-slate-200/60 px-3 py-1 rounded-full font-medium">每節 40 分鐘</span>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <!-- Lesson 1 Card -->
+                    <div class="bg-white rounded-2xl p-6 border border-slate-200/80 shadow-md hover:shadow-lg transition-all duration-300 flex flex-col justify-between">
+                        <div class="space-y-4">
+                            <div class="flex justify-between items-center">
+                                <span class="w-10 h-10 rounded-xl bg-emeraldBrand-100 text-emeraldBrand-700 font-black flex items-center justify-center text-lg">01</span>
+                                <span class="bg-emeraldBrand-50 text-emeraldBrand-700 border border-emeraldBrand-200 text-xs px-2.5 py-1 rounded-md font-bold">環境倫理主軸</span>
+                            </div>
+                            <h4 class="text-lg font-extrabold text-slate-800">樹與生物多樣性：水生植物</h4>
+                            <p class="text-xs text-slate-600 leading-relaxed">
+                                認識沉水、浮葉、挺水等水生植物特性，理解水生植物與沿岸樹木如何淨化水質並維護濕地生態多樣性。
+                            </p>
+                        </div>
+                        <div class="mt-6 pt-4 border-t border-slate-100 space-y-2">
+                            <div class="flex items-center justify-between text-xs">
+                                <span class="text-slate-400">評量產出方式</span>
+                                <span class="font-bold text-emeraldBrand-700 bg-emeraldBrand-50 px-2 py-0.5 rounded">綜藝劇場</span>
+                            </div>
+                            <div class="text-xs text-slate-500 bg-slate-50 p-2 rounded-lg">
+                                🎭 演出「濕地交響曲」短劇演繹生物互相依賴關係。
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Lesson 2 Card -->
+                    <div class="bg-white rounded-2xl p-6 border border-slate-200/80 shadow-md hover:shadow-lg transition-all duration-300 flex flex-col justify-between">
+                        <div class="space-y-4">
+                            <div class="flex justify-between items-center">
+                                <span class="w-10 h-10 rounded-xl bg-pink-100 text-pink-700 font-black flex items-center justify-center text-lg">02</span>
+                                <span class="bg-pink-50 text-pink-700 border border-pink-200 text-xs px-2.5 py-1 rounded-md font-bold">永續發展主軸</span>
+                            </div>
+                            <h4 class="text-lg font-extrabold text-slate-800">永續發展：玫瑰與天然食材</h4>
+                            <p class="text-xs text-slate-600 leading-relaxed">
+                                探索食用玫瑰的生長環境與無毒栽培價值，學習將天然花卉與無毒植物融於飲食文化與生活美學中。
+                            </p>
+                        </div>
+                        <div class="mt-6 pt-4 border-t border-slate-100 space-y-2">
+                            <div class="flex items-center justify-between text-xs">
+                                <span class="text-slate-400">評量產出方式</span>
+                                <span class="font-bold text-pink-700 bg-pink-50 px-2 py-0.5 rounded">辦桌小師傅</span>
+                            </div>
+                            <div class="text-xs text-slate-500 bg-slate-50 p-2 rounded-lg">
+                                🥗 設計「綠寶石創意花卉輕食菜單」並公開發表。
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Lesson 3 Card -->
+                    <div class="bg-white rounded-2xl p-6 border border-slate-200/80 shadow-md hover:shadow-lg transition-all duration-300 flex flex-col justify-between">
+                        <div class="space-y-4">
+                            <div class="flex justify-between items-center">
+                                <span class="w-10 h-10 rounded-xl bg-ocean-100 text-ocean-700 font-black flex items-center justify-center text-lg">03</span>
+                                <span class="bg-ocean-50 text-ocean-700 border border-ocean-200 text-xs px-2.5 py-1 rounded-md font-bold">能資源永續主軸</span>
+                            </div>
+                            <h4 class="text-lg font-extrabold text-slate-800">能資源永續：綠能源與永續未來</h4>
+                            <p class="text-xs text-slate-600 leading-relaxed">
+                                了解太陽能、風力發電等再生能源的運行與減碳價值，構思校園綠色能源裝置方案，展現公民責任。
+                            </p>
+                        </div>
+                        <div class="mt-6 pt-4 border-t border-slate-100 space-y-2">
+                            <div class="flex items-center justify-between text-xs">
+                                <span class="text-slate-400">評量產出方式</span>
+                                <span class="font-bold text-ocean-700 bg-ocean-50 px-2 py-0.5 rounded">國際小公民、小魯班</span>
+                            </div>
+                            <div class="text-xs text-slate-500 bg-slate-50 p-2 rounded-lg">
+                                💡 繪製校園綠能節能裝置藍圖並簽署永續承諾。
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Start Callout -->
+            <div class="bg-emeraldBrand-50 border border-emeraldBrand-200 rounded-2xl p-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+                <div class="flex items-center gap-4">
+                    <div class="w-12 h-12 bg-emeraldBrand-600 text-white rounded-xl flex items-center justify-center text-xl shrink-0">
+                        <i class="fa-solid fa-play"></i>
+                    </div>
+                    <div>
+                        <h4 class="font-bold text-emeraldBrand-900">準備好開始學習了嗎？</h4>
+                        <p class="text-xs text-emeraldBrand-700">點擊下方按鈕隨即開啟《濱海綠寶石大冒險》互動故事繪本！</p>
+                    </div>
+                </div>
+                <button onclick="switchTab('storybook')" class="bg-emeraldBrand-600 hover:bg-emeraldBrand-700 text-white font-bold px-6 py-3 rounded-xl text-sm transition-all shadow-md shrink-0">
+                    進入故事繪本 <i class="fa-solid fa-arrow-right ml-1"></i>
+                </button>
+            </div>
+        </section>
+
+        <!-- ================= SECTION 2: 互動故事繪本閱讀器 (STORYBOOK READER) ================= -->
+        <section id="tab-storybook" class="tab-content hidden space-y-6">
+            <!-- Storybook Header Control Bar -->
+            <div class="bg-white rounded-2xl p-4 border border-slate-200 shadow-sm flex flex-col md:flex-row items-center justify-between gap-4">
+                <!-- Chapter Selector Buttons -->
+                <div class="flex flex-wrap items-center gap-2 w-full md:w-auto">
+                    <button onclick="loadChapter(1)" id="chap-btn-1" class="chap-tab-btn active-chap bg-emeraldBrand-600 text-white px-3.5 py-2 rounded-xl text-xs font-bold transition-all">第一章：濕地交響曲</button>
+                    <button onclick="loadChapter(2)" id="chap-btn-2" class="chap-tab-btn bg-slate-100 text-slate-700 hover:bg-slate-200 px-3.5 py-2 rounded-xl text-xs font-bold transition-all">第二章：花香盛宴</button>
+                    <button onclick="loadChapter(3)" id="chap-btn-3" class="chap-tab-btn bg-slate-100 text-slate-700 hover:bg-slate-200 px-3.5 py-2 rounded-xl text-xs font-bold transition-all">第三章：綠能未來</button>
+                    <button onclick="loadChapter(4)" id="chap-btn-4" class="chap-tab-btn bg-slate-100 text-slate-700 hover:bg-slate-200 px-3.5 py-2 rounded-xl text-xs font-bold transition-all">第四章：守護綠寶石</button>
+                </div>
+
+                <!-- Speech Audio Controls -->
+                <div class="flex items-center gap-2 bg-slate-50 p-1.5 rounded-xl border border-slate-200 w-full md:w-auto justify-end">
+                    <span id="tts-status" class="text-xs text-slate-500 font-medium px-2">
+                        <i class="fa-solid fa-volume-high text-emeraldBrand-600"></i> 故事朗讀
+                    </span>
+                    <button onclick="playTTS()" class="bg-emeraldBrand-600 hover:bg-emeraldBrand-700 text-white px-3 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1 transition-all">
+                        <i class="fa-solid fa-circle-play"></i> 播放語音
+                    </button>
+                    <button onclick="stopTTS()" class="bg-slate-200 hover:bg-slate-300 text-slate-700 px-3 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1 transition-all">
+                        <i class="fa-solid fa-circle-stop"></i> 停止
+                    </button>
+                </div>
+            </div>
+
+            <!-- Storybook Main Reader Display Card -->
+            <div class="bg-white rounded-3xl border border-slate-200/80 shadow-xl overflow-hidden grid grid-cols-1 lg:grid-cols-12 min-h-[520px]">
+                
+                <!-- Left Column: Scene Graphic Canvas -->
+                <div class="lg:col-span-6 bg-gradient-to-b from-emeraldBrand-50 to-ocean-50 p-6 flex flex-col justify-between items-center relative min-h-[300px] border-b lg:border-b-0 lg:border-r border-slate-200">
+                    <!-- Chapter Badge -->
+                    <div class="w-full flex justify-between items-center z-10">
+                        <span id="story-chapter-badge" class="bg-emeraldBrand-600 text-white text-xs font-bold px-3 py-1 rounded-full shadow-sm">
+                            第 1 章 / 共 4 章
+                        </span>
+                        <span id="story-topic-tag" class="bg-white/80 backdrop-blur-sm text-slate-600 text-xs font-semibold px-3 py-1 rounded-full border border-slate-200">
+                            樹與生物多樣性
+                        </span>
+                    </div>
+
+                    <!-- SVG Illustration Container -->
+                    <div id="story-svg-container" class="w-full my-auto py-4 flex justify-center items-center">
+                        <!-- Dynamic SVG graphic loaded via JS -->
+                    </div>
+
+                    <!-- Visual Caption -->
+                    <p id="story-img-caption" class="text-xs text-slate-500 font-medium text-center bg-white/70 px-4 py-1.5 rounded-full border border-slate-200/60 z-10">
+                        小綠與小白鷺阿綠在濕地公園
+                    </p>
+                </div>
+
+                <!-- Right Column: Story Text Content & Knowledge Card -->
+                <div class="lg:col-span-6 p-6 sm:p-8 flex flex-col justify-between space-y-6">
+                    <div>
+                        <!-- Title -->
+                        <h3 id="story-title" class="text-2xl font-black text-slate-800 mb-4 border-b border-slate-100 pb-3 flex items-center gap-2">
+                            <i class="fa-solid fa-book-bookmark text-emeraldBrand-600"></i> 第一章：濕地交響曲
+                        </h3>
+
+                        <!-- Paragraph Text -->
+                        <div id="story-text" class="text-slate-700 text-base leading-relaxed space-y-4 font-normal">
+                            <!-- Story paragraphs populated by JS -->
+                        </div>
+                    </div>
+
+                    <!-- Key Knowledge Tip Card (重點知識小卡) -->
+                    <div class="bg-amberWarm-100/60 border border-amberWarm-500/30 rounded-2xl p-4 space-y-2">
+                        <div class="flex items-center gap-2 text-amberWarm-600 font-bold text-xs uppercase tracking-wider">
+                            <i class="fa-solid fa-lightbulb"></i> 綠寶石重點知識小卡
+                        </div>
+                        <p id="story-knowledge-tip" class="text-xs text-slate-700 leading-relaxed font-medium">
+                            水生植物分為挺水、浮葉、漂浮與沉水四大類，它們能吸收水中過多養分，為水生生物提供食物與庇護棲地。
+                        </p>
+                    </div>
+
+                    <!-- Prev/Next Navigation Controls -->
+                    <div class="flex items-center justify-between pt-2 border-t border-slate-100">
+                        <button id="prev-chap-btn" onclick="prevChapter()" class="flex items-center gap-2 text-slate-500 hover:text-emeraldBrand-700 text-sm font-bold px-4 py-2 rounded-xl hover:bg-slate-100 transition-all">
+                            <i class="fa-solid fa-chevron-left"></i> 上一章
+                        </button>
+                        <span id="chap-indicator" class="text-xs text-slate-400 font-semibold">1 / 4</span>
+                        <button id="next-chap-btn" onclick="nextChapter()" class="flex items-center gap-2 text-emeraldBrand-600 hover:text-emeraldBrand-800 text-sm font-bold px-4 py-2 rounded-xl bg-emeraldBrand-50 hover:bg-emeraldBrand-100 transition-all">
+                            下一章 <i class="fa-solid fa-chevron-right"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= SECTION 3: 互動隨堂小測驗 (INTERACTIVE QUIZ) ================= -->
+        <section id="tab-quiz" class="tab-content hidden space-y-6">
+            <!-- Quiz Header Banner -->
+            <div class="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm flex flex-col sm:flex-row items-center justify-between gap-4">
+                <div class="flex items-center gap-4">
+                    <div class="w-12 h-12 bg-amberWarm-500 text-white rounded-2xl flex items-center justify-center text-xl shadow-md shadow-amberWarm-100">
+                        <i class="fa-solid fa-puzzle-piece"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-bold text-slate-800">綠寶石大挑戰：隨堂小測驗</h3>
+                        <p class="text-xs text-slate-500">檢測你對水生植物、無毒玫瑰與綠色能源的理解程度！</p>
+                    </div>
+                </div>
+                <!-- Score Counter -->
+                <div class="bg-slate-100 px-5 py-2.5 rounded-xl flex items-center gap-3 border border-slate-200">
+                    <span class="text-xs text-slate-500 font-bold">目前得分</span>
+                    <span id="quiz-score" class="text-2xl font-black text-emeraldBrand-600">0</span>
+                    <span class="text-xs text-slate-400">/ 300</span>
+                </div>
+            </div>
+
+            <!-- Question Card Container -->
+            <div id="quiz-container" class="space-y-6 max-w-3xl mx-auto">
+                <!-- Dynamic Quiz Cards rendered via JavaScript -->
+            </div>
+
+            <!-- Quiz Summary Modal/Card (Hidden initially) -->
+            <div id="quiz-result-card" class="hidden bg-white rounded-3xl p-8 border border-emeraldBrand-200 shadow-xl text-center space-y-6 max-w-xl mx-auto">
+                <div class="w-20 h-20 bg-emeraldBrand-100 text-emeraldBrand-600 rounded-full flex items-center justify-center text-4xl mx-auto">
+                    <i class="fa-solid fa-award"></i>
+                </div>
+                <div>
+                    <h4 class="text-2xl font-black text-slate-800">挑戰完成！探索家成就解鎖</h4>
+                    <p id="quiz-final-msg" class="text-slate-600 text-sm mt-2">太棒了！你獲得了 300 分！你是一位極具永續觀念的綠寶石大師！</p>
+                </div>
+                <button onclick="resetQuiz()" class="bg-emeraldBrand-600 hover:bg-emeraldBrand-700 text-white font-bold px-6 py-3 rounded-xl text-sm transition-all shadow-md">
+                    <i class="fa-solid fa-rotate-right"></i> 再挑戰一次
+                </button>
+            </div>
+        </section>
+
+        <!-- ================= SECTION 4: 學習單與教學評量 (WORKSHEETS & RUBRICS) ================= -->
+        <section id="tab-worksheet" class="tab-content hidden space-y-8">
+            <!-- Worksheet Print Action Header -->
+            <div class="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm flex flex-col sm:flex-row items-center justify-between gap-4 no-print">
+                <div>
+                    <h3 class="text-xl font-bold text-slate-800 flex items-center gap-2">
+                        <i class="fa-solid fa-file-signature text-emeraldBrand-600"></i> 五年級校訂課程學習單與評量矩陣
+                    </h3>
+                    <p class="text-xs text-slate-500">可於數位裝置線上填寫，或點擊右側按鈕直接列印成紙本學習單！</p>
+                </div>
+                <button onclick="window.print()" class="bg-emeraldBrand-600 hover:bg-emeraldBrand-700 text-white px-5 py-2.5 rounded-xl text-xs font-bold flex items-center gap-2 transition-all shadow-md">
+                    <i class="fa-solid fa-print"></i> 列印完整學習單與評量
+                </button>
+            </div>
+
+            <!-- Printable Student Header Information Box -->
+            <div class="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm card-box space-y-4">
+                <div class="text-center border-b border-slate-200 pb-4">
+                    <h2 class="text-2xl font-black text-slate-900">「濱海綠寶石」五年級校訂課程學習探索單</h2>
+                    <p class="text-xs text-slate-500 mt-1">班級：五年 ______ 班 ｜ 座號：______ ｜ 姓名：______________ ｜ 日期：2026 年 ___ 月 ___ 日</p>
+                </div>
+
+                <!-- TASK 1: 綜藝劇場 -->
+                <div class="space-y-3 pt-2">
+                    <div class="flex items-center gap-2">
+                        <span class="bg-emeraldBrand-600 text-white text-xs font-extrabold px-3 py-1 rounded-md">任務一</span>
+                        <h4 class="font-bold text-slate-800 text-base">【綜藝劇場】：濕地生態短劇分工與劇本紀錄</h4>
+                    </div>
+                    <p class="text-xs text-slate-600">請與組員分工演譯濕地生態系（水生植物、魚蝦、水鳥、沿岸樹木）互動情境：</p>
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
+                        <div class="border border-slate-200 p-3 rounded-xl bg-slate-50">
+                            <label class="block font-bold text-slate-700 mb-1">小組角色分配：</label>
+                            <input type="text" placeholder="例：小明扮演挺水植物香蒲..." class="w-full bg-white border border-slate-300 rounded-md p-2 text-xs focus:ring-2 focus:ring-emeraldBrand-500 outline-none">
+                        </div>
+                        <div class="border border-slate-200 p-3 rounded-xl bg-slate-50">
+                            <label class="block font-bold text-slate-700 mb-1">劇本核心主題：</label>
+                            <input type="text" placeholder="例：水生植物淨化水質的大功勞" class="w-full bg-white border border-slate-300 rounded-md p-2 text-xs focus:ring-2 focus:ring-emeraldBrand-500 outline-none">
+                        </div>
+                        <div class="border border-slate-200 p-3 rounded-xl bg-slate-50">
+                            <label class="block font-bold text-slate-700 mb-1">台詞與情境摘要：</label>
+                            <input type="text" placeholder="例：水鳥阿綠謝謝香蒲給予庇護..." class="w-full bg-white border border-slate-300 rounded-md p-2 text-xs focus:ring-2 focus:ring-emeraldBrand-500 outline-none">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TASK 2: 辦桌小師傅 -->
+                <div class="space-y-3 pt-4 border-t border-slate-100">
+                    <div class="flex items-center gap-2">
+                        <span class="bg-pink-600 text-white text-xs font-extrabold px-3 py-1 rounded-md">任務二</span>
+                        <h4 class="font-bold text-slate-800 text-base">【辦桌小師傅】：綠寶石創意花卉輕食菜單設計</h4>
+                    </div>
+                    <p class="text-xs text-slate-600">運用無毒栽培食用玫瑰或在地天然食材，為大家設計一份兼具健康與生活美學的輕食：</p>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+                        <div class="border border-slate-200 p-3 rounded-xl bg-slate-50">
+                            <label class="block font-bold text-slate-700 mb-1">創意菜單名稱：</label>
+                            <input type="text" placeholder="例：繽紛玫瑰香草果凍與天然花茶" class="w-full bg-white border border-slate-300 rounded-md p-2 text-xs focus:ring-2 focus:ring-pink-500 outline-none">
+                        </div>
+                        <div class="border border-slate-200 p-3 rounded-xl bg-slate-50">
+                            <label class="block font-bold text-slate-700 mb-1">選用食材與永續價值說明：</label>
+                            <input type="text" placeholder="例：選用有機食用玫瑰，支持無毒栽培護地球" class="w-full bg-white border border-slate-300 rounded-md p-2 text-xs focus:ring-2 focus:ring-pink-500 outline-none">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TASK 3: 國際小公民與小魯班 -->
+                <div class="space-y-3 pt-4 border-t border-slate-100">
+                    <div class="flex items-center gap-2">
+                        <span class="bg-ocean-600 text-white text-xs font-extrabold px-3 py-1 rounded-md">任務三</span>
+                        <h4 class="font-bold text-slate-800 text-base">【國際小公民、小魯班】：校園綠能節能裝置藍圖</h4>
+                    </div>
+                    <p class="text-xs text-slate-600">發揮「小魯班」的發明精神，構思一項適合裝設在校園的綠色能源（太陽能/風力）裝置：</p>
+                    <div class="space-y-2 text-xs">
+                        <div class="border border-slate-200 p-3 rounded-xl bg-slate-50">
+                            <label class="block font-bold text-slate-700 mb-1">裝置構想與用途說明：</label>
+                            <textarea rows="2" placeholder="例：在圖書館屋頂鋪設太陽能板，並結合雨水回收系統為校園植栽灌溉供電..." class="w-full bg-white border border-slate-300 rounded-md p-2 text-xs focus:ring-2 focus:ring-ocean-500 outline-none"></textarea>
+                        </div>
+                        <div class="p-3 bg-ocean-50 border border-ocean-200 rounded-xl flex items-center gap-3">
+                            <input type="checkbox" id="pledge-check" class="w-4 h-4 text-ocean-600 rounded">
+                            <label for="pledge-check" class="font-bold text-ocean-900 cursor-pointer">
+                                我承諾在日常生活中落實隨手關燈、珍惜能資源，成為一名具備國際永續視野的「綠能小公民」！
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Rubrics Table Card -->
+            <div class="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm card-box space-y-4">
+                <h4 class="font-bold text-slate-800 text-base flex items-center gap-2">
+                    <i class="fa-solid fa-table-list text-emeraldBrand-600"></i> 五年級「濱海綠寶石」多元學習評量矩陣
+                </h4>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-xs text-left border-collapse border border-slate-200">
+                        <thead>
+                            <tr class="bg-slate-100 text-slate-700">
+                                <th class="border border-slate-200 p-2.5 font-bold">評量項目</th>
+                                <th class="border border-slate-200 p-2.5 font-bold">優異 (3分)</th>
+                                <th class="border border-slate-200 p-2.5 font-bold">良好 (2分)</th>
+                                <th class="border border-slate-200 p-2.5 font-bold">基礎 (1分)</th>
+                            </tr>
+                        </thead>
+                        <tbody class="text-slate-600">
+                            <tr>
+                                <td class="border border-slate-200 p-2.5 font-bold bg-slate-50">【綜藝劇場】<br>水生植物與生態演繹</td>
+                                <td class="border border-slate-200 p-2.5">能深刻演譯水生植物與生物多樣性關係，肢體展演極具創意與表達力。</td>
+                                <td class="border border-slate-200 p-2.5">能展現水生植物的基本功能與角色分工，完成短劇呈現。</td>
+                                <td class="border border-slate-200 p-2.5">能在同伴協助下參與短劇演出。</td>
+                            </tr>
+                            <tr>
+                                <td class="border border-slate-200 p-2.5 font-bold bg-slate-50">【辦桌小師傅】<br>天然花卉菜單設計</td>
+                                <td class="border border-slate-200 p-2.5">菜單結合無毒栽培玫瑰與健康理念，美感設計優異且發表具說服力。</td>
+                                <td class="border border-slate-200 p-2.5">能選用天然花卉食材並完成輕食菜單設計與簡短分享。</td>
+                                <td class="border border-slate-200 p-2.5">能填寫菜單名稱並選用基本食材。</td>
+                            </tr>
+                            <tr>
+                                <td class="border border-slate-200 p-2.5 font-bold bg-slate-50">【國際小公民】<br>綠能藍圖與永續態度</td>
+                                <td class="border border-slate-200 p-2.5">藍圖規劃具系統思考與實用性，並能展現積極積極之永續公民責任。</td>
+                                <td class="border border-slate-200 p-2.5">能提出合理的校園綠能裝置構想，並認同節能減碳價值。</td>
+                                <td class="border border-slate-200 p-2.5">能完成基本藍圖繪製與簽署承諾。</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t border-slate-200 py-6 mt-12 no-print">
+        <div class="max-w-7xl mx-auto px-4 text-center space-y-2">
+            <p class="text-xs text-slate-500 font-medium">「濱海綠寶石」校訂課程五年級單元｜國小環境教育與永續發展系列</p>
+            <p class="text-[11px] text-slate-400">願景對應：樂在學習・溫馨關懷・感恩惜福・健康成長</p>
+        </div>
+    </footer>
+
+    <!-- JavaScript Logic -->
+    <script>
+        // ================= STORYBOOK DATA =================
+        const storyData = [
+            {
+                chapter: 1,
+                title: "第一章：濕地交響曲——水底與水面的綠色家園",
+                topic: "樹與生物多樣性—水生植物",
+                badge: "第 1 章 / 共 4 章",
+                caption: "小綠與小白鷺阿綠在濕地公園",
+                knowledge: "水生植物分為沉水、浮葉、漂浮與挺水四類。它們不僅能淨化水質，更是濕地魚蝦與水鳥重要的家園！",
+                paragraphs: [
+                    "太陽灑下金黃色的光芒，五年級的小男孩「小綠」背著探索背包來到濱海濕地。在這裡，他遇見了一位特別的在地導遊——戴著小小綠葉帽的小白鷺「阿綠」。",
+                    "「小綠，你看！這些挺立在水邊的香蒲，還有漂浮在水面上的睡蓮，可不只是好看而已喔！」阿綠指著清澈的水面笑著說。",
+                    "水面下，小魚小蝦歡快地穿梭；水面上，水鳥正悠閒地停棲。「水生植物就像是濕地的天然淨水器，還為許多小動物提供了溫馨的庇護所呢！」小綠認真地在筆記本上記下這奇妙的生態網，深刻體會到水生植物與沿岸樹木對於維護生物多樣性的重要性。"
+                ],
+                // 將原本的 <svg> 替換為 p01.jpg 圖片連結
+                svg: `<img src="p01.jpg" alt="第一章圖片" class="w-full max-w-md h-auto rounded-2xl shadow-md border border-emeraldBrand-200 object-cover" />`
+            },
+            {
+                chapter: 2,
+                title: "第二章：花香盛宴——食用玫瑰與天然美味",
+                topic: "永續發展—玫瑰與天然食材",
+                badge: "第 2 章 / 共 4 章",
+                caption: "小綠化身辦桌小師傅製作玫瑰輕食",
+                knowledge: "有機食用玫瑰採用無毒栽培，不化學噴藥，保護土地的同時也能化為兼具美感與健康價值的精緻食材！",
+                paragraphs: [
+                    "告別了濕地，阿綠帶著小綠來到充滿花香的有機花園。一朵朵盛開的粉紅玫瑰在陽光下綻放，散發出陣陣清香。",
+                    "「你知道嗎？這裡的玫瑰是用無毒栽培的方式種植的，不僅美麗，還能當作安全的食材呢！」阿綠輕聲介紹道。",
+                    "小綠戴上小廚師帽，化身為「辦桌小師傅」，將新鮮的花瓣與天然食材結合，親手設計了一份健康的玫瑰花茶與天然輕食菜單。看著眼前精緻的料理，小綠體會到尊重自然、選擇天然食材的永續價值。"
+                ],
+                // 替換為 p02.jpg
+                svg: `<img src="p02.jpg" alt="第二章圖片" class="w-full max-w-md h-auto rounded-2xl shadow-md border border-pink-200 object-cover" />`
+            },
+            {
+                chapter: 3,
+                title: "第三章：綠能未來——乾淨能源與永續藍圖",
+                topic: "能資源永續—綠能源",
+                badge: "第 3 章 / 共 4 章",
+                caption: "小綠展現綠能藍圖成為國際小公民與小魯班",
+                knowledge: "太陽能與風力發電是源源不絕的再生能源，替代傳統化石燃料能有效減少碳排放，是邁向國際永續的重要藍圖。",
+                paragraphs: [
+                    "品嚐完美味的花香盛宴後，阿綠帶領小綠爬上了風光明媚的綠能丘陵。一排排巨大的風力發電機在蔚藍天空下緩緩轉動，太陽能板在陽光下熠熠生輝。",
+                    "「陽光與風力是源源不絕的乾淨能源，能減少碳排放、保護我們的地球！」阿綠向小綠解釋綠色能源的永續價值。",
+                    "小綠展開手中的藍圖，化身為「小魯班」，興奮地畫下校園綠能節能裝置的設計圖。他堅定地許下承諾，要做一名具備國際視野與環保責任感的「國際小公民」。"
+                ],
+                // 替換為 p03.jpg
+                svg: `<img src="p03.jpg" alt="第三章圖片" class="w-full max-w-md h-auto rounded-2xl shadow-md border border-ocean-200 object-cover" />`
+            },
+            {
+                chapter: 4,
+                title: "第四章：守護綠寶石——攜手邁向永續未來",
+                topic: "五年級校訂總結",
+                badge: "第 4 章 / 共 4 章",
+                caption: "小綠與阿綠坐在海岸邊欣賞夕陽",
+                knowledge: "從水生植物生態淨化、無毒農作飲食到綠色能源，我們每個人都可以是保護海岸綠寶石的永續推手！",
+                paragraphs: [
+                    "夕陽西下，金色的餘暉溫柔地灑落在美麗的濱海海岸上。經過了一整天豐富的探索，小綠終於明白了「濱海綠寶石」的真正含義。",
+                    "阿綠與小綠並肩坐在海岸丘陵上，遠眺著閃耀的波光與翠綠的土地。「只要我們每個人都願意付出行動、學習關懷生態並與自然和諧共生，這顆綠寶石就能永遠閃耀，生生不息！」小綠微笑著說。",
+                    "這趟驚喜連連的探險不僅是一次美好的學習體驗，更是小綠邁向綠色永續小公民的精采起點！"
+                ],
+                // 替換為 p04.jpg
+                svg: `<img src="p04.jpg" alt="第四章圖片" class="w-full max-w-md h-auto rounded-2xl shadow-md border border-amberWarm-500/30 object-cover" />`
+            }
+        ];
+
+        // ================= QUIZ DATA =================
+        const quizData = [
+            {
+                id: 1,
+                question: "1. 關於「水生植物」在濕地生態系中的功能，下列哪一項說明是正確的？",
+                options: [
+                    "A. 水生植物會污染水質，應盡量全部拔除",
+                    "B. 能淨化水質，並為水生生物提供食物與庇護棲地",
+                    "C. 水生植物不需要陽光就能進行光合作用",
+                    "D. 水生植物與沿岸樹木完全沒有任何生態關係"
+                ],
+                answer: 1, // B (0-indexed)
+                explanation: "正確！水生植物（挺水、浮葉、漂浮、沉水）能吸收過多養分淨化水質，並維護生物多樣性。"
+            },
+            {
+                id: 2,
+                question: "2. 在「辦桌小師傅」課程中，為什麼選用「無毒栽培的食用玫瑰」很重要？",
+                options: [
+                    "A. 無毒栽培不使用有害化學農藥，能確保食材安全並保護土地",
+                    "B. 因為無毒栽培的玫瑰花朵會變成藍色的",
+                    "C. 只有塑膠花才可以當作無毒食材",
+                    "D. 無毒栽培會讓植物停止生長"
+                ],
+                answer: 0, // A
+                explanation: "正確！無毒有機栽培尊重自然與和諧共生，使天然花卉成為安全又健康的精緻餐點食材。"
+            },
+            {
+                id: 3,
+                question: "3. 作為「國際小公民」，推動校園綠色能源（如太陽能、風力）的主要永續價值是什麼？",
+                options: [
+                    "A. 增加更多化石燃料的使用",
+                    "B. 綠色能源是再生能源，能減少碳排放並對抗氣候變遷",
+                    "C. 綠色能源會產生大量空氣污染",
+                    "D. 綠色能源只能在夜間發電"
+                ],
+                answer: 1, // B
+                explanation: "正確！太陽能與風力發電乾淨無污染，是推動永續發展與節能減碳的重要能源方案。"
+            }
+        ];
+
+        // State variables
+        let currentChapter = 1;
+        let quizState = { answers: {}, score: 0 };
+        let synth = window.speechSynthesis;
+
+        // Init page on load
+        window.onload = function() {
+            loadChapter(1);
+            renderQuiz();
+        };
+
+        // Tab Switching Logic
+        function switchTab(tabId) {
+            // Hide all tabs
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            // Remove active states from desktop nav
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                btn.classList.remove('active-tab', 'text-emeraldBrand-700', 'bg-emeraldBrand-50');
+                btn.classList.add('text-slate-600');
+            });
+            // Remove active states from mobile nav
+            document.querySelectorAll('[id^="mob-"]').forEach(btn => {
+                btn.classList.remove('text-emeraldBrand-800', 'bg-white', 'shadow-sm');
+                btn.classList.add('text-slate-600');
+            });
+
+            // Show current tab
+            document.getElementById('tab-' + tabId).classList.remove('hidden');
+
+            // Set desktop active style
+            const activeNav = document.getElementById('nav-' + tabId);
+            if (activeNav) {
+                activeNav.classList.add('active-tab', 'text-emeraldBrand-700', 'bg-emeraldBrand-50');
+                activeNav.classList.remove('text-slate-600');
+            }
+            // Set mobile active style
+            const mobNav = document.getElementById('mob-' + tabId);
+            if (mobNav) {
+                mobNav.classList.add('text-emeraldBrand-800', 'bg-white', 'shadow-sm');
+                mobNav.classList.remove('text-slate-600');
+            }
+
+            // Stop TTS if running when changing tabs
+            stopTTS();
+        }
+
+        // Storybook Renderer
+        function loadChapter(chapNum) {
+            currentChapter = chapNum;
+            const data = storyData.find(d => d.chapter === chapNum);
+            if (!data) return;
+
+            // Update Chapter Navigation Buttons UI
+            for (let i = 1; i <= 4; i++) {
+                const btn = document.getElementById(`chap-btn-${i}`);
+                if (i === chapNum) {
+                    btn.className = "chap-tab-btn active-chap bg-emeraldBrand-600 text-white px-3.5 py-2 rounded-xl text-xs font-bold transition-all shadow-sm";
+                } else {
+                    btn.className = "chap-tab-btn bg-slate-100 text-slate-700 hover:bg-slate-200 px-3.5 py-2 rounded-xl text-xs font-bold transition-all";
+                }
+            }
+
+            // Update View Elements
+            document.getElementById('story-chapter-badge').innerText = data.badge;
+            document.getElementById('story-topic-tag').innerText = data.topic;
+            document.getElementById('story-img-caption').innerText = data.caption;
+            document.getElementById('story-svg-container').innerHTML = data.svg;
+            document.getElementById('story-title').innerHTML = `<i class="fa-solid fa-book-bookmark text-emeraldBrand-600"></i> ${data.title}`;
+            document.getElementById('story-knowledge-tip').innerText = data.knowledge;
+            document.getElementById('chap-indicator').innerText = `${chapNum} / 4`;
+
+            // Render Text Paragraphs
+            const textContainer = document.getElementById('story-text');
+            textContainer.innerHTML = data.paragraphs.map(p => `<p class="leading-relaxed">${p}</p>`).join('');
+
+            // Prev/Next Button Disabling
+            document.getElementById('prev-chap-btn').disabled = (chapNum === 1);
+            document.getElementById('prev-chap-btn').style.opacity = (chapNum === 1) ? '0.4' : '1';
+            document.getElementById('next-chap-btn').disabled = (chapNum === 4);
+            document.getElementById('next-chap-btn').style.opacity = (chapNum === 4) ? '0.4' : '1';
+
+            stopTTS();
+        }
+
+        function prevChapter() {
+            if (currentChapter > 1) loadChapter(currentChapter - 1);
+        }
+        function nextChapter() {
+            if (currentChapter < 4) loadChapter(currentChapter + 1);
+        }
+
+        // Text To Speech (TTS) Implementation
+        function playTTS() {
+            if (!('speechSynthesis' in window)) {
+                alert("您的瀏覽器不支援 Web Speech 語音朗讀功能。");
+                return;
+            }
+
+            stopTTS(); // Clear previous utterance
+
+            const data = storyData.find(d => d.chapter === currentChapter);
+            const fullText = `${data.title}。${data.paragraphs.join(' ')}`;
+
+            const utterance = new SpeechSynthesisUtterance(fullText);
+            utterance.lang = 'zh-TW';
+            utterance.rate = 0.9; // Kids friendly speed
+
+            utterance.onstart = function() {
+                document.getElementById('tts-status').innerHTML = '<i class="fa-solid fa-spinner fa-spin text-emeraldBrand-600"></i> 朗讀中...';
+            };
+            utterance.onend = function() {
+                document.getElementById('tts-status').innerHTML = '<i class="fa-solid fa-volume-high text-emeraldBrand-600"></i> 故事朗讀';
+            };
+            utterance.onerror = function() {
+                document.getElementById('tts-status').innerHTML = '<i class="fa-solid fa-volume-high text-emeraldBrand-600"></i> 故事朗讀';
+            };
+
+            synth.speak(utterance);
+        }
+
+        function stopTTS() {
+            if (synth && synth.speaking) {
+                synth.cancel();
+            }
+            const statusEl = document.getElementById('tts-status');
+            if (statusEl) {
+                statusEl.innerHTML = '<i class="fa-solid fa-volume-high text-emeraldBrand-600"></i> 故事朗讀';
+            }
+        }
+
+        // Interactive Quiz Renderer
+        function renderQuiz() {
+            const container = document.getElementById('quiz-container');
+            container.innerHTML = '';
+
+            quizData.forEach((q, qIndex) => {
+                const card = document.createElement('div');
+                card.className = "bg-white rounded-2xl p-6 border border-slate-200 shadow-md space-y-4";
+                card.id = `quiz-card-${q.id}`;
+
+                let optionsHTML = q.options.map((opt, optIndex) => `
+                    <button onclick="checkAnswer(${q.id}, ${optIndex})" id="opt-${q.id}-${optIndex}" 
+                        class="w-full text-left p-3.5 rounded-xl border border-slate-200 hover:border-emeraldBrand-400 hover:bg-emeraldBrand-50 text-xs sm:text-sm font-medium transition-all flex items-center justify-between">
+                        <span>${opt}</span>
+                        <i class="fa-regular fa-circle text-slate-300 opt-icon"></i>
+                    </button>
+                `).join('');
+
+                card.innerHTML = `
+                    <h4 class="font-bold text-slate-800 text-sm sm:text-base">${q.question}</h4>
+                    <div class="space-y-2.5">${optionsHTML}</div>
+                    <div id="quiz-feedback-${q.id}" class="hidden p-3.5 rounded-xl text-xs font-medium border"></div>
+                `;
+
+                container.appendChild(card);
+            });
+        }
+
+        function checkAnswer(qId, selectedIdx) {
+            if (quizState.answers[qId] !== undefined) return; // Already answered
+
+            const q = quizData.find(item => item.id === qId);
+            quizState.answers[qId] = selectedIdx;
+
+            const feedbackEl = document.getElementById(`quiz-feedback-${qId}`);
+            feedbackEl.classList.remove('hidden');
+
+            // Disable all option buttons for this question
+            q.options.forEach((_, idx) => {
+                const btn = document.getElementById(`opt-${qId}-${idx}`);
+                btn.disabled = true;
+                btn.classList.remove('hover:border-emeraldBrand-400', 'hover:bg-emeraldBrand-50');
+            });
+
+            const selectedBtn = document.getElementById(`opt-${qId}-${selectedIdx}`);
+
+            if (selectedIdx === q.answer) {
+                // Correct Answer
+                quizState.score += 100;
+                selectedBtn.classList.add('bg-emerald-100', 'border-emerald-500', 'text-emerald-900', 'font-bold');
+                selectedBtn.querySelector('.opt-icon').className = 'fa-solid fa-circle-check text-emerald-600 text-base';
+
+                feedbackEl.className = "p-3.5 rounded-xl text-xs font-medium bg-emerald-50 border-emerald-200 text-emerald-800";
+                feedbackEl.innerHTML = `<i class="fa-solid fa-circle-check text-emerald-600 mr-1"></i> <strong>答對了！</strong> ${q.explanation}`;
+            } else {
+                // Incorrect Answer
+                selectedBtn.classList.add('bg-rose-50', 'border-rose-400', 'text-rose-900');
+                selectedBtn.querySelector('.opt-icon').className = 'fa-solid fa-circle-xmark text-rose-500 text-base';
+
+                // Highlight correct option
+                const correctBtn = document.getElementById(`opt-${qId}-${q.answer}`);
+                correctBtn.classList.add('bg-emerald-50', 'border-emerald-400', 'text-emerald-900');
+                correctBtn.querySelector('.opt-icon').className = 'fa-solid fa-circle-check text-emerald-600 text-base';
+
+                feedbackEl.className = "p-3.5 rounded-xl text-xs font-medium bg-rose-50 border-rose-200 text-rose-800";
+                feedbackEl.innerHTML = `<i class="fa-solid fa-triangle-exclamation text-rose-500 mr-1"></i> <strong>再想想看！</strong> ${q.explanation}`;
+            }
+
+            // Update score
+            document.getElementById('quiz-score').innerText = quizState.score;
+
+            // Check if all answered
+            if (Object.keys(quizState.answers).length === quizData.length) {
+                setTimeout(() => {
+                    document.getElementById('quiz-result-card').classList.remove('hidden');
+                    document.getElementById('quiz-final-msg').innerText = `太棒了！你獲得了 ${quizState.score} 分！你是一位極具永續關懷觀念的綠寶石大師！`;
+                }, 800);
+            }
+        }
+
+        function resetQuiz() {
+            quizState = { answers: {}, score: 0 };
+            document.getElementById('quiz-score').innerText = 0;
+            document.getElementById('quiz-result-card').classList.add('hidden');
+            renderQuiz();
+        }
+    </script>
+</body>
+</html>
